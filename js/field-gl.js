@@ -73,6 +73,14 @@ const CONFIG = {
   brightness: 0,
   charset: ' .:-=+*#%@WLAD',   // artefakt appends 4RT3F; we append our name
 
+  /* intro — the wordmark assembles out of a pile of particles */
+  assemble: 2.8,          // seconds from the floor to the letters, 0 = off
+  pileDrop: 0.45,         // how far below the glyph the pile lies, in glyph heights
+  pileRise: 0.12,         // thickness of the heap, in glyph heights
+  pileSpread: 0.75,       // how wide it is spread, share of the model width
+  pileDepth: 0.3,         // scatter in z, share of the extrusion
+  pileCalm: 0.25,         // flow strength while lying down — the shiver
+
   /* ours */
   ink: '#FA4D48',
   opacity: 1,
@@ -103,6 +111,7 @@ const FOOTER = {
   tiltSpace: 'field',
   tiltX: 0, tiltY: 0,     // no rotation in the footer — the mark stays flat to the page
   ink: '#F5F3EE',
+  assemble: 0,            // the mark is simply there — the intro is the hero's
   grain: null             // the page grain is the hero panel's business
 };
 
@@ -194,12 +203,39 @@ uniform vec3  uMouse;
 uniform float uMouseStrength;
 uniform float uMouseSpeed;
 uniform sampler2D uBase;
+uniform float uAssemble;     /* 0 = lying on the floor, 1 = in the letters */
+uniform vec4  uPile;         /* xyz: centre of the heap · w: flow while lying */
+uniform vec3  uPileSize;     /* spread x · thickness y · scatter z           */
 ${NOISE}
+
+float hash(vec2 p, float k) {
+  return fract(sin(dot(p, vec2(12.9898, 78.233)) + k) * 43758.5453);
+}
+
 void main() {
   float time = uTime * 0.2;
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec4 particle = texture(uParticles, uv);
   vec4 base = texture(uBase, uv);
+
+  /* Where this particle calls home. During the intro that is a spot on
+     the floor, and it travels to its place in the glyph as uAssemble
+     runs 0 → 1. Each one leaves at its own moment, so the wordmark
+     fills in rather than snapping. */
+  float sa = hash(uv, 0.0);
+  float sb = hash(uv, 7.0);
+  float sc = hash(uv, 13.0);
+  vec3 pile = uPile.xyz + vec3(
+    (sa - 0.5) * uPileSize.x,
+    sb * uPileSize.y,
+    (sc - 0.5) * uPileSize.z
+  );
+  float t = clamp((uAssemble - sa * 0.4) / 0.6, 0.0, 1.0);
+  t = t * t * (3.0 - 2.0 * t);
+  vec3 home = mix(pile, base.xyz, t);
+
+  /* lying still is almost still: the flow is damped until they lift */
+  float calm = mix(uPile.w, 1.0, t);
 
   /* cursor: repel, scaled by pointer speed and capped */
   float repel = clamp(uMouseSpeed, 0.0, uMouseStrength);
@@ -210,7 +246,7 @@ void main() {
   if (particle.a >= 1.0) {
     /* died: reborn at home */
     particle.a = mod(particle.a, 1.0);
-    particle.xyz = base.xyz;
+    particle.xyz = home;
   } else {
     float strength = simplexNoise4d(vec4(base.xyz, time + 1.0));
     float influence = (uFlowFieldInfluence - 0.5) * (-2.0);
@@ -221,9 +257,9 @@ void main() {
       simplexNoise4d(vec4(particle.xyz * uFlowFieldFrequency + 1.0, time)),
       simplexNoise4d(vec4(particle.xyz * uFlowFieldFrequency + 2.0, time))
     ));
-    particle.xyz += flow * uDeltaTime * strength * uFlowFieldStrength;
+    particle.xyz += flow * uDeltaTime * strength * uFlowFieldStrength * calm;
 
-    vec3 toHome = base.xyz - particle.xyz;
+    vec3 toHome = home - particle.xyz;
     particle.xyz += toHome * 2.0 * uDeltaTime;   /* spring */
     particle.xyz += toHome * 0.1 * uDeltaTime;   /* pull   */
 
@@ -397,8 +433,17 @@ async function createField(stage, cfg, { primary = false } = {}) {
     uFlowFieldFrequency: { value: cfg.flowFrequency },
     uMouse: { value: new T.Vector3(1e4, 1e4, 1e4) },
     uMouseStrength: { value: cfg.mouseStrength },
-    uMouseSpeed: { value: 0 }
+    uMouseSpeed: { value: 0 },
+    /* the heap sits under the glyph's own baseline, measured in glyph
+       heights so it follows the shape at any size */
+    uAssemble: { value: cfg.assemble > 0 && !reduced ? 0 : 1 },
+    uPile: { value: new T.Vector4(0, 0, 0, cfg.pileCalm) },
+    uPileSize: { value: new T.Vector3(0, 0, 0) }
   });
+
+  /* the floor: a shallow heap under the glyph, as wide as the model */
+  su.uPile.value.set(0, dense.boundingBox.min.y - modelH * cfg.pileDrop, 0, cfg.pileCalm);
+  su.uPileSize.value.set(MODEL_W * cfg.pileSpread, modelH * cfg.pileRise, cfg.depth * cfg.pileDepth);
   const err = gpu.init();
   if (err) throw new Error(err);
 
@@ -528,6 +573,23 @@ async function createField(stage, cfg, { primary = false } = {}) {
   }, { passive: true });
   window.addEventListener('scroll', () => ndc.set(10, 10), { passive: true });
 
+  /* ── the intro ────────────────────────────────────────────────────
+     The particles lie on the floor until the hero is actually on
+     screen: with the loader running that is `loader:done`, otherwise
+     right away. Reduced motion skips it and the letters are simply
+     there. */
+  let assembleT = cfg.assemble > 0 && !reduced ? 0 : cfg.assemble > 0 ? cfg.assemble : -1;
+  let assembleGo = cfg.assemble <= 0 || reduced;
+  if (!assembleGo) {
+    if (document.documentElement.classList.contains('is-loading')) {
+      window.addEventListener('loader:done', () => { assembleGo = true; }, { once: true });
+      /* the loader's own safety net is 6 s; never wait longer than that */
+      setTimeout(() => { assembleGo = true; }, 6500);
+    } else {
+      assembleGo = true;
+    }
+  }
+
   /* ── frame ────────────────────────────────────────────────────── */
   let elapsed = 0, last = 0;
   function frame(now) {
@@ -540,6 +602,11 @@ async function createField(stage, cfg, { primary = false } = {}) {
 
     su.uTime.value = elapsed;
     su.uDeltaTime.value = reduced ? 0 : dt;
+
+    if (assembleT >= 0 && assembleT < cfg.assemble) {
+      if (assembleGo) assembleT = Math.min(cfg.assemble, assembleT + dt);
+      su.uAssemble.value = cfg.assemble ? assembleT / cfg.assemble : 1;
+    }
     if (DEBUG === 'still') su.uFlowFieldStrength.value = 0;
 
     ray.setFromCamera(ndc, camera);
@@ -612,8 +679,15 @@ async function createField(stage, cfg, { primary = false } = {}) {
       asciiMat.uniforms.uAsciiBrightness.value = cfg.brightness;
       asciiMat.uniforms.uOpacity.value = cfg.opacity;
       asciiMat.uniforms.uInk.value.set(...hexToVec(cfg.ink));
+      su.uPile.value.set(0, dense.boundingBox.min.y - modelH * cfg.pileDrop, 0, cfg.pileCalm);
+      su.uPileSize.value.set(MODEL_W * cfg.pileSpread, modelH * cfg.pileRise, cfg.depth * cfg.pileDepth);
       if (cfg.grain != null) html.style.setProperty('--grain-opacity', cfg.grain);
       if (key === 'charset') buildAtlas();
+      /* touching any intro value replays it, so you can watch the change */
+      if (key && key.startsWith('pile') || key === 'assemble') {
+        assembleT = cfg.assemble > 0 ? 0 : -1;
+        su.uAssemble.value = cfg.assemble > 0 ? 0 : 1;
+      }
       wide = innerWidth >= cfg.minWidth;
       resize(); sync();
     },
@@ -699,6 +773,14 @@ function renderPanel() {
       .concat([R('minWidth', 'min width', 0, 1600, 16)])],
     ['Shape · after reload', [R('depth', 'depth', 0.05, 3, 0.05), R('frontWeight', 'front weight', 0.5, 20, 0.5)]]
   ];
+  /* the intro belongs to the hero; "replay" runs it again from the floor */
+  if (cfg.assemble != null) groups.push(['Intro · assemble', [
+    R('assemble', 'duration s (0 = off)', 0, 8, 0.1),
+    R('pileDrop', 'floor, glyph heights', 0, 2, 0.01),
+    R('pileRise', 'heap thickness', 0, 0.6, 0.01),
+    R('pileSpread', 'spread', 0.1, 1.6, 0.01),
+    R('pileDepth', 'z scatter', 0, 2, 0.05),
+    R('pileCalm', 'shiver', 0, 1, 0.01)]]);
   const row = (r) => `<div class="r"><label for="fp-${r.k}">${r.text}</label><input type="range" id="fp-${r.k}" min="${r.min}" max="${r.max}" step="${r.step}" value="${cfg[r.k]}"><span class="v" id="fpv-${r.k}">${cfg[r.k]}</span></div>`;
   const esc = (v) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
