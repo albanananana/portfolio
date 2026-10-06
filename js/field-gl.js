@@ -45,10 +45,10 @@ const CONFIG = {
 
   /* placement */
   anchor: 'center',       // 'center': posX from the centre · 'left': shape's left edge on the field's padding
-  scale: 96,              // % of the field's content width the shape spans
-  maxHeight: 0.8,         // never taller than this share of the field's height
-  posX: -1,               // % of width — from centre, or from the left padding when anchored left
-  posY: 32,               // % of height, from centre (down is +) — v2 is 4.68:1, foot on the bottom edge
+  scale: 78,              // % of the field's content width the shape spans
+  maxHeight: 1,           // never taller than this share of the field's height
+  posX: 9.5,              // % of width — from centre, or from the left padding when anchored left
+  posY: 26,               // % of height, from centre (down is +) — v2 is 4.68:1, foot on the bottom edge
   depth: 0.5,             // extrusion, model units (the shape is 13.7 wide)
   frontWeight: 4,         // sampling weight of the front face vs. lit walls (0.5)
 
@@ -56,18 +56,18 @@ const CONFIG = {
   flowInfluence: 0.43,
   flowStrength: 1.09,
   flowFrequency: 0.53,
-  mouseStrength: 0.1,
+  mouseStrength: 0.155,
   pointSize: 4,
 
   /* motion toward the pointer — artefakt */
-  tiltX: 0.2,
-  tiltY: 0.05,
+  tiltX: 0.12,
+  tiltY: 0.13,
   tiltLerp: 0.09,
   tiltSpace: 'window',    // artefakt: pointer position across the whole window
 
   /* ASCII pass — artefakt */
   columns: 145,           // after their resize handler; 180 before it
-  cell: 0,                // px per glyph; when set, overrides columns
+  cell: 7.5,              // px per glyph; when set, overrides columns
   renderScale: 0.3,       // particle buffer vs. canvas size
   contrast: 1.09,
   brightness: 0,
@@ -100,9 +100,13 @@ const FOOTER = {
   posX: 0, posY: 0,
   depth: 1.2,
   cell: 9,
+  flowFrequency: 0.05,    // a long, slow swell instead of the hero's churn
+  mouseStrength: 0.1,
   tiltSpace: 'field',
-  tiltX: 0, tiltY: 0,     // no rotation in the footer — the mark stays flat to the page
+  tiltX: 0.1, tiltY: 0.1, // a small tilt, measured inside the band
+  tiltLerp: 0.18,
   ink: '#F5F3EE',
+  opacity: 0.2,           // the mark sits far back on the dark ground
   grain: null             // the page grain is the hero panel's business
 };
 

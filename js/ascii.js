@@ -23,27 +23,27 @@
   /* ── Paste tuned values here ──────────────────────────────── */
   var CONFIG = {
     object:    'wordmark',  // 'wordmark' | 'logo' | 'text'
-    text:      'WLAD',
+    text:      'Wlad.A',
     scale:     96,          // % of the hero width — the file has it 1390 of 1440
     posX:      -1,          // % of the hero, from centre
-    posY:      32,          // low band, its foot on the hero's bottom edge (v2 is 4.68:1)
+    posY:      29,          // low band, its foot on the hero's bottom edge (v2 is 4.68:1)
     soft:      0.35,        // blur of the density map — sets the bevel width
     light:     0.7,         // 0 = flat density, 1 = fully lit by the normals
     lightAngle: 130,        // degrees; where the light comes from
-    gamma:     1,
-    cell:      13,          // px; also the type size
-    charset:   'classic',
-    mode:      'spin',      // spin | wave | dissolve | cursor | still
-    speed:     0.45,
-    amount:    0.5,
-    fps:       24,
+    gamma:     0.55,
+    cell:      10,          // px; also the type size
+    charset:   'brand',
+    mode:      'dissolve',  // spin | wave | dissolve | cursor | still
+    speed:     0.8,
+    amount:    0.42,
+    fps:       10,
     ink:       '#FA4D48',   /* the coral the file draws the wordmark in */
-    opacity:   0.7,
+    opacity:   1,
     accentOn:  false,
     accent:    '#BC4809',
-    threshold: 0.8,
-    grain:     0.08,        // film grain over the page, 0 = off
-    minWidth:  1024         // below this the field is not drawn at all
+    threshold: 1,
+    grain:     0.1,         // film grain over the page, 0 = off
+    minWidth:  448          // below this the field is not drawn at all
   };
 
   var DEV_PANEL = true;     // ← set false to ship
