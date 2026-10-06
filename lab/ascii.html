@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASCII field — lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&family=Inter:wght@400&display=swap">
+
+<style>
+/* ============================================================
+   ASCII field — sandbox
+
+   Not part of the site. Turn the knobs, find the look, then
+   "Copy config" and we lift the numbers into the hero.
+
+   How it works, in one line: an offscreen canvas rasterises the
+   object once into a density map, then every frame each cell of
+   a character grid inverse-projects into that map and picks a
+   glyph by density. No WebGL, no dependencies.
+   ============================================================ */
+:root{
+  --paper:  #FCF9F2;
+  --ink:    #423B3B;
+  --accent: #BC4809;
+  --rule:   #BDBAB5;
+  --panel:  #FFFFFF;
+}
+*,*::before,*::after{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Inter, system-ui, sans-serif;
+  overflow:hidden;
+}
+
+/* ── the field ────────────────────────────────────────────── */
+#stage{ position:fixed; inset:0; overflow:hidden }
+.field{
+  position:absolute; inset:0; margin:0;
+  white-space:pre;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-ligatures:none;
+  user-select:none; pointer-events:none;
+  will-change:contents;
+}
+#base  { color:var(--rule) }
+#accent{ color:var(--accent) }
+
+/* ── panel ────────────────────────────────────────────────── */
+#panel{
+  position:fixed; top:16px; right:16px; width:330px; z-index:10;
+  background:color-mix(in srgb, var(--panel) 92%, transparent);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--rule); border-radius:6px;
+  padding:14px; font-size:11px; line-height:1.4;
+  max-height:calc(100vh - 32px); overflow-y:auto; overflow-x:hidden;
+  box-shadow:0 6px 24px rgba(66,59,59,.10);
+}
+body.panel-hidden #panel{ display:none }
+
+#panel h1{
+  margin:0 0 2px; font-size:11px; font-weight:400; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--accent);
+}
+#panel .hint{ margin:0 0 12px; opacity:.5; font-size:10px }
+
+.row{ display:flex; align-items:center; gap:8px; margin-bottom:9px }
+.row{ min-width:0 }
+.row label{ flex:0 0 74px; opacity:.65; letter-spacing:.02em }
+.row input[type=range]{ flex:1; min-width:0; accent-color:var(--accent); height:16px }
+.row .val{ flex:0 0 40px; text-align:right; font-variant-numeric:tabular-nums; opacity:.75 }
+.row select, .row input[type=text], .row input[type=color]{
+  flex:1; min-width:0; font:inherit; padding:4px 6px;
+  border:1px solid var(--rule); border-radius:3px;
+  background:var(--panel); color:var(--ink);
+}
+.row input[type=color]{ padding:2px; height:26px }
+.row input[type=checkbox]{ accent-color:var(--accent) }
+
+fieldset{ border:0; border-top:1px solid var(--rule); margin:14px 0 10px; padding:12px 0 0 }
+legend{ font-size:10px; letter-spacing:.09em; text-transform:uppercase; opacity:.45; padding:0 6px 0 0 }
+
+.btns{ display:flex; gap:6px; margin-top:12px }
+button{
+  flex:1; font:inherit; font-size:11px; padding:7px 8px; cursor:pointer;
+  border:1px solid var(--rule); border-radius:3px;
+  background:var(--panel); color:var(--ink);
+}
+button:hover{ border-color:var(--accent); color:var(--accent) }
+button.primary{ background:var(--ink); border-color:var(--ink); color:var(--paper) }
+button.primary:hover{ background:var(--accent); border-color:var(--accent); color:#fff }
+
+#stats{ margin-top:10px; font-size:10px; opacity:.45; font-variant-numeric:tabular-nums }
+#toast{
+  position:fixed; bottom:16px; right:16px; z-index:11;
+  background:var(--ink); color:var(--paper);
+  padding:8px 12px; border-radius:4px; font-size:11px;
+  opacity:0; transition:opacity .25s ease; pointer-events:none;
+}
+#toast.show{ opacity:1 }
+
+#hint-show{
+  position:fixed; bottom:16px; left:16px; z-index:10;
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase; opacity:.35;
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <pre class="field" id="base" aria-hidden="true"></pre>
+  <pre class="field" id="accent" aria-hidden="true"></pre>
+</div>
+
+<div id="panel">
+  <h1>ASCII field</h1>
+  <p class="hint">H — hide panel · drag on the field in cursor mode</p>
+
+  <fieldset>
+    <legend>Source</legend>
+    <div class="row">
+      <label for="c-object">object</label>
+      <select id="c-object">
+        <option value="logo" selected>logo mark</option>
+        <option value="text">text</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="c-text">text</label>
+      <input type="text" id="c-text" value="WLAD" maxlength="24">
+    </div>
+    <div class="row">
+      <label for="c-scale">scale</label>
+      <input type="range" id="c-scale" min="10" max="100" step="1" value="46">
+      <span class="val" id="v-scale">46%</span>
+    </div>
+    <div class="row">
+      <label for="c-soft">softness</label>
+      <input type="range" id="c-soft" min="0" max="1" step="0.01" value="0.22">
+      <span class="val" id="v-soft">0.22</span>
+    </div>
+    <div class="row">
+      <label for="c-gamma">contrast</label>
+      <input type="range" id="c-gamma" min="0.3" max="3" step="0.05" value="1">
+      <span class="val" id="v-gamma">1.00</span>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Grid</legend>
+    <div class="row">
+      <label for="c-cell">cell size</label>
+      <input type="range" id="c-cell" min="5" max="24" step="1" value="11">
+      <span class="val" id="v-cell">11px</span>
+    </div>
+    <div class="row">
+      <label for="c-charset">charset</label>
+      <select id="c-charset">
+        <option value="classic" selected>. : - = + * # % @</option>
+        <option value="fine">fine (70 steps)</option>
+        <option value="digits">digits</option>
+        <option value="code">code</option>
+        <option value="blocks">blocks</option>
+        <option value="dots">dots</option>
+      </select>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Motion</legend>
+    <div class="row">
+      <label for="c-mode">mode</label>
+      <select id="c-mode">
+        <option value="spin" selected>spin (plane in 3D)</option>
+        <option value="wave">wave</option>
+        <option value="dissolve">dissolve</option>
+        <option value="cursor">cursor</option>
+        <option value="still">still</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="c-speed">speed</label>
+      <input type="range" id="c-speed" min="0" max="2" step="0.05" value="0.5">
+      <span class="val" id="v-speed">0.50</span>
+    </div>
+    <div class="row">
+      <label for="c-amount">amount</label>
+      <input type="range" id="c-amount" min="0" max="1" step="0.01" value="0.5">
+      <span class="val" id="v-amount">0.50</span>
+    </div>
+    <div class="row">
+      <label for="c-fps">fps cap</label>
+      <input type="range" id="c-fps" min="10" max="60" step="1" value="30">
+      <span class="val" id="v-fps">30</span>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Ink</legend>
+    <div class="row">
+      <label for="c-ink">base</label>
+      <input type="color" id="c-ink" value="#bdbab5">
+    </div>
+    <div class="row">
+      <label for="c-opacity">opacity</label>
+      <input type="range" id="c-opacity" min="0.05" max="1" step="0.01" value="1">
+      <span class="val" id="v-opacity">1.00</span>
+    </div>
+    <div class="row">
+      <label for="c-accent-on">2nd layer</label>
+      <input type="checkbox" id="c-accent-on">
+    </div>
+    <div class="row">
+      <label for="c-accent">colour</label>
+      <input type="color" id="c-accent" value="#bc4809">
+    </div>
+    <div class="row">
+      <label for="c-threshold">threshold</label>
+      <input type="range" id="c-threshold" min="0.3" max="1" step="0.01" value="0.8">
+      <span class="val" id="v-threshold">0.80</span>
+    </div>
+    <div class="row">
+      <label for="c-bg">page</label>
+      <input type="color" id="c-bg" value="#fcf9f2">
+    </div>
+  </fieldset>
+
+  <div class="btns">
+    <button type="button" id="btn-reset">Reset</button>
+    <button type="button" id="btn-copy" class="primary">Copy config</button>
+  </div>
+  <div id="stats"></div>
+</div>
+
+<div id="toast"></div>
+<div id="hint-show">H — panel</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ══ The logo, inlined ═══════════════════════════════════════
+     Same artwork as ../assets/logo.svg, with explicit width and
+     height added: an SVG with only a viewBox rasterises to zero
+     in some browsers when drawn into a canvas. Inlined rather
+     than fetched so the sandbox also works straight off file://,
+     where a loaded SVG would taint the canvas and getImageData
+     would throw. */
+  var LOGO_W = 66.1269, LOGO_H = 37.7669;
+  var LOGO_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="661.269" height="377.669" viewBox="0 0 66.1269 37.7669" fill="none">' +
+    '<rect width="7.52864" height="37.6432" transform="matrix(1 0 0 -1 0 37.6432)" fill="#423B3B"/>' +
+    '<path d="M33.0625 30.1146C33.0625 34.2726 36.4332 37.6432 40.5911 37.6432V7.52869C40.5911 3.37074 37.2205 0 33.0625 0V30.1146Z" fill="#DF6D3B"/>' +
+    '<path d="M7.65524 37.6432C12.2536 37.6432 16.4412 34.9964 18.4141 30.8428L33.0644 0C28.4661 0 24.2785 2.64695 22.3055 6.8005L7.65524 37.6432Z" fill="#DF6D3B"/>' +
+    '<path d="M40.7178 37.6432H48.2464L66.1269 0H58.5983L40.7178 37.6432Z" fill="#423B3B"/>' +
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M33.185 30.647H26.0651V37.7669C26.0651 33.8347 29.2529 30.647 33.185 30.647Z" fill="#423B3B"/>' +
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M33.185 30.647H26.0651V23.5271C26.0651 27.4593 29.2529 30.647 33.185 30.647Z" fill="#423B3B"/>' +
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9452 30.647H26.0651V37.7669C26.0651 33.8347 22.8773 30.647 18.9452 30.647Z" fill="#423B3B"/>' +
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9452 30.647H26.0651V23.5271C26.0651 27.4593 22.8773 30.647 18.9452 30.647Z" fill="#423B3B"/>' +
+    '</svg>';
+
+  var CHARSETS = {
+    classic: ' .:-=+*#%@',
+    fine:    ' .\'`^",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$',
+    digits:  ' .:0123456789',
+    code:    ' .,:;i1tfLCG08@',
+    blocks:  ' ░▒▓█',
+    dots:    ' ·•●'
+  };
+
+  var DEFAULTS = {
+    object: 'logo', text: 'WLAD', scale: 46, soft: 0.22, gamma: 1,
+    cell: 11, charset: 'classic',
+    mode: 'spin', speed: 0.5, amount: 0.5, fps: 30,
+    ink: '#bdbab5', opacity: 1,
+    accentOn: false, accent: '#bc4809', threshold: 0.8,
+    bg: '#fcf9f2'
+  };
+
+  var cfg = Object.assign({}, DEFAULTS);
+
+  var stage   = document.getElementById('stage');
+  var baseEl  = document.getElementById('base');
+  var accEl   = document.getElementById('accent');
+  var statsEl = document.getElementById('stats');
+  var toastEl = document.getElementById('toast');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ══ Density map ═════════════════════════════════════════════
+     The object is rasterised ONCE into a Float32Array of density
+     (0 = empty, 1 = solid). Everything after that is a lookup. */
+  var MASK_W = 512;
+  var mask = null, maskW = 0, maskH = 0, maskAspect = 1;
+  var maskCanvas = document.createElement('canvas');
+  var maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
+
+  function buildMaskFromCanvas(w, h) {
+    var img = maskCtx.getImageData(0, 0, w, h).data;
+    var out = new Float32Array(w * h);
+    for (var i = 0, p = 0; i < out.length; i++, p += 4) {
+      /* Drawn on white, so density is inverted luminance. Keeping
+         luminance rather than alpha preserves the mark's own
+         two-tone structure — the orange strokes come out lighter
+         than the dark ones instead of flattening to a silhouette. */
+      var lum = (img[p] * 0.2126 + img[p + 1] * 0.7152 + img[p + 2] * 0.0722) / 255;
+      out[i] = 1 - lum;
+    }
+    mask = blur(out, w, h, Math.round(cfg.soft * w * 0.05));
+    maskW = w; maskH = h; maskAspect = w / h;
+  }
+
+  /* Separable box blur, run once per rebuild. The mark is flat
+     vector art — every fill is one solid tone — so straight off the
+     rasteriser it quantises into slabs of a single glyph. Softening
+     the map gives the edges a falloff, and the falloff is what the
+     character ramp actually renders. */
+  function blur(src, w, h, r) {
+    if (r < 1) return src;
+    var tmp = new Float32Array(w * h);
+    var out = new Float32Array(w * h);
+    var i, x, y, sum, n;
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++) {
+        sum = 0; n = 0;
+        for (i = -r; i <= r; i++) {
+          var xx = x + i;
+          if (xx >= 0 && xx < w) { sum += src[y * w + xx]; n++; }
+        }
+        tmp[y * w + x] = sum / n;
+      }
+    }
+    for (x = 0; x < w; x++) {
+      for (y = 0; y < h; y++) {
+        sum = 0; n = 0;
+        for (i = -r; i <= r; i++) {
+          var yy = y + i;
+          if (yy >= 0 && yy < h) { sum += tmp[yy * w + x]; n++; }
+        }
+        out[y * w + x] = sum / n;
+      }
+    }
+    return out;
+  }
+
+  function buildLogoMask(done) {
+    var img = new Image();
+    img.onload = function () {
+      var w = MASK_W, h = Math.round(MASK_W * LOGO_H / LOGO_W);
+      maskCanvas.width = w; maskCanvas.height = h;
+      maskCtx.fillStyle = '#fff';
+      maskCtx.fillRect(0, 0, w, h);
+      maskCtx.drawImage(img, 0, 0, w, h);
+      buildMaskFromCanvas(w, h);
+      done();
+    };
+    img.onerror = function () { done(); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(LOGO_SVG);
+  }
+
+  function buildTextMask(str, done) {
+    var fs = 200, pad = 24;
+    var probe = maskCtx;
+    maskCanvas.width = 16; maskCanvas.height = 16;
+    probe.font = fs + "px 'Public Sans', system-ui, sans-serif";
+    var tw = Math.max(1, Math.ceil(probe.measureText(str).width));
+    var w = tw + pad * 2, h = Math.round(fs * 1.25) + pad * 2;
+    maskCanvas.width = w; maskCanvas.height = h;
+    maskCtx.fillStyle = '#fff';
+    maskCtx.fillRect(0, 0, w, h);
+    maskCtx.fillStyle = '#000';
+    maskCtx.font = fs + "px 'Public Sans', system-ui, sans-serif";
+    maskCtx.textAlign = 'center';
+    maskCtx.textBaseline = 'middle';
+    maskCtx.fillText(str, w / 2, h / 2);
+    buildMaskFromCanvas(w, h);
+    done();
+  }
+
+  function rebuildMask(done) {
+    if (cfg.object === 'text' && cfg.text.trim()) buildTextMask(cfg.text.trim(), done);
+    else buildLogoMask(done);
+  }
+
+  /* Bilinear sample of the density map. u,v in 0..1; outside → 0. */
+  function sample(u, v) {
+    if (u < 0 || u > 1 || v < 0 || v > 1) return 0;
+    var x = u * (maskW - 1), y = v * (maskH - 1);
+    var x0 = x | 0, y0 = y | 0;
+    var x1 = x0 + 1 < maskW ? x0 + 1 : x0;
+    var y1 = y0 + 1 < maskH ? y0 + 1 : y0;
+    var fx = x - x0, fy = y - y0;
+    var a = mask[y0 * maskW + x0], b = mask[y0 * maskW + x1];
+    var c = mask[y1 * maskW + x0], d = mask[y1 * maskW + x1];
+    return (a * (1 - fx) + b * fx) * (1 - fy) + (c * (1 - fx) + d * fx) * fy;
+  }
+
+  /* Cheap deterministic noise, for dissolve. */
+  function hash(x, y) {
+    var n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+    return n - Math.floor(n);
+  }
+
+  /* ══ Grid metrics ════════════════════════════════════════════ */
+  var cols = 0, rows = 0, charW = 8, charH = 12;
+
+  function measureGrid() {
+    charH = cfg.cell;
+    var c = document.createElement('canvas').getContext('2d');
+    var font = cfg.cell + "px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+    c.font = font;
+    charW = c.measureText('M').width || cfg.cell * 0.6;
+
+    [baseEl, accEl].forEach(function (el) {
+      el.style.fontSize = cfg.cell + 'px';
+      el.style.lineHeight = cfg.cell + 'px';
+    });
+
+    cols = Math.ceil(stage.clientWidth / charW) + 1;
+    rows = Math.ceil(stage.clientHeight / charH) + 1;
+  }
+
+  /* ══ Frame ═══════════════════════════════════════════════════ */
+  var pointer = { x: 0.5, y: 0.5, active: false };
+  var t = 0, lastFrame = 0, fpsAvg = 0;
+
+  function render(time) {
+    if (!mask) return;
+
+    var chars = CHARSETS[cfg.charset] || CHARSETS.classic;
+    var last  = chars.length - 1;
+    var mode  = reduced ? 'still' : cfg.mode;
+    var amt   = cfg.amount;
+
+    /* The object's box on screen, in pixels, keeping its aspect. */
+    var W = stage.clientWidth, H = stage.clientHeight;
+    var boxW = W * (cfg.scale / 100);
+    var boxH = boxW / maskAspect;
+    var cx = W / 2, cy = H / 2;
+
+    /* spin: a flat plane yawing around Y with a perspective divide */
+    var ang = mode === 'spin' ? Math.sin(t * 0.35) * (0.2 + amt * 1.25) : 0;
+    var ca = Math.cos(ang), sa = Math.sin(ang);
+    var persp = 0.55;
+
+    var base = '', accStr = '';
+    var wantAcc = cfg.accentOn;
+    var thr = cfg.threshold;
+    var gamma = cfg.gamma;
+
+    for (var row = 0; row < rows; row++) {
+      var sy = (row + 0.5) * charH;
+      var vs = (sy - cy) / (boxH / 2);          /* -1..1 down the box */
+
+      for (var col = 0; col < cols; col++) {
+        var sx = (col + 0.5) * charW;
+        var us = (sx - cx) / (boxW / 2);        /* -1..1 across the box */
+
+        var u = us, v = vs, light = 1;
+
+        if (mode === 'spin') {
+          /* Inverse of  x = u·cos·s , y = v·s , s = 1/(1 + k·u·sin) */
+          var den = ca - us * persp * sa;
+          if (Math.abs(den) < 1e-4) { base += ' '; if (wantAcc) accStr += ' '; continue; }
+          u = us / den;
+          var z = u * sa;
+          v = vs * (1 + persp * z);
+          light = 1 - 0.42 * z;                 /* far side thins out */
+        } else if (mode === 'wave') {
+          var k = 2.4;
+          u = us + amt * 0.32 * Math.sin(vs * k + t * 1.1);
+          v = vs + amt * 0.22 * Math.cos(us * k - t * 0.9);
+        } else if (mode === 'cursor') {
+          var pu = (pointer.x * W - cx) / (boxW / 2);
+          var pv = (pointer.y * H - cy) / (boxH / 2);
+          var dx = us - pu, dy = vs - pv;
+          var d2 = dx * dx + dy * dy;
+          var push = amt * 0.5 / (d2 * 6 + 0.35);
+          u = us + dx * push;
+          v = vs + dy * push;
+        }
+
+        /* map -1..1 → 0..1 into the density map */
+        var d = sample(u * 0.5 + 0.5, v * 0.5 + 0.5) * light;
+
+        if (mode === 'dissolve' && d > 0) {
+          var sweep = (Math.sin(t * 0.8) * 0.5 + 0.5);
+          var n = hash(Math.floor(u * 40), Math.floor(v * 40));
+          d *= Math.max(0, 1 - amt * 1.6 * Math.abs(n - sweep) * 2);
+        }
+
+        if (gamma !== 1) d = Math.pow(d, gamma);
+
+        if (d <= 0.008) { base += ' '; if (wantAcc) accStr += ' '; continue; }
+        if (d > 1) d = 1;
+
+        var idx = (d * last + 0.5) | 0;
+        var ch = chars.charAt(idx);
+
+        if (wantAcc && d >= thr) { accStr += ch; base += ' '; }
+        else { base += ch; if (wantAcc) accStr += ' '; }
+      }
+      base += '\n';
+      if (wantAcc) accStr += '\n';
+    }
+
+    baseEl.textContent = base;
+    accEl.textContent = wantAcc ? accStr : '';
+
+    if (lastFrame) {
+      var dt = time - lastFrame;
+      fpsAvg = fpsAvg ? fpsAvg * 0.9 + (1000 / dt) * 0.1 : 1000 / dt;
+    }
+    lastFrame = time;
+    statsEl.textContent =
+      cols + '×' + rows + ' = ' + (cols * rows).toLocaleString() + ' cells · ' +
+      Math.round(fpsAvg) + ' fps' + (reduced ? ' · reduced-motion: frozen' : '');
+  }
+
+  /* ══ Loop ════════════════════════════════════════════════════ */
+  var acc = 0, prev = 0, dirty = true;
+
+  function loop(time) {
+    requestAnimationFrame(loop);
+    if (!prev) prev = time;
+    var dt = time - prev;
+    prev = time;
+
+    var frozen = reduced || cfg.mode === 'still' || cfg.speed === 0;
+    if (frozen && !dirty) return;
+
+    acc += dt;
+    var step = 1000 / cfg.fps;
+    if (acc < step && !dirty) return;
+    acc = 0;
+
+    if (!frozen) t += (dt / 1000) * cfg.speed;
+    dirty = false;
+    render(time);
+  }
+
+  /* ══ Controls ════════════════════════════════════════════════ */
+  function $(id) { return document.getElementById(id); }
+
+  function apply(needsMask) {
+    document.body.style.background = cfg.bg;
+    baseEl.style.color = cfg.ink;
+    accEl.style.color = cfg.accent;
+    stage.style.opacity = cfg.opacity;
+    measureGrid();
+    dirty = true;
+    if (needsMask) rebuildMask(function () { dirty = true; });
+  }
+
+  var bindings = [
+    ['c-object',    'object',    'value',   false, true],
+    ['c-text',      'text',      'value',   false, true],
+    ['c-scale',     'scale',     'number',  'v-scale'],
+    ['c-soft',      'soft',      'number',  'v-soft',   true],
+    ['c-gamma',     'gamma',     'number',  'v-gamma'],
+    ['c-cell',      'cell',      'number',  'v-cell'],
+    ['c-charset',   'charset',   'value',   false],
+    ['c-mode',      'mode',      'value',   false],
+    ['c-speed',     'speed',     'number',  'v-speed'],
+    ['c-amount',    'amount',    'number',  'v-amount'],
+    ['c-fps',       'fps',       'number',  'v-fps'],
+    ['c-ink',       'ink',       'value',   false],
+    ['c-opacity',   'opacity',   'number',  'v-opacity'],
+    ['c-accent-on', 'accentOn',  'checked', false],
+    ['c-accent',    'accent',    'value',   false],
+    ['c-threshold', 'threshold', 'number',  'v-threshold'],
+    ['c-bg',        'bg',        'value',   false]
+  ];
+
+  function fmt(key, val) {
+    if (key === 'scale') return val + '%';
+    if (key === 'cell')  return val + 'px';
+    if (key === 'fps')   return String(val);
+    return Number(val).toFixed(2);
+  }
+
+  function syncLabels() {
+    bindings.forEach(function (b) {
+      if (b[3]) $(b[3]).textContent = fmt(b[1], cfg[b[1]]);
+    });
+  }
+
+  bindings.forEach(function (b) {
+    var el = $(b[0]), key = b[1], kind = b[2], label = b[3], remask = b[4];
+    el.addEventListener('input', function () {
+      cfg[key] = kind === 'number'  ? parseFloat(el.value)
+               : kind === 'checked' ? el.checked
+               : el.value;
+      if (label) $(label).textContent = fmt(key, cfg[key]);
+      apply(!!remask);
+    });
+  });
+
+  function pushToUI() {
+    bindings.forEach(function (b) {
+      var el = $(b[0]);
+      if (b[2] === 'checked') el.checked = cfg[b[1]];
+      else el.value = cfg[b[1]];
+    });
+    syncLabels();
+  }
+
+  $('btn-reset').addEventListener('click', function () {
+    cfg = Object.assign({}, DEFAULTS);
+    pushToUI();
+    apply(true);
+    toast('Reset');
+  });
+
+  $('btn-copy').addEventListener('click', function () {
+    var text = 'var ASCII_CONFIG = ' + JSON.stringify(cfg, null, 2) + ';';
+    navigator.clipboard.writeText(text).then(
+      function () { toast('Config copied'); },
+      function () { toast('Copy blocked — see console'); console.log(text); }
+    );
+  });
+
+  var toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1600);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'h' || e.key === 'H') document.body.classList.toggle('panel-hidden');
+  });
+
+  stage.addEventListener('pointermove', function (e) {
+    pointer.x = e.clientX / stage.clientWidth;
+    pointer.y = e.clientY / stage.clientHeight;
+    if (cfg.mode === 'cursor') dirty = true;
+  });
+
+  window.addEventListener('resize', function () { measureGrid(); dirty = true; });
+
+  /* ══ Go ══════════════════════════════════════════════════════ */
+  pushToUI();
+  apply(false);
+  rebuildMask(function () { dirty = true; requestAnimationFrame(loop); });
+
+  /* Text mode measures against Public Sans, which arrives after the
+     first paint — remeasure once it is actually there. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      if (cfg.object === 'text') rebuildMask(function () { dirty = true; });
+    });
+  }
+})();
+</script>
+</body>
+</html>

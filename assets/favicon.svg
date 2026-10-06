@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 -14.18 66.127 66.127" fill="none">
+<style>@media (prefers-color-scheme: dark){[fill="#121212"]{fill:#F5F3EE}}</style>
+<g id="Logo">
+<rect id="Rectangle 37" width="7.52864" height="37.6432" transform="matrix(1 0 0 -1 0 37.6432)" fill="#121212"/>
+<path id="Rectangle 40" d="M33.0625 30.1146C33.0625 34.2726 36.4332 37.6432 40.5911 37.6432V7.52869C40.5911 3.37074 37.2205 4.50049e-05 33.0625 4.50049e-05V30.1146Z" fill="#FA4D48"/>
+<path id="Rectangle 39" d="M7.65524 37.6432C12.2536 37.6432 16.4412 34.9964 18.4141 30.8428L33.0644 4.88196e-05C28.4661 4.88196e-05 24.2785 2.64695 22.3055 6.8005L7.65524 37.6432Z" fill="#FA4D48"/>
+<path id="Rectangle 41" d="M40.7178 37.6432H48.2464L66.1269 4.50049e-05H58.5983L40.7178 37.6432Z" fill="#121212"/>
+<g id="Group 20">
+<path id="Rectangle 20" fill-rule="evenodd" clip-rule="evenodd" d="M33.185 30.647H26.0651V37.7669C26.0651 33.8347 29.2529 30.647 33.185 30.647Z" fill="#121212"/>
+<path id="Rectangle 22" fill-rule="evenodd" clip-rule="evenodd" d="M33.185 30.647H26.0651V23.5271C26.0651 27.4593 29.2529 30.647 33.185 30.647Z" fill="#121212"/>
+<path id="Rectangle 21" fill-rule="evenodd" clip-rule="evenodd" d="M18.9452 30.647H26.0651V37.7669C26.0651 33.8347 22.8773 30.647 18.9452 30.647Z" fill="#121212"/>
+<path id="Rectangle 23" fill-rule="evenodd" clip-rule="evenodd" d="M18.9452 30.647H26.0651V23.5271C26.0651 27.4593 22.8773 30.647 18.9452 30.647Z" fill="#121212"/>
+</g>
+</g>
+</svg>

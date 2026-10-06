@@ -1,0 +1,355 @@
+/* ============================================================
+   Case page — Figma "Portfolio" › Case — Bondata · kit (343:5478)
+
+   Loaded after css/style.css, which owns the shell: the fluid
+   units (--u, --lu), the type and space scales, the colours and
+   the whole nav. Nothing here redefines any of that.
+
+   Measured off the file, 1440 canvas, 40 margins:
+
+     aside 346 · content column 1014 · pitch 40
+     Cover      image 1440 × 539, flush under the bar
+     Overview   pad-bottom 80, column gap 40
+     Decisions  pad 80/80, one coral rule per decision, pad 80 each
+     Changed    pad 80/80 on the paper
+     Results    pad 120/120 on white
+     Works      pad 120/120, full width, rows bleed right
+
+   Vertical rhythm is in --u like the rest of the site; column
+   widths are in --lu, the unit of the file's 1360 column.
+   ============================================================ */
+
+:root{
+  --case-aside: calc(346 * var(--lu));
+  --case-col:   calc(1014 * var(--lu));
+  --muted:      #737373;          /* labels, shot captions, notes  */
+  --note:       #FF0000;          /* the numbered badge in the file */
+  --band-white: #FFFFFF;          /* Decisions and Results          */
+
+  /* The file's list marker, a four-point spark (12 × 12). */
+  --spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 0c0 3.314 2.686 6 6 6-3.314 0-6 2.686-6 6 0-3.314-2.686-6-6-6 3.314 0 6-2.686 6-6z'/%3E%3C/svg%3E");
+}
+
+/* No scrolling colour story here — the tabs are static links back
+   to the home page, so the two properties js/main.js normally
+   writes are set once. */
+.page-case{
+  --section-bg: var(--paper);
+  --section-fg: var(--accent);
+}
+
+.page-case main{ padding-top:var(--nav-h) }
+
+/* Two rows, two columns: the cover bleeds across the top, the rail
+   owns column one of row two, the body column two. An explicit row
+   track is what lets the rail span row two — `grid-row: 2 / -1` in a
+   grid with no explicit rows resolves -1 to line 1 and collapses. */
+.case{
+  display:grid;
+  grid-template-columns:var(--case-aside) var(--case-col);
+  grid-template-rows:auto 1fr;
+  align-items:start;
+}
+.case__body{ grid-column:2; grid-row:2 }
+
+/* ── Contents ──────────────────────────────────────────────────
+   Column one, sticky for the whole page. Everything hugs its text,
+   as in the file: the rule under Home is as wide as the word, not
+   as wide as the column. */
+.case__aside{
+  grid-column:1; grid-row:2;
+  position:sticky; top:calc(var(--nav-h) + var(--sp-40));
+  /* the same 40 the overview takes, so Home starts on the title's line */
+  padding:var(--sp-40) var(--sp-40) 0 0;
+}
+.contents{ display:flex; flex-direction:column; align-items:flex-start }
+.contents__home{
+  display:flex; align-items:center; gap:calc(8 * var(--u));
+  padding-bottom:calc(8 * var(--u));
+  border-bottom:1px solid var(--rule);
+  font-size:var(--fs-meta); line-height:1.2; letter-spacing:0;
+  color:var(--muted);
+}
+.contents__home svg{ width:calc(12 * var(--u)); height:auto; flex:none }
+.contents__home:hover{ color:var(--ink) }
+
+.contents__list{ margin-top:calc(24 * var(--u)); display:flex; flex-direction:column }
+.contents__list a{
+  padding:calc(8 * var(--u)) 0;
+  font-size:var(--fs-meta); line-height:1.2; letter-spacing:0;
+  color:var(--muted);
+  transition:color .25s ease;
+}
+.contents__list a:hover{ color:var(--ink) }
+.contents__list a.is-current{ color:var(--accent) }
+
+/* ── Cover ────────────────────────────────────────────────────
+   1440 × 539 in the file, sitting flush under the bar and running
+   to both window edges. */
+.case__cover{
+  grid-column:1 / -1; grid-row:1;
+  margin:0 calc(var(--gutter) * -1);
+}
+.case__cover img,
+.case__cover video,
+.case__cover .case__ph{
+  width:100%; height:auto; display:block;
+  aspect-ratio:1440 / 539;
+  object-fit:cover;
+  border:0.5px solid var(--rule);
+}
+.case__cover video{ background:var(--media) }
+.case__ph{
+  background:var(--media);
+  display:grid; place-items:center; place-content:center; text-align:center;
+  font-size:var(--fs-tag); letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink); opacity:.45;
+}
+
+/* ── Overview ────────────────────────────────────────────────── */
+/* One column on a 24 rhythm, exactly as in the file: head, divider,
+   meta, divider, then the four text rows. The dividers are items in
+   that flow, so they keep 24 of air on both sides. */
+.case__overview{
+  padding:var(--sp-40) 0 var(--sp-80);
+  display:flex; flex-direction:column; gap:var(--sp-24);
+}
+
+.case__head{ display:flex; flex-direction:column; gap:var(--sp-16) }
+.case__title{
+  font-size:var(--fs-hero); font-weight:400;
+  line-height:1.08; letter-spacing:-.07em;
+}
+.case__sub{ font-size:var(--fs-body); line-height:1.2; letter-spacing:-.05em }
+
+/* Five columns between two full-width dividers — the file carries no
+   rule per column any more. */
+.case__meta{
+  display:grid; grid-template-columns:repeat(5, 1fr);
+  column-gap:calc(48 * var(--lu));
+  align-items:start;
+}
+.case__meta > div{
+  display:flex; flex-direction:column; gap:var(--sp-16);
+}
+
+/* The divider used throughout the case: 0.5 in the rule grey. */
+.rule{
+  height:0; margin:0; border:0;
+  border-top:0.5px solid var(--rule);
+}
+.case__meta dt{
+  font-size:var(--fs-tag); line-height:1; letter-spacing:-.04em;
+  color:var(--muted);
+}
+.case__meta dd{
+  margin:0;
+  font-size:var(--fs-body); line-height:1.2; letter-spacing:-.05em;
+}
+.case__meta li + li{ margin-top:calc(2 * var(--u)) }
+
+/* Context / Problem / Outcome / Ownership: a grey letterspaced label
+   over a paragraph. The red labels are the section eyebrows and the
+   Results band — not these. */
+.case__notes{ display:flex; flex-direction:column; gap:var(--sp-40) }
+.case__overview .case__notes{ gap:var(--sp-24) }
+.case__note{ display:flex; flex-direction:column; gap:var(--sp-16) }
+.case__note h2,
+.case__note h3{
+  font-size:var(--fs-meta); font-weight:400; line-height:1.2;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--muted);
+}
+.case__note--accent h2{ color:var(--accent) }
+.case__note p{
+  font-size:var(--fs-body); line-height:1.5; letter-spacing:-.02em;
+}
+.case__note p + p{ margin-top:var(--sp-16) }
+
+/* ── Bands ────────────────────────────────────────────────────
+   A section whose ground has to run to both window edges while its
+   text stays in the content column: bleed with negative margins,
+   take the column back as padding. */
+.case__band{
+  margin-left:calc((var(--case-aside) + var(--gutter)) * -1);
+  margin-right:calc(var(--gutter) * -1);
+  padding-left:calc(var(--case-aside) + var(--gutter));
+  padding-right:var(--gutter);
+}
+.case__band--white{ background:var(--band-white) }
+.case__band--roomy{ padding-top:var(--sp-120); padding-bottom:var(--sp-120) }
+
+/* ── Section heads ────────────────────────────────────────────
+   Only the vertical padding: a section that is also a band keeps
+   the side padding that holds its text in the column. */
+.case__section{ padding-top:var(--sp-80); padding-bottom:var(--sp-80) }
+.case__section > .eyebrow{ display:block; margin-bottom:var(--sp-40) }
+
+/* ── Decisions ────────────────────────────────────────────────
+   The whole band is white in the file. No rule between decisions:
+   the stacked ones breathe on 80 of padding, the side-by-side pairs
+   on 40. */
+.decisions{ display:flex; flex-direction:column }
+.decision{
+  padding:var(--sp-80) 0;
+  display:flex; flex-direction:column; gap:var(--sp-40);
+}
+.decision--pair{ padding:var(--sp-40) 0 }
+
+.decision__body{ display:flex; flex-direction:column; gap:var(--sp-24) }
+.decision__head{ display:flex; gap:calc(8 * var(--u)); align-items:flex-start }
+.decision__num{
+  flex:none;
+  font-size:var(--fs-body); line-height:1.2; letter-spacing:0;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.decision__title{
+  font-size:var(--fs-title); font-weight:500;
+  line-height:1.2; letter-spacing:-.05em;
+}
+.decision__text{
+  font-size:var(--fs-body); line-height:1.5; letter-spacing:-.02em;
+}
+
+/* ── Shots ───────────────────────────────────────────────────── */
+.shots{ display:flex; flex-direction:column; gap:var(--sp-32) }
+.shot-group{ display:flex; flex-direction:column; gap:var(--sp-16) }
+.shots--pair{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:var(--sp-32) calc(32 * var(--lu));
+}
+
+.shot{ display:flex; flex-direction:column; gap:calc(12 * var(--u)) }
+.shot__label{
+  font-size:var(--fs-body); font-weight:600;
+  line-height:1.5; letter-spacing:-.02em;
+  color:var(--muted);
+}
+/* In the file a shot is the fill of a fixed box, scaled to FILL it:
+   the picture covers the box and is cropped, never letterboxed. So the
+   box carries the file's own ratio (--ar) and the image covers it. */
+.shot__frame{
+  background:var(--media);
+  border:0.5px solid var(--rule);
+  aspect-ratio:var(--ar, 1014 / 570);
+  overflow:hidden;
+}
+.shot__frame img{ width:100%; height:100%; display:block; object-fit:cover }
+
+
+/* ── Notes under a before shot ────────────────────────────────
+   Boxes on the same ground as the screenshot, side by side, each
+   with the red badge that is drawn on the shot itself. */
+.notes{
+  display:grid; grid-auto-flow:column; grid-auto-columns:1fr;
+  gap:var(--sp-16);
+}
+.notes--one{ grid-auto-flow:row }
+.note{
+  background:var(--media);
+  border:0.5px solid var(--rule);
+  padding:var(--sp-24);
+  display:flex; gap:calc(12 * var(--u)); align-items:flex-start;
+}
+.note__n{
+  flex:none;
+  width:calc(24 * var(--u)); height:calc(24 * var(--u));
+  border-radius:50%; background:var(--note); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-tag); line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.note p{
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--muted);
+}
+
+/* ── Tabs over a shot ─────────────────────────────────────────
+   A segmented control: the track carries the ground, only the
+   selected segment is drawn — paper, rounded, lifted by the file's
+   two drop shadows. The rest stays transparent. */
+.shot__tabs{
+  align-self:flex-start;
+  display:flex; gap:calc(4 * var(--u));
+  padding:calc(4 * var(--u));
+  height:calc(40 * var(--u));
+  background:var(--media); border:0.5px solid var(--rule);
+  border-radius:calc(8 * var(--u));
+}
+.shot__tab{
+  display:flex; align-items:center;
+  padding:0 calc(24 * var(--u));
+  border-radius:calc(8 * var(--u));
+  background:transparent;
+  font-size:var(--fs-meta); line-height:1.2; color:#000;
+  cursor:pointer;
+  transition:background .2s ease, box-shadow .2s ease;
+}
+.shot__tab[aria-selected="true"]{
+  background:var(--paper);
+  box-shadow:0 1px 3px 1px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.3);
+}
+.shot__panel[hidden]{ display:none }
+
+/* ── What else changed ────────────────────────────────────────
+   The marker is the file's own four-point spark, inlined. */
+.case__list{ display:flex; flex-direction:column; gap:var(--sp-8) }
+.case__list li{
+  display:flex; gap:calc(8 * var(--u));
+  font-size:var(--fs-body); line-height:1.5; letter-spacing:-.02em;
+}
+.case__list li::before{
+  content:""; flex:none;
+  width:calc(12 * var(--u)); height:calc(12 * var(--u)); margin-top:.375em;
+  background:var(--coral);
+  -webkit-mask:var(--spark) center / contain no-repeat;
+          mask:var(--spark) center / contain no-repeat;
+}
+
+/* ── Other projects ──────────────────────────────────────────
+   Full width, like the home page: the rows carry their own gutters
+   and the media strips run off the right edge of the window. */
+/* Its own shell, below the case grid: it only has to clear the
+   gutters so the rows run to both window edges. */
+.case__works{
+  margin:0 calc(var(--gutter) * -1);
+  padding:var(--sp-120) var(--gutter);
+}
+.case__works .works{ margin-top:var(--sp-40) }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1023px){
+  /* A column instead of a grid, so the strip can stick over the body:
+     a grid item is stuck inside its own cell and would not travel. */
+  .case{ display:flex; flex-direction:column }
+  .case__cover{ order:1 }
+  .case__aside{ order:2 }
+  .case__body{ order:3 }
+
+  .case__aside{
+    position:sticky; top:var(--nav-h); z-index:50;
+    padding:10px 0; margin:0 calc(var(--gutter) * -1);
+    background:var(--paper);
+    border-bottom:1px solid var(--rule);
+  }
+  .contents{ flex-direction:row; align-items:center; gap:16px; overflow-x:auto; padding:0 var(--gutter) }
+  .contents__home{ border:0; padding:0; flex:none }
+  .contents__list{ margin:0; flex-direction:row; gap:16px }
+  .contents__list a{ padding:0; white-space:nowrap }
+
+  .case__meta{ grid-template-columns:1fr 1fr; column-gap:20px }
+  .case__section{ padding-top:56px; padding-bottom:56px }
+  .decision{ padding:40px 0; gap:24px }
+  .shots--pair{ grid-template-columns:1fr }
+  .shot--tall .shot__frame{ max-height:70vh }
+  .notes{ grid-auto-flow:row }
+
+  .case__band{
+    margin-left:calc(var(--gutter) * -1);
+    padding-left:var(--gutter);
+  }
+  .case__works{ margin-left:calc(var(--gutter) * -1); padding:56px var(--gutter) }
+}

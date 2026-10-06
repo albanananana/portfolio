@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en" class="page-case">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bondata — redesign of an HR analytics web app · Wlad Albakhtsin</title>
+<meta name="description" content="Filters, typography, navigation and cards rebuilt in a live HR analytics product used by HR leads and managers in Finland.">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/case.css">
+</head>
+<body>
+
+<!-- The tab outline, defined once and reused by every tab SVG. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" class="svg-defs">
+  <defs>
+    <clipPath id="tab-clip" clipPathUnits="userSpaceOnUse">
+      <path d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- ══ Nav ═════════════════════════════════════════════════════
+     The same bar as the home page, and it must not change here:
+     the tabs are the site's six bands, written out as links back
+     to them rather than built from this page's sections. That is
+     why js/main.js is not loaded — it builds tabs from [data-nav],
+     and a case page has none. 02 is marked current. -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__logo" href="index.html" aria-label="Wlad Albakhtsin — home">
+      <img src="assets/logo.svg" alt="" width="66" height="38">
+    </a>
+
+    <nav class="tabs" aria-label="Sections">
+      <a class="tab" href="index.html#intro">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="0" height="32"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>01</b>intro</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>01</b>intro</span>
+      </a>
+
+      <a class="tab is-active" style="--p:1" href="index.html#portfolio" aria-current="page">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="155.694" height="32" style="width:155.694px"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>02</b>Portfolio</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>02</b>Portfolio</span>
+      </a>
+
+      <a class="tab" href="index.html#about">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="0" height="32"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>03</b>about</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>03</b>about</span>
+      </a>
+
+      <a class="tab" href="index.html#career">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="0" height="32"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>04</b>Career</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>04</b>Career</span>
+      </a>
+
+      <a class="tab" href="index.html#skills">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="0" height="32"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>05</b>Skills</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>05</b>Skills</span>
+      </a>
+
+      <a class="tab" href="index.html#contact">
+        <svg class="tab__svg" viewBox="0 0 155.694 32" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="tab__plate" d="M4 4V28C4 30.2091 2.20914 32 0 32H155.694C154.611 32 153.575 31.561 152.821 30.7832L129.188 6.38867C125.233 2.30538 119.791 0 114.105 0H8C5.79086 0 4 1.79086 4 4Z"/>
+          <rect class="tab__fill" clip-path="url(#tab-clip)" x="0" y="0" width="0" height="32"/>
+          <path class="tab__edge" d="M0 32C2.20914 32 4 30.2091 4 28V4C4 1.79086 5.79086 0 8 0H114.105C119.791 0 125.233 2.30538 129.188 6.38867L152.821 30.7832C153.575 31.561 154.611 32 155.694 32"/>
+        </svg>
+        <span class="tab__label tab__label--base"><b>06</b>Contact</span>
+        <span class="tab__label tab__label--fill" aria-hidden="true"><b>06</b>Contact</span>
+      </a>
+    </nav>
+
+    <div class="nav__right">
+      <p class="lang">
+        <span class="lang__opt">PL</span>
+        <button type="button" class="lang__switch" role="switch" aria-checked="true" aria-label="Language: English"><span class="lang__knob"></span></button>
+        <span class="lang__opt is-on">EN</span>
+      </p>
+    </div>
+
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+      <span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__rule"></div>
+</header>
+
+<nav class="menu" id="menu" aria-label="Sections">
+  <a href="index.html#intro"><b>01</b>intro</a>
+  <a href="index.html#portfolio" class="is-active"><b>02</b>Portfolio</a>
+  <a href="index.html#about"><b>03</b>about</a>
+  <a href="index.html#career"><b>04</b>Career</a>
+  <a href="index.html#skills"><b>05</b>Skills</a>
+  <a href="index.html#contact"><b>06</b>Contact</a>
+</nav>
+
+<main>
+  <div class="shell case">
+
+    <!-- ══ Contents ═══════════════════════════════════════════
+         Sticky for the whole page: it owns column one of row two,
+         so it travels without a scroll handler. js/case.js only
+         marks the section you are reading. -->
+    <aside class="case__aside">
+      <nav class="contents" aria-label="On this page">
+        <a class="contents__home" href="index.html">
+          <svg viewBox="0 0 12 11" fill="none" aria-hidden="true" focusable="false">
+            <path d="M11.5 5.5H0.5M0.5 5.5L5 1M0.5 5.5L5 10" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          Home
+        </a>
+        <div class="contents__list">
+          <a href="#overview">Overview</a>
+          <a href="#decisions">Decisions</a>
+          <a href="#results">Results</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ══ Cover ══════════════════════════════════════════════
+         1440 × 539 in the file, flush under the bar and bleeding
+         to both window edges. The slot holds a video there, so
+         this stand-in waits for an export. -->
+    <figure class="case__cover">
+      <video src="assets/case-bondata/Bondata-1080p.mp4" autoplay muted loop playsinline preload="metadata" aria-label="The redesigned results report, recorded in the product"></video>
+    </figure>
+
+    <div class="case__body">
+
+      <!-- ══ Overview ═════════════════════════════════════════ -->
+      <section class="case__overview" id="overview">
+        <div class="case__head">
+          <h1 class="case__title">Bondata</h1>
+          <p class="case__sub">Redesign of an HR analytics web app</p>
+        </div>
+
+        <hr class="rule">
+
+        <dl class="case__meta">
+          <div>
+            <dt>Team</dt>
+            <dd>
+              <ul>
+                <li>Me (Lead UX/UI designer)</li>
+                <li>1 UX/UI designer</li>
+                <li>2 frontend developers</li>
+                <li>The client's product owner</li>
+                <li>The platform's founder</li>
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt>Skills</dt>
+            <dd>
+              <ul>
+                <li>Design systems</li>
+                <li>Data visualisation</li>
+                <li>Interaction design</li>
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt>Platform</dt>
+            <dd>Web app</dd>
+          </div>
+          <div>
+            <dt>Timeline</dt>
+            <dd>Mar – Jul 2026</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd>Handed off</dd>
+          </div>
+        </dl>
+
+        <hr class="rule">
+
+        <div class="case__notes">
+          <div class="case__note">
+            <h2>Context</h2>
+            <p>An employee-engagement analytics platform for HR leads and managers in Finland. Bondata reports over 100,000 users and more than 3,000,000 survey responses in a year, and HR leads read all of it through ~40 views and 25 chart types.</p>
+          </div>
+          <div class="case__note">
+            <h2>Problem</h2>
+            <p>The data was there; reading it was the hard part. Filters sat in a side rail and applied only after Refresh. Cards had no type hierarchy and grew as tall as their data, objectives came without the numbers behind them, and 40 views sat in one flat list.</p>
+          </div>
+          <div class="case__note">
+            <h2>Outcome</h2>
+            <p>I redrew every view across ~25 chart types and rebuilt filtering, typography, navigation and the card layout under them.</p>
+          </div>
+          <div class="case__note">
+            <h2>Ownership</h2>
+            <p>I led the design and owned the audit, the navigation and filter architecture, the type hierarchy and the colour system. A second designer worked on parts of the chart library. Two frontend developers built it. Product decisions sat with the client's team, and I presented and defended mine in a twice-weekly review.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ Decisions ════════════════════════════════════════ -->
+      <section class="case__section case__band case__band--white" id="decisions">
+        <h2 class="eyebrow">[ decisions ]</h2>
+
+        <div class="decisions">
+
+          <article class="decision">
+            <div class="decision__body">
+              <div class="decision__head">
+                <p class="decision__num">01</p>
+                <h3 class="decision__title">Twenty filters, in the wrong place</h3>
+              </div>
+              <p class="decision__text">Up to 20 filters sat in a right-hand rail and changed nothing until you found Refresh at the bottom and pressed it. I moved them into a row above the content they control and made each one apply the moment it is set, so filtering went from set → Refresh → read to set → read. The row hides on scroll down and collapses to one sticky button; extra filters fold into "More".</p>
+            </div>
+
+            <div class="shots">
+              <div class="shot-group">
+                <figure class="shot">
+                  <figcaption class="shot__label">Before</figcaption>
+                  <div class="shot__frame" style="--ar:1014 / 540">
+                    <img src="assets/case-bondata/filters-before.webp" alt="The old results page with up to twenty filters in a right-hand rail and a Refresh button at its foot" width="1014" height="540" loading="lazy" decoding="async">
+                  </div>
+                </figure>
+
+                <ol class="notes">
+                  <li class="note"><span class="note__n">1</span><p>Filters in a right-hand rail. People look for them along the top or on the left, so a third placement costs a scan of the page before the first click. Jakob's law.</p></li>
+                  <li class="note"><span class="note__n">2</span><p>A filter does nothing until you find Refresh at the bottom of the rail, so the page keeps showing numbers that no longer match the controls above them.</p></li>
+                </ol>
+              </div>
+
+              <hr class="rule">
+
+              <figure class="shot" id="filters-after">
+                <figcaption class="shot__label">After</figcaption>
+                <div class="shot__tabs" role="tablist" aria-label="Filter states">
+                  <button class="shot__tab" type="button" role="tab" aria-selected="true" aria-controls="filters-expanded" id="tab-filters-expanded">Expanded filters</button>
+                  <button class="shot__tab" type="button" role="tab" aria-selected="false" aria-controls="filters-collapsed" id="tab-filters-collapsed">Collapsed filters</button>
+                </div>
+                <div class="shot__panel" id="filters-expanded" role="tabpanel" aria-labelledby="tab-filters-expanded">
+                  <div class="shot__frame" style="--ar:1014 / 584">
+                    <img src="assets/case-bondata/filters-after.webp" alt="The new page with a filter row above the content, every value visible and one Reset all filters link" width="1014" height="584" loading="lazy" decoding="async">
+                  </div>
+                </div>
+                <div class="shot__panel" id="filters-collapsed" role="tabpanel" aria-labelledby="tab-filters-collapsed" hidden>
+                  <div class="shot__frame" style="--ar:1014 / 584">
+                    <img src="assets/case-bondata/filters-collapsed.webp" alt="The same page scrolled: the filter row has collapsed to one Filters (3) button next to Reset all filters" width="1014" height="584" loading="lazy" decoding="async">
+                  </div>
+                </div>
+              </figure>
+            </div>
+          </article>
+
+          <article class="decision decision--pair">
+            <div class="decision__body">
+              <div class="decision__head">
+                <p class="decision__num">02</p>
+                <h3 class="decision__title">A card with everything at one size</h3>
+              </div>
+              <p class="decision__text">Text-heavy cards set headline, value, comparison and explanation at close to the same size and weight, so reading a card meant reading all of it. I gave every card one type hierarchy, where each level of information has its own size and weight and the reading order shows before the words do. Bigger headlines cost vertical space on dense cards, which is part of why cards later needed a maximum height.</p>
+            </div>
+
+            <div class="shots shots--pair">
+              <figure class="shot">
+                <figcaption class="shot__label">Before</figcaption>
+                <div class="shot__frame" style="--ar:491 / 326">
+                  <img src="assets/case-bondata/card-before.webp" alt="The old summary card: headline, meta and every statement at one size and one weight" width="491" height="326" loading="lazy" decoding="async">
+                </div>
+              </figure>
+              <figure class="shot">
+                <figcaption class="shot__label">After</figcaption>
+                <div class="shot__frame" style="--ar:491 / 326">
+                  <img src="assets/case-bondata/card-after.webp" alt="The same card on the type hierarchy: the headline first, section labels in grey, statements below" width="491" height="326" loading="lazy" decoding="async">
+                </div>
+              </figure>
+            </div>
+          </article>
+
+          <article class="decision">
+            <div class="decision__body">
+              <div class="decision__head">
+                <p class="decision__num">03</p>
+                <h3 class="decision__title">An objective you couldn't act on</h3>
+              </div>
+              <p class="decision__text">An objective is a task a manager sets off the back of a survey result, and the old card carried a title, a paragraph of description and a four-step chevron bar. It never said which question the objective came from, which group it was set for or how that group had answered, and the discussion of it lived on another page.</p>
+            </div>
+
+            <div class="shots">
+              <figure class="shot">
+                <figcaption class="shot__label">Before</figcaption>
+                <div class="shot__frame" style="--ar:1014 / 372">
+                  <img src="assets/case-bondata/objectives-before.webp" alt="The old objectives page: one centred card with a title, a description and a four-step status bar" width="1014" height="372" loading="lazy" decoding="async">
+                </div>
+              </figure>
+
+              <p class="decision__text">I rebuilt the card around the decision it supports: the question, the group, the index and the result behind it ("64% agree, 6 of 12 responded"), comments that expand in place next to Important and Reply, and a dot-and-line stepper carrying the time in the current state instead of a coloured status bar. A manager reads, judges and answers an objective on one page, two cards to a row, where the old layout gave one centred card.</p>
+
+              <hr class="rule">
+
+              <figure class="shot">
+                <figcaption class="shot__label">After</figcaption>
+                <div class="shot__frame" style="--ar:1014 / 583">
+                  <img src="assets/case-bondata/objectives-after.webp" alt="The new objectives page: two cards to a row, each carrying its question, group, index, result and comments" width="1014" height="583" loading="lazy" decoding="async">
+                </div>
+              </figure>
+            </div>
+          </article>
+
+          <article class="decision decision--pair">
+            <div class="decision__body">
+              <div class="decision__head">
+                <p class="decision__num">04</p>
+                <h3 class="decision__title">Cards as tall as their data</h3>
+              </div>
+              <p class="decision__text">A card was as tall as its content, so one data-heavy card could run several screens and a results page turned into a scroll past everything you were not reading. I capped card height and let the content scroll inside the card, with a full-screen view for charts that need the room, so nothing hides behind a "read more". Card heights became a system of small, medium and full width, which also settles how many fit a row.</p>
+            </div>
+
+            <div class="shots shots--pair">
+              <figure class="shot shot--tall">
+                <figcaption class="shot__label">Before</figcaption>
+                <div class="shot__frame" style="--ar:491 / 1195">
+                  <img src="assets/case-bondata/height-before.webp" alt="A results page where one data-heavy card runs for several screens" width="491" height="1196" loading="lazy" decoding="async">
+                </div>
+              </figure>
+              <figure class="shot shot--tall">
+                <figcaption class="shot__label">After</figcaption>
+                <div class="shot__frame" style="--ar:491 / 962">
+                  <img src="assets/case-bondata/height-after.webp" alt="The same report with capped card heights: small, medium and full-width cards on one page" width="491" height="964" loading="lazy" decoding="async">
+                </div>
+              </figure>
+            </div>
+          </article>
+
+          <article class="decision">
+            <div class="decision__body">
+              <div class="decision__head">
+                <p class="decision__num">05</p>
+                <h3 class="decision__title">The AI summary didn't look like one</h3>
+              </div>
+              <p class="decision__text">Every page already carried a generated summary: three paragraphs, open by default, with one line at the end reading "AI-generated summary may contain errors". You learned what you had been reading after you read it. I put an "AI Summary" badge above the text, gave the card the client's brand gradient that no chart uses, and collapsed it to two lines behind "Read more", so the reader sees where the words come from before reading them.</p>
+            </div>
+
+            <div class="shots">
+              <div class="shot-group">
+                <figure class="shot">
+                  <figcaption class="shot__label">Before</figcaption>
+                  <div class="shot__frame" style="--ar:1014 / 231">
+                    <img src="assets/case-bondata/summary-before.webp" alt="The old summary: three open paragraphs with the AI disclaimer on the last line" width="1014" height="232" loading="lazy" decoding="async">
+                  </div>
+                </figure>
+
+                <ol class="notes notes--one">
+                  <li class="note"><span class="note__n">1</span><p>The one line saying a machine wrote this sits at the bottom, in the same grey as everything else. You learn what you have been reading once you have read it, on a page about your own team.</p></li>
+                </ol>
+              </div>
+
+              <hr class="rule">
+
+              <figure class="shot">
+                <figcaption class="shot__label">After</figcaption>
+                <div class="shot__frame" style="--ar:1014 / 231">
+                  <img src="assets/case-bondata/summary-after.webp" alt="The new AI Summary card: a badge above the text, a gradient outline, two lines and Read more" width="1014" height="233" loading="lazy" decoding="async">
+                </div>
+              </figure>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ══ What else changed ════════════════════════════════ -->
+      <section class="case__section">
+        <h2 class="eyebrow">[ What else changed ]</h2>
+        <ul class="case__list">
+          <li>A chart palette refreshed on the model the backend already used: positive, negative, neutral, no colour.</li>
+          <li>A new icon set.</li>
+          <li>Trend indicators moved after the last word of a headline; corner positions jumped around on multi-line titles.</li>
+          <li>A feedback control on every card, five versions.</li>
+          <li>Comments, objectives, the measurement list, the admin tables and the login flows redrawn.</li>
+          <li>A focus/breakdown toggle, reworked because people could not tell which mode was on.</li>
+          <li>Trend indicators carry an arrow as well as a colour, and direction and valence stay separate, because on a harassment metric a rising number is the worse outcome. WCAG AA throughout.</li>
+        </ul>
+      </section>
+
+      <!-- ══ Results ══════════════════════════════════════════
+           The one white band on the page, bleeding to both window
+           edges while the text stays in the column. -->
+      <section class="case__band case__band--white case__band--roomy" id="results">
+        <div class="case__notes">
+          <div class="case__note case__note--accent">
+            <h2>[ Results ]</h2>
+            <p>Every view in the product redrawn across ~25 chart types, on a design system built inside the project: 44 component sets, 136 colour variables across light and dark, 35 text styles, and 6,200 component instances across the final screens. Applying a filter went from three steps to one. Forty views got sections, search and a collapsed rail. Objective cards carry the question, the group, the index and the result behind them, two to a row against one centred card before. AI summaries are labelled at the top and collapsed to two lines. WCAG AA as the floor.</p>
+            <p>The work is handed off and nothing is released, so there are no product numbers. The two I would measure: time to a filtered view, and support volume around "which colour means what".</p>
+          </div>
+          <div class="case__note case__note--accent">
+            <h2>[ What I'd do differently ]</h2>
+            <p>I argued every decision in a twice-weekly review and never put one in front of a user. Six versions of the collapsed navigation and five of the feedback control went through internal debate alone, when an afternoon with five HR managers from the client's own customers would have settled both.</p>
+          </div>
+          <div class="case__note case__note--accent">
+            <h2>[ What's next ]</h2>
+            <p>The new theme runs behind an environment flag alongside the old product, so the rollout goes view by view rather than as a cutover. The usability session on the filter row and the card hierarchy is the first thing to run against it, and the two numbers above follow once the redesign is in front of customers.</p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.case__body -->
+  </div>
+
+  <!-- ══ Other projects ═════════════════════════════════════════
+       Outside the case grid on purpose: the contents rail is sticky
+       inside that grid, so anything left in it would be ridden over
+       by the rail. Full width, with the media strips running off the
+       right edge exactly as on the home page. -->
+  <div class="shell">
+    <section class="case__works">
+      <h2 class="eyebrow">[ Another projects ]</h2>
+
+      <ol class="works">
+        <li class="work">
+          <a class="work__row" href="#">
+            <div class="work__left">
+              <div class="work__meta">
+                <h3 class="work__name">Dishcover</h3>
+                <p class="work__note">A recipe app built for the 40 minutes at the stove · Coming soon</p>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li><li>Concept</li>
+              </ul>
+              <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false"><path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1"/></svg></span> )</p>
+            </div>
+            <div class="work__media" aria-hidden="true">
+              <span class="work__shot"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+            </div>
+          </a>
+        </li>
+
+        <li class="work">
+          <a class="work__row" href="#">
+            <div class="work__left">
+              <div class="work__meta">
+                <h3 class="work__name">Twój Weterynarz</h3>
+                <p class="work__note">A vet booking marketplace you can use before your clinic joins it · Coming soon</p>
+              </div>
+              <ul class="work__tags">
+                <li>Web platform</li><li>Marketplace</li>
+              </ul>
+              <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false"><path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1"/></svg></span> )</p>
+            </div>
+            <div class="work__media" aria-hidden="true">
+              <span class="work__shot"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+            </div>
+          </a>
+        </li>
+
+        <li class="work">
+          <a class="work__row" href="#">
+            <div class="work__left">
+              <div class="work__meta">
+                <h3 class="work__name">Evoke</h3>
+                <p class="work__note">Art direction for an AI companion that must not behave like one · Coming soon</p>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li><li>Mental health</li>
+              </ul>
+              <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false"><path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1"/></svg></span> )</p>
+            </div>
+            <div class="work__media" aria-hidden="true">
+              <span class="work__shot"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+              <span class="work__thumb"></span>
+            </div>
+          </a>
+        </li>
+      </ol>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer" id="contact">
+  <div class="site-footer__inner">
+    <div class="site-footer__top">
+      <div class="site-footer__col site-footer__col--reach">
+        <p><a href="mailto:wladyslaw.design@gmail.com">wladyslaw.design@gmail.com</a></p>
+        <p><a href="tel:+48577538552">+48 577 538 552</a></p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--social" aria-label="Elsewhere">
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+        <a href="#">Dribble</a>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--cv">
+        <a href="#" download>Download CV</a>
+      </div>
+    </div>
+
+    <div class="site-footer__mark" aria-hidden="true">
+      <div class="ascii-bg" id="footer-field" hidden></div>
+    </div>
+
+    <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
+  </div>
+</footer>
+
+<script>
+  /* Same gate as the home page: the footer mark is the GPU field, and
+     without WebGL2 the band simply stays empty. */
+  (function () {
+    var root = document.documentElement, ok = false;
+    try {
+      if (location.protocol !== 'file:') {
+        var gl = document.createElement('canvas').getContext('webgl2');
+        ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
+        var lose = gl && gl.getExtension('WEBGL_lose_context');
+        if (lose) lose.loseContext();
+      }
+    } catch (e) {}
+    root.dataset.field = ok ? 'gl' : 'cpu';
+  })();
+</script>
+<script src="js/case.js"></script>
+<script type="module" src="js/field-gl.js"></script>
+</body>
+</html>
