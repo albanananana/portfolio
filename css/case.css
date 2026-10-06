@@ -164,6 +164,8 @@
 .case__note p{
   font-size:var(--fs-body); line-height:1.5; letter-spacing:-.02em;
 }
+/* The file marks the numbers in SemiBold, not in the browser's bold. */
+.case__note strong, .decision__text strong, .case__list strong{ font-weight:600 }
 .case__note p + p{ margin-top:var(--sp-16) }
 
 /* ── Bands ────────────────────────────────────────────────────
