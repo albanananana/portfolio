@@ -1,0 +1,521 @@
+/* ============================================================
+   Case page, editorial — Figma "Portfolio" › Case — Bondata · AiiD
+   style (node 586:25457)
+
+   Loaded after css/style.css (fluid units, type and space scales,
+   colours, work rows, footer) and css/case.css (the video bar, shot
+   frames, --fs-big, --fs-h3, --media-clear). Nothing here redefines
+   those; every class is .ed-*.
+
+   Measured off the file, 1440 canvas:
+
+     Hero     blue-400 (Dishcover: red-400), pad 148 / 20, the title 64 on 2 lines
+     Cover    1440 × 674, edge to edge
+     Facts    blue-400, a black rule, five columns
+     Bands    a black rule edge to edge, then two columns: the label
+              (Label/Eyebrow, 24 down) and the copy (20 down, 48
+              between blocks), 112 under every band
+     Copy     H2 620 · text 600 · lists, sub-blocks, bar chart 696 ·
+              the stats and the column chart run the full column
+
+   The copy column starts where the work rows' names start (33.9% of
+   the content width, see § Selected works in style.css), so the
+   case and the rows under it share one line. Photos and videos do
+   not: they sit on the page's centre, 1014 of the 1360 column wide.
+
+   dishcover.html is built on the same bands from Figma › Case —
+   Dishcover · AiiD style (node 615:13746); its own blocks — stages,
+   the bar chart, personas, the user flow and the research tabs — are
+   under § Dishcover blocks. Its journey map keeps the table of the
+   earlier page, styled in css/case-dishcover.css.
+   ============================================================ */
+
+:root{
+  /* Each case wears its own colour, picked to sit with the product's
+     design: Bondata blue (below), Dishcover orange (.page-dishcover). */
+  --ed-ground: #72A5FF;   /* hero, facts and flow tabs (blue-400) */
+  --ed-bar:    #3F84FF;   /* chart bars (blue-500)                */
+  --ed-line:   #000000;   /* band and block rules (border/tab)    */
+
+  --fs-display: max(36px, calc(64 * var(--u)));   /* Display/Hero */
+
+  --ed-col-n: .339;     /* the work rows' name line, as a share */
+  --ed-col: calc(var(--ed-col-n) * 100%);
+}
+/* Figma › Case — Dishcover · AiiD style: color/red/400 and red/500 */
+.page-dishcover{
+  --ed-ground: #FF8177;
+  --ed-bar:    #FA4D48;
+}
+
+.page-ed main{ display:block }
+
+/* ── Home ─────────────────────────────────────────────────────
+   Figma › Nav: a black chip in the top-left corner. Fixed there; it
+   slides away on the way down and back on the way up, and is always
+   in at the very top (js/case-editorial.js toggles .is-away). */
+.ed-home{
+  position:fixed; z-index:30; top:0; left:0;
+  display:flex; align-items:center;
+  height:calc(40 * var(--u));
+  padding:0 calc(12 * var(--u)) 0 calc(10 * var(--u));
+  background:var(--ink); color:var(--on-dark);
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  transition:transform .35s cubic-bezier(.22,.61,.36,1), background-color .2s ease;
+}
+.ed-home:hover{ background:#000 }
+.ed-home.is-away{ transform:translateY(-100%) }
+.ed-home:focus-visible{ transform:none }
+
+/* ── Shared type ─────────────────────────────────────────────── */
+.ed-eyebrow{
+  font-size:var(--fs-meta); line-height:normal;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink);
+}
+.ed-h2{
+  width:calc(620 * var(--u)); max-width:100%;
+  font-size:var(--fs-lead); font-weight:600;
+  line-height:1.1; letter-spacing:-.04em;
+}
+.ed-h3{
+  width:calc(620 * var(--u)); max-width:100%;
+  font-size:var(--fs-h3); font-weight:600;
+  line-height:1.1; letter-spacing:-.04em;
+}
+.ed-text{
+  width:calc(600 * var(--u)); max-width:100%;
+  font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em;
+}
+.ed-text p + p{ margin-top:var(--sp-16) }
+.ed-text strong{ font-weight:600 }
+.ed-caption{
+  font-size:var(--fs-tag); font-weight:300; font-style:italic;
+  line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.ed-hero{
+  background:var(--ed-ground);
+  padding:calc(148 * var(--u)) var(--gutter) calc(100 * var(--u));
+  display:flex; flex-direction:column; gap:calc(20 * var(--u));
+}
+.ed-hero__row{ display:flex; align-items:flex-end; justify-content:space-between; gap:var(--sp-24) }
+.ed-hero__main{
+  width:calc(692 * var(--u)); max-width:100%;
+  display:flex; flex-direction:column; gap:var(--sp-40);
+}
+/* The title's box is wider than its column in the file — 1150 — so
+   it breaks into two lines and runs over the empty right half. */
+.ed-hero__title{
+  width:calc(1150 * var(--u)); max-width:calc(100vw - 2 * var(--gutter));
+  font-size:var(--fs-display); font-weight:500;
+  line-height:1; letter-spacing:-.05em;
+  text-wrap:balance;   /* no single word left on the last line */
+}
+.ed-hero__lede{ font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em }
+
+/* ── Cover ────────────────────────────────────────────────────── */
+.ed-cover{ border:.5px solid var(--rule) }
+/* each case's film keeps its own ratio: --ar on the figure, Bondata's 1440 × 674 by default */
+.ed-cover .case__video{ height:auto; aspect-ratio:var(--ar, 1440 / 674) }
+
+/* ── Facts ────────────────────────────────────────────────────── */
+.ed-facts{
+  background:var(--ed-ground);
+  padding:calc(16 * var(--u)) var(--gutter) calc(72 * var(--u));
+}
+.ed-facts__grid{
+  margin:0; padding-top:var(--sp-24);
+  /* one row of equal columns, however many facts a case has: every
+     fact starts the same distance after the one before it */
+  display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0, 1fr);
+  column-gap:var(--sp-16); row-gap:var(--sp-24);
+}
+/* Facts right under the hero: one block in the case's colour, and the
+   room the hero kept above the film moves under the facts. */
+.ed-hero:has(+ .ed-facts){ padding-bottom:calc(40 * var(--u)) }
+.ed-hero + .ed-facts{ padding-top:0; padding-bottom:calc(100 * var(--u)) }
+.ed-fact{ display:flex; flex-direction:column; gap:var(--sp-8) }
+.ed-fact dt{
+  font-size:var(--fs-small); line-height:1.2; letter-spacing:-.02em;
+  text-transform:uppercase; opacity:.6;
+}
+.ed-fact dd{ margin:0; font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em }
+
+/* ── Bands ────────────────────────────────────────────────────── */
+.ed-sec{
+  padding:0 var(--gutter) calc(112 * var(--u));
+  /* the box media are centred in: 100cqw is its content width */
+  container-type:inline-size;
+}
+.ed-sec__row{
+  display:grid; grid-template-columns:var(--ed-col) minmax(0, 1fr);
+  border-top:1px solid var(--ed-line);
+}
+/* the first band follows the facts with no rule, only 80 of air */
+.ed-sec:first-child{ padding-top:calc(80 * var(--u)) }
+.ed-sec:first-child > .ed-sec__row{ border-top:0 }
+/* The copy keeps to the right column; the left one is left to the
+   contents nav. Each band's label sits right above its title, so the
+   eye reads down the one column instead of crossing back to the left. */
+.ed-sec__content{
+  grid-column:2;
+  min-width:0;
+  padding-top:calc(24 * var(--u));
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:calc(48 * var(--u));
+}
+
+/* Contents: one nav, fixed on the left at mid-height, in the band
+   labels' column. Shown only while the bands are on screen — not over
+   the hero, the cover or the works (.is-shown, js/case-editorial.js).
+   It wears the page ground, so whatever scrolls under it is covered;
+   the box starts at the window edge, the links stay on the gutter.
+   Figma › Contents · sticky. */
+.ed-toc{
+  position:fixed; z-index:20; left:0; top:50%;
+  padding:calc(16 * var(--u)) calc(24 * var(--u)) calc(16 * var(--u)) var(--gutter);
+  background:var(--paper);
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:calc(6 * var(--u));
+  opacity:0; visibility:hidden;
+  transform:translateY(-50%);
+  transition:opacity .3s ease, visibility .3s;
+}
+.ed-toc.is-shown{ opacity:1; visibility:visible }
+.ed-toc a{
+  display:flex; align-items:center; gap:var(--sp-8);
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+  transition:color .25s ease;
+}
+.ed-toc a::before{
+  content:""; width:0; height:1px; margin-right:calc(-1 * var(--sp-8));
+  background:var(--ed-line);
+  transition:width .25s ease, margin .25s ease;
+}
+.ed-toc a:hover{ color:var(--ink) }
+.ed-toc a.is-current{ color:var(--ink) }
+.ed-toc a.is-current::before{ width:calc(20 * var(--u)); margin-right:0 }
+
+/* A sub-block: a black rule, then 20 between its parts. */
+.ed-sub{
+  width:calc(696 * var(--u)); max-width:100%;
+  padding-top:calc(20 * var(--u));
+  border-top:1px solid var(--ed-line);
+  display:flex; flex-direction:column; gap:calc(20 * var(--u));
+}
+
+/* A titled group: a short title, 16, then what it names.
+   Figma › Research › Also. */
+.ed-group{ width:calc(696 * var(--u)); max-width:100%; display:flex; flex-direction:column; gap:var(--sp-16) }
+.ed-group__title{ font-size:var(--fs-chip); line-height:1; letter-spacing:-.04em }
+
+/* ── Numbered list ────────────────────────────────────────────
+   Figma › Numbered row: a 0.5 rule on top, 18 / 20 padding, the
+   number in a 72 track. */
+.ed-list{ width:calc(696 * var(--u)); max-width:100% }
+.ed-list li{
+  display:flex; align-items:flex-start;
+  padding:calc(18 * var(--u)) 0 calc(20 * var(--u));
+  border-top:.5px solid var(--rule);
+}
+.ed-list li > span{
+  flex:none; width:calc(72 * var(--u));
+  padding-top:calc(4 * var(--u));   /* sits the number on the text's first line */
+  font-size:var(--fs-chip); line-height:1; letter-spacing:-.04em;
+}
+.ed-list li > p, .ed-finding > p{ font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em }
+
+/* ── Stat figures ─────────────────────────────────────────────
+   Figma › Stat figure: three in a row, each with a rule on its left
+   only; the value on top, the label and note on the foot. */
+.ed-stats{
+  width:100%;
+  display:grid; grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+.ed-stat{
+  height:calc(220 * var(--u));
+  padding:calc(12 * var(--u)) var(--sp-16) var(--sp-16);
+  border-left:1px solid var(--rule);
+  display:flex; flex-direction:column;
+}
+.ed-stat__value{
+  font-size:var(--fs-display); font-weight:500;
+  line-height:1; letter-spacing:-.05em;
+}
+.ed-stat__label{
+  margin-top:auto;
+  font-size:var(--fs-title); font-weight:500;
+  line-height:normal; letter-spacing:-.05em;
+}
+.ed-stat__note{
+  margin-top:var(--sp-8);
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+
+/* ── Before → after list ──────────────────────────────────────
+   Figma › Results chart: items 24 apart, each a label, and 4 below it
+   the pair at 30: the before soft, the arrow, the after in ink with
+   its change, 16 apart; 8 under the pair, a 0.5 rule closes the item.
+   Each pair keeps its own unit, so nothing invites a comparison across
+   rows the way columns on one axis did. */
+.ed-deltas{ width:100% }
+.ed-deltas__list{ display:flex; flex-direction:column; gap:var(--sp-24) }
+.ed-delta{
+  display:flex; flex-direction:column; gap:var(--sp-4);
+  padding-bottom:var(--sp-8);
+  border-bottom:.5px solid var(--rule);
+}
+.ed-delta__label{ font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em }
+.ed-delta__values{
+  display:flex; flex-wrap:wrap; align-items:baseline; column-gap:var(--sp-16);
+  font-size:var(--fs-h3); font-weight:600;
+  line-height:1.1; letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;
+}
+.ed-delta__from, .ed-delta__arrow{ color:var(--ink-soft) }
+.ed-delta__to{ color:var(--ink) }
+/* read aloud, not seen: "18% to 31%" instead of a bare arrow */
+.ed-sr{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip-path:inset(50%); white-space:nowrap;
+}
+
+/* ── Findings ─────────────────────────────────────────────────
+   Figma › Finding row: a numbered row whose statement may carry a
+   bar — a 14 bar and its value on a hairline, the bar its share of
+   the line less the value's room — and a note on why it matters.
+   One list, so a figure is never told twice, as a bar and again
+   as a sentence. */
+.ed-bars{ width:calc(696 * var(--u)); max-width:100%; display:flex; flex-direction:column; gap:var(--sp-8) }
+.ed-findings{ width:100% }
+.ed-finding{ flex:1; min-width:0; display:flex; flex-direction:column; gap:calc(10 * var(--u)) }
+.ed-finding > .ed-finding__note{
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+.ed-bar__track{
+  padding-top:calc(4 * var(--u));
+  display:flex; align-items:center; gap:var(--sp-8);
+  border-bottom:1px solid var(--rule);
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+}
+.ed-bar__fill{
+  flex:none;
+  width:calc(var(--p) * (100% - 64 * var(--u)));
+  height:calc(14 * var(--u));
+  background:var(--ed-bar);
+}
+.ed-bar__value{ white-space:nowrap }
+
+/* ── Dishcover blocks ─────────────────────────────────────────── */
+
+/* Stat figures four in a row, or two by two on the text's measure so
+   the block doesn't run out to the right edge. */
+.ed-stats--4{ grid-template-columns:repeat(4, minmax(0, 1fr)) }
+.ed-stats--2{
+  width:calc(696 * var(--u)); max-width:100%;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  row-gap:calc(32 * var(--u));
+}
+/* Smaller figures by the closing line: as wide as the results' columns
+   above, shorter, the value at 40 and the label at 18. */
+.ed-stats--mini .ed-stat{ height:calc(132 * var(--u)) }
+.ed-stats--mini{
+  width:calc(696 * var(--u)); max-width:100%;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+.ed-stats--mini .ed-stat__value{ font-size:var(--fs-lead) }
+.ed-stats--mini .ed-stat__label{ font-size:var(--fs-big); letter-spacing:-.04em }
+/* Figma › Stages: a stat figure whose foot is a list — the number,
+   24, the stage, 24, the artifacts 10 apart, so a stage reads as the
+   head of its list; all four as tall as the tallest. */
+.ed-stats .ed-stat--stage{ height:auto }
+.ed-stat--stage .ed-stat__label{ margin-top:calc(24 * var(--u)); line-height:1.15 }
+.ed-stat__items{
+  margin-top:var(--sp-24);
+  display:flex; flex-direction:column; gap:calc(10 * var(--u));
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+
+/* Figma › Personas: two by two, 32 between the rows, each card on a
+   rule at its left like the stat figures. */
+.ed-personas{
+  width:100%;
+  display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
+  row-gap:calc(32 * var(--u));
+}
+.ed-persona{
+  padding:calc(12 * var(--u)) var(--sp-16) var(--sp-16);
+  border-left:1px solid var(--rule);
+  display:flex; flex-direction:column; gap:var(--sp-8);
+}
+.ed-persona__photo{
+  width:calc(72 * var(--u)); min-width:48px; height:auto; aspect-ratio:1;
+  border-radius:50%; object-fit:cover; display:block;
+}
+.ed-persona__name{
+  margin-top:calc(20 * var(--u));
+  font-size:var(--fs-h3); font-weight:600;
+  line-height:1.1; letter-spacing:-.04em;
+}
+.ed-persona__role{
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+.ed-persona__body{ margin:0; display:flex; flex-direction:column; gap:calc(20 * var(--u)) }
+.ed-persona__body > div:first-child{ margin-top:calc(12 * var(--u)) }
+.ed-persona__body dd{
+  margin:var(--sp-8) 0 0;
+  font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em;
+}
+
+/* Research tabs: one table at a time, the rest a click away. The
+   list sits on a hairline; the open tab is ink with a black line. */
+.ed-tabs{ display:flex; flex-direction:column; gap:var(--sp-24) }
+.ed-tabs__list{
+  display:flex; gap:calc(32 * var(--u));
+  border-bottom:1px solid var(--rule);
+  overflow-x:auto; scrollbar-width:none;
+}
+.ed-tabs__list::-webkit-scrollbar{ display:none }
+.ed-tab{
+  flex:none;
+  margin-bottom:-1px; padding:0 0 calc(12 * var(--u));
+  border-bottom:2px solid transparent;
+  background:none;
+  font-size:var(--fs-chip); line-height:1; letter-spacing:-.04em;
+  color:var(--ink-soft);
+  cursor:pointer;
+  transition:color .2s ease, border-color .2s ease;
+}
+.ed-tab:hover{ color:var(--ink) }
+.ed-tab[aria-selected="true"]{ color:var(--ink); border-bottom-color:var(--ed-line) }
+.ed-tab:focus-visible{ outline:2px solid var(--accent); outline-offset:4px }
+.ed-tabs__panel[hidden]{ display:none }
+.ed-tabs__soon{
+  min-height:calc(240 * var(--u));
+  display:flex; align-items:center; justify-content:center;
+  border:.5px dashed var(--rule);
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+
+.ed-closing a{ text-decoration:underline; text-underline-offset:.2em }
+
+/* Counting figures keep their width steady while they run. */
+[data-count]{ font-variant-numeric:tabular-nums }
+
+/* ── Centred media ────────────────────────────────────────────
+   Photos and videos: 1014 of the 1360 column, centred on the page,
+   clear of the contents on both sides — the band's content box is
+   100cqw and the copy column starts 33.9% into it. */
+.ed-media{
+  --page-w:  calc(100cqw + 2 * var(--gutter));
+  --media-w: min(calc(1014 * var(--lu)), calc(var(--page-w) - 2 * var(--media-clear)));
+  width:var(--media-w); max-width:none;
+  margin-left:calc(50cqw - var(--media-w) / 2 - var(--ed-col-n) * 100cqw);
+}
+.ed-figure{ display:flex; flex-direction:column; gap:calc(12 * var(--u)) }
+/* A near-square film: no taller than the window, so the whole phone stays
+   in view. The export has a 1 px dark edge, scaled out behind the frame. */
+.ed-media--fit{
+  --media-w:min(calc(1014 * var(--lu)), calc(var(--page-w) - 2 * var(--media-clear)), calc((100svh - 120px) * 934 / 958));
+}
+.ed-media--fit .case__video{ transform:scale(1.006) }
+.ed-decision{ display:flex; flex-direction:column; gap:calc(32 * var(--u)); align-self:stretch; align-items:flex-start }
+
+/* ── Video ────────────────────────────────────────────────────
+   While a video plays the pointer over it turns into a pause sign and
+   the bar stays away; a click pauses it and brings the bar up, and it
+   stays up until the video plays again. The bar's own hover rule in
+   case.css is undone here; keyboard focus and a tap on touch still
+   show it. .is-held is set by js/case.js when the reader pauses. */
+@media (hover:hover){
+  .page-ed .has-vctl:hover .vctl{ opacity:0; transform:translateY(4px); pointer-events:none }
+}
+.page-ed .has-vctl.is-held .vctl,
+.page-ed .has-vctl .vctl.is-shown,
+.page-ed .has-vctl .vctl:has(:focus-visible){ opacity:1; transform:none; pointer-events:auto }
+.page-ed .has-vctl .case__video{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23121212' fill-opacity='.72'/%3E%3Cpath d='M12 10h3v12h-3zM17 10h3v12h-3z' fill='%23fff'/%3E%3C/svg%3E") 16 16, pointer;
+}
+.page-ed .has-vctl.is-paused .case__video{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23121212' fill-opacity='.72'/%3E%3Cpath d='M13 10l9 6-9 6z' fill='%23fff'/%3E%3C/svg%3E") 16 16, pointer;
+}
+
+/* ── Zoom ─────────────────────────────────────────────────────
+   Images open full screen on a click: a magnifier with a plus over
+   them, one with a minus over the open view, which a click, Esc or
+   the close control shuts (js/case-editorial.js). */
+.ed-zoom{ cursor:zoom-in }
+.ed-zoom:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+
+.ed-lightbox{
+  position:fixed; z-index:100; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--sp-40);
+  background:rgba(18,18,18,.92);
+  cursor:zoom-out;
+}
+.ed-lightbox[hidden]{ display:none }
+.ed-lightbox img{
+  max-width:100%; max-height:100%;
+  width:auto; height:auto;
+  object-fit:contain;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.ed-lightbox__close{
+  position:absolute; top:var(--sp-16); right:var(--sp-16);
+  padding:calc(8 * var(--u)) calc(12 * var(--u));
+  background:var(--paper); color:var(--ink);
+  font-size:var(--fs-small); line-height:1.2; letter-spacing:-.02em;
+  text-transform:uppercase;
+  cursor:zoom-out;
+}
+html.ed-locked{ overflow:hidden }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1023px){
+  .ed-home{ height:36px; padding:0 12px 0 10px }
+  .ed-hero{ padding:96px var(--gutter) 24px }
+  .ed-hero__row{ flex-direction:column; align-items:flex-start }
+  .ed-hero__title, .ed-hero__main{ width:100% }
+
+  .ed-facts{ padding:16px var(--gutter) 48px }
+  .ed-hero:has(+ .ed-facts){ padding-bottom:24px }
+  .ed-hero + .ed-facts{ padding:0 var(--gutter) 48px }
+  .ed-facts__grid{ grid-auto-flow:row; grid-template-columns:1fr 1fr; column-gap:var(--sp-16) }
+  .ed-fact:first-child{ grid-column:1 / -1 }
+
+  .ed-sec{ padding-bottom:72px }
+  .ed-sec:first-child{ padding-top:48px }
+  .ed-sec__row{ grid-template-columns:1fr }
+  .ed-toc{ display:none }
+  .ed-sec__content{ grid-column:1; padding-top:20px; gap:32px }
+  /* the file's measures are for wide screens; here the copy takes the column */
+  .ed-h2, .ed-h3, .ed-text, .ed-list, .ed-sub, .ed-bars, .ed-group, .ed-stats--2, .ed-stats--mini{ width:100% }
+
+  .ed-media{ width:100%; margin-left:0 }
+
+  .ed-stat{ height:200px }
+
+  .ed-stats--4{ grid-template-columns:repeat(2, minmax(0, 1fr)); row-gap:24px }
+}
+
+@media (max-width:560px){
+  .ed-stats{ grid-template-columns:1fr; row-gap:24px }
+  .ed-stat{ height:auto; min-height:160px }
+  .ed-stat__label{ margin-top:24px }
+  .ed-list li > span{ width:48px }
+  .ed-personas{ grid-template-columns:1fr; row-gap:24px }
+  .ed-stats.ed-stats--mini{ grid-template-columns:repeat(2, minmax(0, 1fr)) }
+  .ed-stats--mini .ed-stat{ min-height:0 }
+}

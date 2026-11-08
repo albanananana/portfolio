@@ -2,19 +2,24 @@
 
 Static site — plain HTML, CSS and JS. No build step. Two vendored dependencies:
 a tree-shaken three.js build for the hero field, loaded lazily on wide screens,
-and GSAP for the loader.
+and GSAP for the loader and the editorial case's figures.
 Built against the Figma file **Portfolio › Desktop - 9** (`node-id=239-1139`).
 
 ```
 site/
 ├── index.html          markup + copy
-├── bondata.html        case page — Bondata
+├── bondata-editorial.html  case page — Bondata in the editorial layout (Figma › Case — Bondata · AiiD style, 586:25457); the earlier bondata.html is in ../_backups/2026-10-28
+├── dishcover.html      case page — Dishcover in the editorial layout (Figma › Case — Dishcover · AiiD style, 615:13746); the old page is in ../_backups/2026-10-28
 ├── css/style.css       tokens, layout, the folder-tab nav
 ├── css/case.css        case-page layout: contents rail, decisions, shots
+├── css/case-editorial.css   editorial case layout: blue hero and facts, ruled bands, stat figures, column and bar charts, findings, personas, user flow, research tabs
+├── css/case-dishcover.css  Dishcover: the journey map table and the Vimeo embeds (its stages, personas and flow belong to the old page)
 ├── js/loader.js        the intro loader timeline (GSAP)
 ├── js/main.js          tab building, scroll spy, per-section colour, burger
 ├── js/case.js          case page: burger + which contents link is current
-├── js/field-gl.js      particle glyph fields — hero wordmark + footer logo (GPU)
+├── js/case-editorial.js   editorial case: home and contents, image zoom, research tabs, GSAP reveal of figures and charts (bars fill, numbers count up)
+├── js/field-flow.js    particle flow fields — hero + footer logo mark (WebGL2, after colin.cv)
+├── js/field-gl.js      the tuning panel (H); its ASCII fields stand down when field-flow runs
 ├── js/ascii.js         the hero field, CPU version (fallback)
 ├── vendor/
 │   ├── gsap.min.js     GSAP 3.15.0
@@ -24,6 +29,8 @@ site/
     ├── logo.svg
     ├── loader/         the project shots the loader flicks through
     ├── case-bondata/   the case's before/after screenshots (WebP, 2x)
+    ├── case-dishcover/ screens cut from the Behance boards (WebP, 1920 wide) and the persona photos
+    ├── work-dishcover/ the Dishcover row shot, from the Behance cover
     ├── Wlad.A.svg
     ├── about-star.webp       About photo, exported from Figma already cut to the star (2x)
     ├── about-photo.jpg       previous About photos — no longer used
@@ -146,6 +153,11 @@ other band. That is why `main.js` selects on `[data-nav]` rather than
 
 ## Case pages
 
+> Both case pages are now built on the editorial layout (`css/case-editorial.css`,
+> `js/case-editorial.js`). What follows describes the earlier, kit-based case
+> page, archived as `../_backups/2026-10-28/bondata.html`; `css/case.css` and
+> `js/case.js` still serve the editorial pages (shot frames, the video bar).
+
 Figma **Portfolio › Case — Bondata · kit** (`node-id=343-5478`). One page per
 case, `bondata.html` first. Three rules hold them together.
 
@@ -233,7 +245,11 @@ Percentage padding would resolve against *width*, which is the wrong axis.
 
 ## Character field
 
-### GPU version — `js/field-gl.js` (default)
+### Flow fields — `js/field-flow.js` (default)
+
+The hero and the footer draw the logo mark as particles running along its outlines and through hatch strokes inside it. Press H for the panel (Hero and Footer tabs); defaults are `CONFIG` and `FOOTER` at the top of the file. `js/field-flow.js` loads before `js/field-gl.js` and claims both bands, so the ASCII fields below no longer start; `js/field-gl.js` only provides the panel. If WebGL2 is missing, `js/ascii.js` still takes the hero. The previous, ASCII version of the whole site is kept in `../site-backup-ascii/`.
+
+### GPU ASCII version — `js/field-gl.js` (previous default)
 
 A rebuild of artefakt.mov's hero for our wordmark, with their parameters:
 

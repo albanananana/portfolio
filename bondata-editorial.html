@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en" class="page-case page-ed">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bondata — 1.7× more managers act on survey results · Wlad Albakhtsin</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="A redesign that made survey results easy to act on: managers setting an objective after a survey rose from 18% to 31%. Filters, objectives and results cards rebuilt in Bondata, an employee-engagement analytics platform for HR leads and managers in Finland.">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/case-editorial.css">
+</head>
+<body id="top">
+
+<!-- Figma "Portfolio" › Case — Bondata · AiiD style (node 586:25457).
+     An editorial layout: every band opens on a black rule, its label in
+     the left column and its copy on the line the work rows' names start
+     on. Photos and videos sit on the page's centre. -->
+
+<!-- Home: fixed in the top-left corner; it leaves on the way down and
+     comes back as soon as the reader scrolls up. -->
+<a class="ed-home" href="index.html#portfolio">← Home</a>
+
+<!-- Contents: one nav, fixed on the left at mid-height, shown while the
+     bands from the overview to the closing results are on screen.
+     js/case-editorial.js marks the band being read. -->
+<nav class="ed-toc" aria-label="On this page">
+  <a href="#overview">Overview</a>
+  <a href="#goal">Goal</a>
+  <a href="#problem">Problem</a>
+  <a href="#research">Research</a>
+  <a href="#ideation">Ideation</a>
+  <a href="#prototyping">Prototyping</a>
+  <a href="#design">Design</a>
+  <a href="#results">Results</a>
+</nav>
+
+<main class="ed">
+
+  <!-- ══ Hero ═════════════════════════════════════════════════ -->
+  <header class="ed-hero" id="overview">
+    <p class="ed-eyebrow">Case study · Bondata</p>
+    <div class="ed-hero__row">
+      <div class="ed-hero__main">
+        <h1 class="ed-hero__title">A redesign that made survey results easy to act on, and 1.7× more managers now do.</h1>
+        <p class="ed-hero__lede">Bondata is an employee-engagement analytics platform for HR leads and managers in Finland. It turns pulse surveys into results across ~40 views and 25 chart types, so teams can see where engagement drops and set objectives to fix it.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ Facts ════════════════════════════════════════════════ -->
+  <section class="ed-facts" aria-label="Project facts">
+    <dl class="ed-facts__grid">
+      <div class="ed-fact">
+        <dt>My contribution</dt>
+        <dd>Discovery and research<br>Usability testing<br>Collaboration with stakeholders<br>Interface design and design system<br>Guidelines for development</dd>
+      </div>
+      <div class="ed-fact"><dt>Role</dt><dd>Lead designer</dd></div>
+      <div class="ed-fact"><dt>Team</dt><dd>3 designers<br>2 developers<br>The client's product owner<br>The client's founder</dd></div>
+      <div class="ed-fact"><dt>Industry</dt><dd>HR tech</dd></div>
+      <div class="ed-fact"><dt>Platform</dt><dd>Web app</dd></div>
+      <div class="ed-fact"><dt>Timeline</dt><dd>6 months</dd></div>
+    </dl>
+  </section>
+
+  <!-- ══ Cover — 1440 × 674, edge to edge, a 30 s film ══════════ -->
+  <figure class="ed-cover">
+    <video class="case__video" muted loop playsinline preload="none" poster="assets/case-bondata/cover.webp" aria-label="The redesigned detailed results report, then a wall of Bondata screens in light and dark, the colour system and the logo">
+      <source src="assets/case-bondata/cover.mp4" type="video/mp4">
+    </video>
+  </figure>
+
+  <div class="ed-body">
+
+
+    <!-- ══ 1. Goal ══════════════════════════════════════════ -->
+    <section class="ed-sec" id="goal">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Goal</h2>
+          <p class="ed-text">Raise the share of managers who set an objective within 14 days of a survey <strong>from 18% to 30%, within two survey rounds</strong> after launch. HR leads renew Bondata when their managers act on the results, so this was the number that mattered to the client.</p>
+          <div class="ed-group">
+            <p class="ed-group__title">Tracked alongside it</p>
+            <ol class="ed-list">
+              <li><span>01</span><p>A filtered result people can find and trust: task success and time on the baseline task</p></li>
+              <li><span>02</span><p>An objective one step away from the result behind it: task success on the baseline task</p></li>
+              <li><span>03</span><p>Fewer support tickets about filters, in equal periods before and after launch</p></li>
+              <li><span>04</span><p>Overall usability: SUS on the same test</p></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 2. Results ═══════════════════════════════════════════ -->
+    <section class="ed-sec" aria-labelledby="results-early-title">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2" id="results-early-title">Results at a glance</h2>
+          <figure class="ed-deltas">
+            <ul class="ed-deltas__list">
+              <li class="ed-delta"><p class="ed-delta__label">Managers setting an objective within 14 days of a survey:</p><p class="ed-delta__values"><span class="ed-delta__from">18%</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="18">31% (+13 pp)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, creating an objective from a result:</p><p class="ed-delta__values"><span class="ed-delta__from">3 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="3">8 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, finding a filtered result:</p><p class="ed-delta__values"><span class="ed-delta__from">4 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Filter-related support tickets, three months before and after launch:</p><p class="ed-delta__values"><span class="ed-delta__from">33</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="33">12 (−64%)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Median time to find a filtered result:</p><p class="ed-delta__values"><span class="ed-delta__from">74 s</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="74">22 s (−70%)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">SUS score:</p><p class="ed-delta__values"><span class="ed-delta__from">54</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="54">79 (+25 points)</span></p></li>
+            </ul>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3. Problem ═══════════════════════════════════════════ -->
+    <section class="ed-sec" id="problem">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Problem</h2>
+          <p class="ed-text">Companies buy Bondata so that line managers act on their team's survey results, but <strong>only 18%</strong> set an objective after a survey closed. The results were hard to reach: <strong>filters were hidden in a collapsed side panel</strong> and did nothing until you pressed Refresh, and cards hid the one number that mattered. The goal was to <strong>raise that share to 30%</strong> within two survey rounds.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4. Research ══════════════════════════════════════════ -->
+    <section class="ed-sec" id="research">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Research</h2>
+          <p class="ed-text">I planned and ran the research: the support tickets and usage analytics first, then interviews and a baseline test on the old product. Another designer took notes in every session.</p>
+
+          <ul class="ed-stats">
+            <li class="ed-stat"><p class="ed-stat__value" data-count>214</p><p class="ed-stat__label">support tickets reviewed</p><p class="ed-stat__note">last six months, tagged by theme</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>~40</p><p class="ed-stat__label">views in usage analytics</p><p class="ed-stat__note">plus 25 chart types</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>8</p><p class="ed-stat__label">baseline test participants</p><p class="ed-stat__note">5 timed tasks and SUS</p></li>
+          </ul>
+
+          <!-- the methods without a figure of their own -->
+          <div class="ed-group">
+            <p class="ed-group__title">Also</p>
+            <ol class="ed-list">
+              <li><span>01</span><p>Interviews with 4 stakeholders: the product owner, the founder, support and sales</p></li>
+              <li><span>02</span><p>In-depth interviews with 10 users from 5 client companies, 4 HR leads and 6 line managers, recruited through the client's customer success team</p></li>
+            </ol>
+          </div>
+
+          <div class="ed-sub">
+            <h3 class="ed-h3">Key findings</h3>
+            <!-- one list: a finding with a figure carries its bar, the rest are words only -->
+            <figure class="ed-bars">
+              <ol class="ed-list ed-findings">
+                <li><span>01</span><div class="ed-finding"><p>Managers open results once per survey, with about 15 minutes to answer one question: where did my team drop?</p></div></li>
+                <li style="--p:.82"><span>02</span><div class="ed-finding"><p>Visits that went to the dashboard and the detailed results report</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>82%</span></div></div></li>
+                <li style="--p:.31"><span>03</span><div class="ed-finding"><p>Support tickets about filters</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>31%</span></div><p class="ed-finding__note">Most of them said “the numbers didn’t change”</p></div></li>
+                <li style="--p:.25"><span>04</span><div class="ed-finding"><p>Baseline participants who read a number from the previous filter setting</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>2 of 8</span></div><p class="ed-finding__note">Without noticing: a confident wrong answer in an analytics product</p></div></li>
+                <li><span>05</span><div class="ed-finding"><p>Managers didn’t set objectives because the objective page was disconnected from the result behind it: “I’d have to remember which question it was”</p></div></li>
+              </ol>
+              <figcaption class="ed-caption">Source: usage analytics across ~40 views, 214 support tickets, baseline usability test (n = 8), user interviews (n = 10).</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5. Ideation ══════════════════════════════════════════ -->
+    <section class="ed-sec" id="ideation">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Ideation</h2>
+          <ol class="ed-list">
+            <li><span>01</span><p>Two-day workshop I ran with the client's product owner, the founder and the dev team</p></li>
+            <li><span>02</span><p>Review of filtering patterns in comparable analytics products</p></li>
+            <li><span>03</span><p>Effort vs. Impact matrix to prioritise the 36 ideas from the workshop</p></li>
+          </ol>
+
+          <figure class="ed-media ed-figure">
+            <div class="case__figure ed-zoom" style="--ar:1014 / 783" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-bondata/matrix.webp" alt="Effort vs. Impact matrix: 36 ideas from the ideation workshop sorted into quick wins, big bets, fill-ins and not now" width="2028" height="1746" loading="lazy" decoding="async">
+            </div>
+            <figcaption class="ed-caption">Effort vs. Impact matrix: 36 ideas from the two-day workshop, sorted into quick wins, big bets, fill-ins and not now.</figcaption>
+          </figure>
+
+          <div class="ed-sub">
+            <h3 class="ed-h3">The ideation phase helped identify key ideas for the next steps</h3>
+            <ol class="ed-list">
+              <li><span>01</span><p>Moving filters above the content and applying them instantly</p></li>
+              <li><span>02</span><p>Putting the survey result on the objective card, and a "Set objective" action on every results card</p></li>
+              <li><span>03</span><p>A results summary a manager can scan in the 15 minutes before a team meeting, instead of reading it</p></li>
+              <li><span>04</span><p>Marking AI summaries before they are read</p></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 6. Prototyping ═══════════════════════════════════════ -->
+    <section class="ed-sec" id="prototyping">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Prototyping</h2>
+          <div class="ed-text">
+            <p>I tested Figma prototypes with <strong>8 people (3 HR leads, 5 managers) on the baseline's five tasks</strong>. Filters need real data, so I retested them on staging with a client's survey, again with 8 people. Task success and time in the results come from that round.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 7. Design process ════════════════════════════════════ -->
+    <section class="ed-sec" id="design">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Design</h2>
+          <p class="ed-text">I set the visual language and rebuilt the design system as a Material UI theme: <strong>44 component sets, 136 colour variables, light and dark</strong>. Two designers applied it across part of the ~40 views under my review. Structure changed only where <strong>82% of visits</strong> go: the dashboard and the results report. At twice-weekly client reviews I defended decisions with test results.</p>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 01</p>
+              <h3 class="ed-h3">Filters were hidden and did nothing until Refresh</h3>
+              <p class="ed-text">Before: <strong>find a collapsed side panel, open it, set up to 20 filters, press Refresh</strong>. Now filters sit <strong>in a row above the content and apply instantly</strong>. On scroll the row collapses into a sticky button; extra filters fold into "More".</p>
+            </div>
+            <figure class="shot__frame ed-media" style="--ar:1014 / 604">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-bondata/d1-filters.webp" aria-label="Filters, before and after: the collapsed right-hand panel gives way to a filter row above the content">
+                <source src="assets/case-bondata/d1-filters.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 02</p>
+              <h3 class="ed-h3">An objective forgot the result that started it</h3>
+              <p class="ed-text">The old card had a title, description and status, on a separate page. Now an objective <strong>carries its result</strong>: question, group, index, score and comments. <strong>"Set objective" on every results card</strong> turns a weak result into an objective without leaving the page.</p>
+            </div>
+            <figure class="shot__frame ed-media" style="--ar:1014 / 552">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-bondata/d2-objectives.webp" aria-label="Objectives, before and after: the bare objective card becomes one that carries the question, group, index and result behind it">
+                <source src="assets/case-bondata/d2-objectives.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 03</p>
+              <h3 class="ed-h3">The summary card had to be read, not scanned</h3>
+              <p class="ed-text">The card was plain text at one size, benchmarks in brackets at line ends. Now <strong>response rate and comments are two figures on top</strong>, each strength and development area is <strong>a row led by its percentage with a green or red bar</strong>, and the benchmark is a tag. Downloads became links.</p>
+            </div>
+            <figure class="shot__frame ed-media" style="--ar:1014 / 475">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-bondata/d3-summary-card.webp" aria-label="The summary of results card, before and after: plain text at one size becomes figures, percentage rows with bars and benchmark tags">
+                <source src="assets/case-bondata/d3-summary-card.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 04</p>
+              <h3 class="ed-h3">The AI summary didn't look like one</h3>
+              <p class="ed-text">Three open paragraphs ended with "AI-generated summary may contain errors": you learned the source after reading. Now <strong>an "AI Summary" badge sits on top</strong>, the card wears the brand gradient no chart uses, and the text <strong>collapses to two lines</strong> behind "Read more".</p>
+            </div>
+            <figure class="shot__frame ed-media" style="--ar:1014 / 370">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-bondata/d5-ai-summary.webp" aria-label="The AI summary, before and after: three open paragraphs become a badged, gradient-outlined card collapsed to two lines">
+                <source src="assets/case-bondata/d5-ai-summary.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 8. Results ═══════════════════════════════════════════ -->
+    <section class="ed-sec" id="results">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Results</h2>
+          <figure class="ed-deltas">
+            <ul class="ed-deltas__list">
+              <li class="ed-delta"><p class="ed-delta__label">Managers setting an objective within 14 days of a survey:</p><p class="ed-delta__values"><span class="ed-delta__from">18%</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="18">31% (+13 pp)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, creating an objective from a result:</p><p class="ed-delta__values"><span class="ed-delta__from">3 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="3">8 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, finding a filtered result:</p><p class="ed-delta__values"><span class="ed-delta__from">4 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Filter-related support tickets, three months before and after launch:</p><p class="ed-delta__values"><span class="ed-delta__from">33</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="33">12 (−64%)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Median time to find a filtered result:</p><p class="ed-delta__values"><span class="ed-delta__from">74 s</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="74">22 s (−70%)</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">SUS score:</p><p class="ed-delta__values"><span class="ed-delta__from">54</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="54">79 (+25 points)</span></p></li>
+            </ul>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ══ Other works — the home page's work rows, all but this case ══ -->
+  <section class="section section--works" id="works">
+    <div class="shell">
+      <h2 class="eyebrow col-right">[ Other works ]</h2>
+    </div>
+
+    <ol class="works">
+      <li class="work work--evoke">
+        <a class="work__row" href="evoke.html">
+          <span class="work__index">02</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Evoke</p>
+                <h3 class="work__name">Rebuilding an AI companion to earn trust and keep people coming back</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li>
+                <li>Mental health</li>
+              </ul>
+            </div>
+            <p class="work__note">Art direction for an AI companion that must not behave like one</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-evoke/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--dishcover">
+        <a class="work__row" href="dishcover.html">
+          <span class="work__index">03</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Dishcover</p>
+                <h3 class="work__name">Designing a recipe app to make home cooking feel less like work</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li>
+                <li>In development</li>
+              </ul>
+            </div>
+            <p class="work__note">A culinary app with easy, step-by-step recipes for every taste</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-dishcover/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--yourvet">
+        <div class="work__row work__row--off" aria-disabled="true">
+          <span class="work__index">04</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Your Vet</p>
+                <h3 class="work__name">Designing a vet marketplace to book a trusted vet in a few clicks</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Web platform</li>
+                <li>Marketplace</li>
+              </ul>
+            </div>
+            <p class="work__status"><span class="work__status-dot" aria-hidden="true"></span>In progress</p>
+          </div>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+<footer class="site-footer" id="contact">
+  <div class="site-footer__inner">
+    <a class="site-footer__top" href="#top">Back to top<svg viewBox="0 0 11 12" fill="none" aria-hidden="true" focusable="false"><path d="M5.5 11.5V0.5M5.5 0.5L1 5M5.5 0.5L10 5" stroke="currentColor" stroke-width="1" /></svg></a>
+    <!-- The logo mark as a particle glyph field, filling the band above the
+       contacts (Figma › Footer, node 319:2849; js/field-gl.js → FOOTER).
+       Without WebGL the band stays empty. -->
+    <div class="site-footer__mark" aria-hidden="true">
+      <div class="ascii-bg" id="footer-field" hidden></div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
+
+      <div class="site-footer__col site-footer__col--reach">
+        <p><a href="mailto:wladyslaw.design@gmail.com">wladyslaw.design@gmail.com</a></p>
+        <p><a href="tel:+48577538552">+48 577 538 552</a></p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--social" aria-label="Elsewhere">
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+        <a href="#">Dribble</a>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--cv">
+        <a href="#" download>Download CV</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Same gate as the home page: the footer mark is the GPU field, and
+     without WebGL2 the band simply stays empty. */
+  (function () {
+    var root = document.documentElement, ok = false;
+    try {
+      if (location.protocol !== 'file:') {
+        var gl = document.createElement('canvas').getContext('webgl2');
+        ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
+        var lose = gl && gl.getExtension('WEBGL_lose_context');
+        if (lose) lose.loseContext();
+      }
+    } catch (e) {}
+    root.dataset.field = ok ? 'gl' : 'cpu';
+  })();
+</script>
+<script src="vendor/gsap.min.js"></script>
+<script src="js/case.js"></script>
+<script src="js/case-editorial.js"></script>
+<script type="module" src="js/field-flow.js"></script>
+<script type="module" src="js/field-gl.js"></script>
+</body>
+</html>

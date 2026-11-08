@@ -1,0 +1,267 @@
+/* ============================================================
+   Case page — Dishcover
+
+   Loaded after css/case.css, which owns the rail, the bands, the
+   columns, the decisions, the stat tiles and the centred media.
+   This file adds the blocks the Behance case is made of and the
+   Bondata page does not have: the process stages, the personas,
+   the journey map, the user flow, the palette and the video embeds.
+
+   Source: behance.net/gallery/224067175. Tables and diagrams are
+   rebuilt in HTML; screens are cut from the Behance boards. The jobs
+   to be done and the competitive analysis come from the project's
+   Google Sheets, translated.
+
+   The case's own colours are content, not site chrome: the brand
+   orange and peach mark the personas, the stages and the two ends
+   of the flow. Everything else stays on the site's tokens.
+   ============================================================ */
+
+.page-dishcover{
+  --dish:       #FF8762;   /* Coral Orange, the brand accent  */
+  --dish-soft:  #F9D6AE;   /* Soft Peach                       */
+  --dish-line:  var(--tile-line);
+}
+
+/* ── Video embeds (Vimeo) ─────────────────────────────────────
+   The Behance films stay on Vimeo; they load when near the window
+   and play muted in a loop, like the decision videos on Bondata. */
+.case__embed{
+  position:relative; aspect-ratio:16 / 9;
+  background:var(--media);
+  border:.5px solid var(--rule);
+  overflow:hidden;
+}
+.case__embed iframe{ position:absolute; inset:0; width:100%; height:100%; border:0 }
+.case__cover.case__embed{ border-left:0; border-right:0 }
+
+/* ── Wide blocks ──────────────────────────────────────────────
+   Diagrams and tables use the image column, centred like a shot. */
+.wide{ display:flex; flex-direction:column; gap:var(--sp-24) }
+
+/* Two headline counts under a heading: "17 artifacts · 4 stages". */
+.counts{ display:flex; flex-wrap:wrap; gap:var(--sp-8) var(--sp-40) }
+.counts p{ font-size:var(--fs-big); line-height:1.5; letter-spacing:-.04em; color:var(--ink-soft) }
+.counts b{ font-weight:600; color:var(--ink) }
+
+/* ── Process: four capsules joined by a line ──────────────────── */
+.stages{
+  --gap: calc(32 * var(--lu));
+  container-type:inline-size;
+  display:grid; grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:var(--gap);
+}
+.stage{
+  --cw: calc((100cqw - 3 * var(--gap)) / 4);   /* one capsule's width */
+  position:relative;
+  padding:calc(12 * var(--u)) calc(12 * var(--u)) calc(var(--cw) * .34);
+  border:1px solid var(--dish); border-radius:999px;
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp-24);
+  background:var(--paper-bright);
+}
+.stage__head{
+  width:100%; aspect-ratio:1;
+  border-radius:50%; background:var(--dish-soft);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:calc(6 * var(--u)); text-align:center; padding:0 calc(12 * var(--u));
+}
+.stage__num{ font-size:var(--fs-tag); letter-spacing:.2em; text-transform:uppercase; color:var(--ink-soft) }
+.stage__name{ font-size:var(--fs-title); font-weight:600; line-height:1.1; letter-spacing:-.03em; text-transform:uppercase }
+/* the joint: a line with a dot at each end, level with the heads' centres */
+.stage + .stage::before{
+  content:""; position:absolute;
+  right:calc(100% + 1px); width:var(--gap); height:1px;
+  top:calc(12 * var(--u) + ((100cqw - 3 * var(--gap)) / 4 - 24 * var(--u) - 2px) / 2);
+  background:
+    radial-gradient(circle, var(--dish) 2.5px, transparent 3px) left center / 6px 6px no-repeat,
+    radial-gradient(circle, var(--dish) 2.5px, transparent 3px) right center / 6px 6px no-repeat,
+    linear-gradient(var(--dish), var(--dish)) center / calc(100% - 12px) 1px no-repeat;
+  height:6px; margin-top:-3px;
+}
+/* the foot is a half circle: the list stays where the walls are still straight */
+.stage .bullets{ align-self:stretch; padding:0 calc(var(--cw) * .1) }
+.bullets--small li{ font-size:var(--fs-body); letter-spacing:-.02em }
+.bullets--small{ gap:calc(4 * var(--u)) }
+
+/* ── Personas ─────────────────────────────────────────────────── */
+.personas{
+  display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:calc(16 * var(--lu));
+}
+.persona{
+  --r: max(28px, calc(34 * var(--u)));   /* the header is a pill; the card's corners follow it */
+  border:1px solid var(--dish-soft); border-radius:var(--r);
+  background:var(--paper-bright); overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.persona__head{
+  display:flex; align-items:center; gap:calc(12 * var(--u));
+  min-height:calc(2 * var(--r) - 2px);
+  padding:calc(10 * var(--u)) calc(20 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
+  background:var(--dish); border-radius:calc(var(--r) - 1px);
+}
+.persona__photo{
+  width:calc(48 * var(--u)); min-width:40px; height:auto; aspect-ratio:1; flex:none;
+  border-radius:50%; object-fit:cover; display:block;
+}
+.persona__who{ flex:1; min-width:0; display:flex; flex-direction:column }
+.persona__name{ font-size:var(--fs-title); line-height:1.15; letter-spacing:-.03em; color:var(--ink) }
+.persona__role{ font-size:var(--fs-small); line-height:1.3; color:rgba(18,18,18,.7) }
+.persona__solvency{
+  flex:none; font-size:var(--fs-tag); letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(18,18,18,.7);
+}
+.persona__solvency b{ font-weight:600; color:var(--ink) }
+.persona__body{ padding:calc(20 * var(--u)) calc(20 * var(--u)) calc(24 * var(--u)); display:flex; flex-direction:column; gap:var(--sp-16) }
+.persona__body dt{ font-size:var(--fs-small); color:var(--ink-soft) }
+.persona__body dd{ margin:calc(4 * var(--u)) 0 0; font-size:var(--fs-big); line-height:1.45; letter-spacing:-.04em; color:var(--ink) }
+
+/* ── Customer journey map ─────────────────────────────────────────
+   A real table. Wider than a phone, so it scrolls inside its own box
+   there; on a desktop it fits the image column. */
+.cjm{ overflow-x:auto; border:.5px solid var(--rule); background:var(--paper-bright) }
+.cjm:focus-visible{ outline:2px solid var(--accent); outline-offset:2px }
+.cjm table{ width:100%; min-width:1014px; border-collapse:collapse; table-layout:fixed }
+.cjm th, .cjm td{
+  padding:calc(12 * var(--u)) calc(12 * var(--u));
+  border-bottom:.5px solid var(--rule);
+  vertical-align:top; text-align:left;
+  font-size:var(--fs-small); line-height:1.4; letter-spacing:-.01em;
+}
+.cjm td + td, .cjm th + th{ border-left:.5px solid var(--rule) }
+.cjm thead th{
+  font-weight:600; font-size:var(--fs-tag); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); background:var(--dish-soft);
+  hyphens:manual;   /* "Personali-zation" breaks at its soft hyphen in a narrow column */
+}
+/* the stage's emoji sits on its own line above the name, as a mark */
+.cjm__emoji{ display:block; margin-bottom:calc(6 * var(--u)); font-size:1.5em; line-height:1; letter-spacing:0 }
+.cjm thead th:first-child{ background:var(--paper); width:11% }
+.cjm tbody th, .cjm thead th:first-child{
+  border-right:1px solid var(--rule);
+}
+.cjm tbody th{
+  background:var(--paper);
+  font-weight:400; font-size:var(--fs-tag); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.cjm tr:last-child > *{ border-bottom:0 }
+.cjm ul{ display:flex; flex-direction:column; gap:calc(4 * var(--u)) }
+.cjm li{ position:relative; padding-left:12px }
+.cjm li::before{
+  content:""; position:absolute; left:1px; top:calc(.7em - 2px);
+  width:4px; height:4px; border-radius:1px;
+  background:var(--coral); opacity:.8; transform:rotate(45deg);
+}
+.cjm tr.cjm__pain td{ background:rgba(250, 77, 72, .05) }
+.cjm tr.cjm__ideas td{ background:rgba(186, 218, 153, .18) }
+
+/* The other research tables share the journey map's look.
+   --rows: two columns, a label and its answer (jobs to be done); it
+   fits a phone, so it does not scroll.
+   --compare: Dishcover against three apps, one row per section; the
+   Dishcover column is marked, a dash is a section the app lacks. */
+.cjm--rows table{ min-width:0 }
+.cjm--rows td{ font-size:var(--fs-body) }
+.cjm--compare thead th:first-child{ width:16% }
+.cjm--compare thead th.cjm__ours{ background:var(--dish) }
+.cjm__none{ color:var(--ink-soft) }
+
+/* ── User flow ────────────────────────────────────────────────────
+   The sign-up path runs left to right; from Personalization a bus
+   drops to the five sections of the app, each with what it opens. */
+.flow{ --line:var(--rule); --node-h:calc(44 * var(--u)) }
+.flow__path{
+  display:grid; grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:calc(48 * var(--lu));
+}
+.flow__node{
+  position:relative;
+  min-height:var(--node-h);
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:calc(8 * var(--u)) calc(14 * var(--u));
+  border:1px solid var(--dish); border-radius:999px;
+  background:var(--paper-bright);
+  font-size:var(--fs-body); line-height:1.25; letter-spacing:-.02em;
+}
+.flow__node--key{ background:var(--dish); border-color:var(--dish); font-weight:600 }
+.flow__path .flow__node + .flow__node::before{
+  content:""; position:absolute; top:50%;
+  right:calc(100% + 1px); width:calc(48 * var(--lu)); height:1px;
+  background:var(--dish);
+}
+/* the drop from Personalization to the bus */
+.flow__path .flow__node:last-child::after{
+  content:""; position:absolute; left:50%; top:100%;
+  width:1px; height:calc(var(--sp-40) + 1px); background:var(--dish);
+}
+.flow__branches{
+  --bgap: calc(20 * var(--lu));
+  position:relative; margin-top:var(--sp-40); padding-top:var(--sp-24);
+  display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:var(--bgap);
+}
+/* the bus: from the centre of the first column to the centre of the last */
+.flow__branches::before{
+  content:""; position:absolute; top:0; height:1px; background:var(--dish);
+  left:calc((100% - 4 * var(--bgap)) / 10);
+  right:calc((100% - 4 * var(--bgap)) / 10);
+}
+.flow__branch{ display:flex; flex-direction:column }
+.flow__branch > .flow__node::before{
+  content:""; position:absolute; left:50%; bottom:100%;
+  width:1px; height:var(--sp-24); background:var(--dish);
+}
+.flow__children{
+  margin:0 0 0 calc(16 * var(--u));
+  padding:calc(4 * var(--u)) 0 0 calc(16 * var(--u));
+  border-left:1px solid var(--line);
+  display:flex; flex-direction:column; gap:calc(10 * var(--u));
+}
+.flow__children > li{ position:relative; margin-top:calc(6 * var(--u)) }
+.flow__children > li::before{
+  content:""; position:absolute; top:50%; right:100%;
+  width:calc(16 * var(--u)); height:1px; background:var(--line);
+}
+.flow__children .flow__node{ border-color:var(--dish-line) }
+.flow__children .flow__node--key{ border-color:var(--dish) }
+.flow__note{ font-size:var(--fs-small); color:var(--ink-soft) }
+
+/* ── Results ──────────────────────────────────────────────────── */
+.stat--plain{ min-height:calc(168 * var(--u)) }
+.stat__figure--word b{ white-space:normal }
+.case__closing{ display:flex; flex-direction:column; gap:var(--sp-16) }
+.case__closing a{ color:var(--accent); text-decoration:underline; text-underline-offset:.2em }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1023px){
+  .stages{ grid-template-columns:repeat(2, minmax(0, 1fr)); row-gap:32px }
+  .stage{ --cw: calc((100cqw - var(--gap)) / 2) }
+  .stage + .stage::before{ display:none }
+  .personas{ grid-template-columns:1fr }
+  .flow__path{ grid-template-columns:1fr; gap:20px; max-width:360px }
+  .flow__path .flow__node + .flow__node::before{
+    right:auto; left:50%; top:auto; bottom:calc(100% + 1px); width:1px; height:20px;
+  }
+  .flow__path .flow__node:last-child::after{ display:none }
+  .flow__branches{ grid-template-columns:repeat(2, minmax(0, 1fr)); row-gap:28px; margin-top:28px; padding-top:0 }
+  .flow__branches::before, .flow__branch > .flow__node::before{ display:none }
+}
+
+@media (max-width:560px){
+  .stages{ grid-template-columns:1fr }
+  .stage{ border-radius:28px; padding-bottom:28px }
+  .stage .bullets{ padding:0 12px }
+  .stage__head{ aspect-ratio:auto; border-radius:20px; padding:20px }
+  .flow__branches{ grid-template-columns:1fr }
+  .persona__head{ flex-wrap:wrap }
+}
+
+/* ── Helpers ──────────────────────────────────────────────────── */
+.visually-hidden{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;
+}
+.persona__body, .persona__body dd{ margin:0 }
+.persona__body dd{ margin-top:calc(4 * var(--u)) }

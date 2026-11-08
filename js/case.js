@@ -1,93 +1,212 @@
 /* ============================================================
    Case page
 
-   Two small jobs. js/main.js is not loaded here — it builds the
-   tabs from the page's own [data-nav] bands, and on a case page
-   the bar must keep pointing at the home page instead.
+   The case is full screen — no bar, so none of js/main.js. Two
+   small jobs for the contents rail, which is sticky in CSS:
 
-     · the burger, same behaviour as the home page
-     · which contents link is current
-
-   The contents list itself is sticky in CSS; this only marks the
-   section you are reading.
+     · mark the section being read
+     · fade the rail out while the cover passes behind it — the
+       cover runs edge to edge, and grey labels over a screenshot
+       read as noise
    ============================================================ */
+/* ── Decision videos ──────────────────────────────────────────
+   Each holds on the before state, then turns into the after. They
+   load nothing until near the window (preload="none", the poster is
+   the before still), play while at least a third is on screen and
+   pause when it leaves.
+
+   Each frame gets a bar: play/pause, a scrub line and the time. It
+   shows while the pointer is over the frame, or on keyboard focus;
+   on a touch screen a tap shows it for a few seconds.
+   A pause by the reader sticks — scrolling back does not restart
+   that video until they press play. Under reduced motion nothing
+   starts on its own. */
 (function () {
   'use strict';
 
-  var body   = document.body;
-  var burger = document.querySelector('.burger');
-  var menu   = document.getElementById('menu');
+  var videos = Array.prototype.slice.call(document.querySelectorAll('.case__video'));
+  if (!videos.length) return;
 
-  /* ── Mobile menu ───────────────────────────────────────────── */
-  function closeMenu() {
-    body.classList.remove('menu-open');
-    burger.setAttribute('aria-expanded', 'false');
-    burger.setAttribute('aria-label', 'Open menu');
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches ||
+              !('IntersectionObserver' in window);
+
+  var ICON_PLAY  = '<svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>';
+  var ICON_PAUSE = '<svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z" fill="currentColor"/></svg>';
+
+  function clock(t) {
+    t = Math.max(0, Math.floor(t || 0));
+    var s = t % 60;
+    return Math.floor(t / 60) + ':' + (s < 10 ? '0' : '') + s;
   }
 
-  if (burger && menu) {
-    burger.addEventListener('click', function () {
-      var open = body.classList.toggle('menu-open');
-      burger.setAttribute('aria-expanded', String(open));
-      burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  function attach(v) {
+    var frame = v.parentNode;
+    var bar = document.createElement('div');
+    bar.className = 'vctl';
+    bar.innerHTML =
+      '<button class="vctl__play" type="button"></button>' +
+      '<input class="vctl__seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek">' +
+      '<span class="vctl__time" aria-hidden="true">0:00 / 0:00</span>';
+    frame.appendChild(bar);
+    frame.classList.add('has-vctl');
+
+    var btn  = bar.querySelector('.vctl__play');
+    var seek = bar.querySelector('.vctl__seek');
+    var time = bar.querySelector('.vctl__time');
+    var scrubbing = false, resume = false, raf = 0;
+
+    v.userPaused = still;
+
+    function paint() {
+      var d = v.duration || 0;
+      var p = d ? v.currentTime / d : 0;
+      if (!scrubbing) seek.value = Math.round(p * 1000);
+      seek.style.setProperty('--p', (seek.value / 10) + '%');
+      time.textContent = clock(v.currentTime) + ' / ' + clock(d);
+      seek.setAttribute('aria-valuetext', clock(v.currentTime) + ' of ' + clock(d));
+    }
+    function loop() { paint(); raf = v.paused ? 0 : requestAnimationFrame(loop); }
+    function state() {
+      var on = !v.paused;
+      btn.innerHTML = on ? ICON_PAUSE : ICON_PLAY;
+      btn.setAttribute('aria-label', on ? 'Pause' : 'Play');
+      frame.classList.toggle('is-paused', !on);
+      /* paused by the reader, not by scrolling away (the editorial case
+         keeps the bar up for exactly this) */
+      frame.classList.toggle('is-held', !on && !!v.userPaused);
+      if (on && !raf) raf = requestAnimationFrame(loop);
+      paint();
+    }
+
+    function play() {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});   /* a blocked autoplay leaves the poster */
+    }
+    function toggle() {
+      if (v.paused) { v.userPaused = false; play(); }
+      else          { v.userPaused = true;  v.pause(); }
+    }
+
+    /* Touch has no hover: a tap shows the bar for a few seconds, and
+       any touch on the frame starts the count again. A tap on the
+       video while the bar is hidden only shows it; with the bar up,
+       a tap plays or pauses. */
+    var touch = false, wasShown = false, hideT = 0;
+    function show() {
+      bar.classList.add('is-shown');
+      clearTimeout(hideT);
+      hideT = setTimeout(hide, 2500);
+    }
+    function hide() {
+      if (scrubbing) { hideT = setTimeout(hide, 2500); return; }
+      bar.classList.remove('is-shown');
+    }
+    frame.addEventListener('pointerdown', function (e) {
+      touch = e.pointerType === 'touch';
+      if (!touch) return;
+      wasShown = bar.classList.contains('is-shown');
+      show();
+    }, true);
+
+    btn.addEventListener('click', toggle);
+    v.addEventListener('click', function () {
+      if (touch && !wasShown) return;
+      toggle();
     });
-    menu.addEventListener('click', function (e) {
-      if (e.target.closest('a')) closeMenu();
+
+    /* Scrubbing holds the video, then picks up where it was. */
+    seek.addEventListener('pointerdown', function () {
+      if (scrubbing) return;
+      scrubbing = true; resume = !v.paused; v.pause();
     });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && body.classList.contains('menu-open')) closeMenu();
+    seek.addEventListener('input', function () {
+      var d = v.duration;
+      if (!d) { v.preload = 'auto'; return; }
+      v.currentTime = seek.value / 1000 * d;
+      paint();
     });
+    function release() {
+      if (!scrubbing) return;
+      scrubbing = false;
+      if (resume) play();
+      if (touch) show();
+    }
+    seek.addEventListener('pointerup', release);
+    seek.addEventListener('pointercancel', release);
+    seek.addEventListener('change', release);
+
+    ['play', 'pause', 'loadedmetadata', 'durationchange'].forEach(function (e) {
+      v.addEventListener(e, state);
+    });
+    v.addEventListener('seeked', paint);
+    state();
   }
 
-  /* ── Shot tabs ─────────────────────────────────────────────
-     One shot can carry two states (decision 01: the filter row
-     expanded and collapsed). The panels are plain divs; this only
-     swaps which one is shown. */
-  Array.prototype.forEach.call(document.querySelectorAll('.shot__tabs'), function (strip) {
-    var tabs = Array.prototype.slice.call(strip.querySelectorAll('.shot__tab'));
-    strip.addEventListener('click', function (e) {
-      var tab = e.target.closest('.shot__tab');
-      if (!tab) return;
-      tabs.forEach(function (t) {
-        var on = t === tab;
-        t.setAttribute('aria-selected', String(on));
-        var panel = document.getElementById(t.getAttribute('aria-controls'));
-        if (panel) panel.hidden = !on;
-      });
-    });
-  });
+  videos.forEach(attach);
 
-  /* ── Contents ──────────────────────────────────────────────── */
+  if (still) {
+    videos.forEach(function (v) { v.preload = 'metadata'; });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting && e.intersectionRatio >= 0.33) {
+        if (v.userPaused) return;
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      } else if (!v.paused) {
+        v.pause();
+      }
+    });
+  }, { threshold: [0, 0.33] });
+  videos.forEach(function (v) { io.observe(v); });
+})();
+
+(function () {
+  'use strict';
+
+  var rail  = document.querySelector('.contents');
+  var cover = document.querySelector('.case__cover');
   var links = Array.prototype.slice.call(
     document.querySelectorAll('.contents__list a[href^="#"]')
   );
-  if (!links.length) return;
+  if (!rail || !links.length) return;
 
   var targets = links
     .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
     .filter(Boolean);
   if (targets.length !== links.length) return;
 
-  var navEl = document.getElementById('nav');
-  var current = -1;
+  var current = -1, hidden = false;
 
-  /* A section is current once its top has passed under the bar. The
-     line is a little below the bar itself so a heading that has just
+  /* A section is current once its top has passed a line a little
+     below the top of the window, so a heading that has only just
      arrived does not flip the mark while it is still being read. */
   function update() {
-    var line = (navEl ? navEl.getBoundingClientRect().height : 0) + 80;
+    var line = window.innerHeight * 0.25;
     var i = 0;
     for (var k = 0; k < targets.length; k++) {
       if (targets[k].getBoundingClientRect().top <= line) i = k;
     }
-    /* The last link wins at the foot of the page, where the final
-       section may be too short to reach the line on its own. */
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-      i = targets.length - 1;
+    if (i !== current) {
+      current = i;
+      links.forEach(function (a, k) { a.classList.toggle('is-current', k === i); });
     }
-    if (i === current) return;
-    current = i;
-    links.forEach(function (a, k) { a.classList.toggle('is-current', k === i); });
+
+    /* Overlap of the rail's box and the cover's, vertically. Only
+       where the rail floats over the page — on narrow screens it is a
+       strip with its own ground and stays. */
+    var over = false;
+    if (cover && getComputedStyle(rail).position === 'sticky' && window.innerWidth >= 1024) {
+      var r = rail.getBoundingClientRect(), c = cover.getBoundingClientRect();
+      over = r.bottom > c.top && r.top < c.bottom;
+    }
+    if (over !== hidden) {
+      hidden = over;
+      rail.classList.toggle('is-hidden', over);
+    }
   }
 
   var queued = false;

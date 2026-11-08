@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en" class="page-case page-ed page-dishcover">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dishcover — making cooking at home feel less like work · Wlad Albakhtsin</title>
+<meta name="description" content="Dishcover is an iOS and Android app with easy, step-by-step recipes for every taste, designed end to end to make cooking at home feel less like work: research, user flow and 100+ screens.">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/case-dishcover.css">
+<link rel="stylesheet" href="css/case-editorial.css">
+</head>
+<body id="top">
+
+<!-- Figma "Portfolio" › Case — Dishcover · AiiD style (node 615:13746),
+     built like bondata-editorial.html: every band opens on a black rule,
+     its label in the left column and its copy on the work rows' line;
+     photos and films sit on the page's centre. Two things stay as they
+     were on the earlier page rather than as drawn: the customer journey
+     map (the table and its look, css/case-dishcover.css) and the Vimeo
+     films. The personas and the three research tables share one band
+     as tabs; the jobs-to-be-done and competitive-analysis tables come
+     from the project's Google Sheets. The user flow is the Figma
+     picture (node 705:39808). -->
+
+<a class="ed-home" href="index.html#portfolio">← Home</a>
+
+<nav class="ed-toc" aria-label="On this page">
+  <a href="#overview">Overview</a>
+  <a href="#about">About</a>
+  <a href="#process">Process</a>
+  <a href="#research">Research</a>
+  <a href="#flow">User flow</a>
+  <a href="#screens">Screens</a>
+  <a href="#results">Results</a>
+</nav>
+
+<main class="ed">
+
+  <!-- ══ Hero ═════════════════════════════════════════════════ -->
+  <header class="ed-hero" id="overview">
+    <p class="ed-eyebrow">Case study · Dishcover</p>
+    <div class="ed-hero__row">
+      <div class="ed-hero__main">
+        <h1 class="ed-hero__title">How a culinary app can make cooking at home feel less like work.</h1>
+        <p class="ed-hero__lede">Dishcover is an iOS and Android app with easy, step-by-step recipes for every taste, designed end to end: research, user flow and <strong>more than 100 screens in light and dark</strong>, in three and a half months.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ Facts ════════════════════════════════════════════════ -->
+  <section class="ed-facts" aria-label="Project facts">
+    <dl class="ed-facts__grid">
+      <div class="ed-fact">
+        <dt>My contribution</dt>
+        <dd>User research and personas<br>Customer journey and user flow<br>Wireframes and prototyping<br>UI design and design system</dd>
+      </div>
+      <div class="ed-fact"><dt>Industry</dt><dd>Food &amp; Cooking</dd></div>
+      <div class="ed-fact"><dt>Platform</dt><dd>iOS and Android app</dd></div>
+      <div class="ed-fact"><dt>Timeline</dt><dd>3.5 months · 2025</dd></div>
+      <div class="ed-fact"><dt>Status</dt><dd>In development</dd></div>
+    </dl>
+  </section>
+
+  <!-- ══ Cover — the hero film, 1920 × 1080, edge to edge ══════ -->
+  <figure class="ed-cover" style="--ar:1920 / 1080">
+    <video class="case__video" muted loop playsinline preload="none" poster="assets/case-dishcover/hero.webp" aria-label="A short film of the Dishcover app on two phones">
+      <source src="assets/case-dishcover/hero.mp4" type="video/mp4">
+    </video>
+  </figure>
+
+  <div class="ed-body">
+
+    <!-- ══ 1. About ═════════════════════════════════════════════ -->
+    <section class="ed-sec" id="about">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">About</h2>
+          <div class="ed-sub">
+            <h3 class="ed-h3">Problem</h3>
+            <p class="ed-text">Many people struggle with cooking — whether they feel uninspired, lack experience, or simply don't enjoy spending time in the kitchen. When hunger strikes, they often feel <strong>stuck with the same repetitive meals</strong> or don't know what to cook with the ingredients they have. This leads to frustration, wasted food, or the temptation to order takeout again.</p>
+          </div>
+          <div class="ed-sub">
+            <h3 class="ed-h3">Solution</h3>
+            <p class="ed-text">Dishcover helps by offering <strong>easy, step-by-step recipes that match the ingredients in your kitchen</strong>. Whether you're a beginner or just need a quick idea, the app turns everyday cooking into a simple and fun process — no planning, no stress, just tasty results.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 2. Design process ════════════════════════════════════ -->
+    <section class="ed-sec" id="process">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Process</h2>
+          <p class="ed-text">The design process included multiple overlapping stages that were often developed <strong>in parallel rather than following a strict linear path</strong>.</p>
+
+          <ol class="ed-stats ed-stats--4">
+            <li class="ed-stat ed-stat--stage"><p class="ed-stat__value">01</p><h3 class="ed-stat__label">Research / Analysis</h3><ul class="ed-stat__items"><li>User research</li><li>User personas</li><li>Competitive analysis</li><li>Information architecture</li><li>Functional analysis</li></ul></li>
+            <li class="ed-stat ed-stat--stage"><p class="ed-stat__value">02</p><h3 class="ed-stat__label">Ideation</h3><ul class="ed-stat__items"><li>JTBD</li><li>User flow</li><li>Customer journey map</li><li>Low-fidelity wireframes</li><li>Interactive wireframes</li></ul></li>
+            <li class="ed-stat ed-stat--stage"><p class="ed-stat__value">03</p><h3 class="ed-stat__label">Design</h3><ul class="ed-stat__items"><li>Visual concept</li><li>Design system</li><li>Icon design</li></ul></li>
+            <li class="ed-stat ed-stat--stage"><p class="ed-stat__value">04</p><h3 class="ed-stat__label">Testing</h3><ul class="ed-stat__items"><li>Specification</li><li>Interactive prototype</li><li>User testing</li><li>Iterations of edits</li></ul></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3. Research ═══════════════════════════════════════════
+         Four methods in one band, one tab each, in the order the thinking
+         went — who cooks, what the app is hired for, what the market
+         already offers, where the way to a cooked dish breaks. -->
+    <section class="ed-sec" id="research">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Research</h2>
+          <p class="ed-text">I looked at the problem from four sides before drawing a screen: <strong>personas</strong> for who cooks and what they need, <strong>jobs to be done</strong> for what the app is hired for, <strong>a comparison with Mealime, Tasty and Kitchen Stories</strong>, and <strong>a customer journey map</strong> from the first launch to rating a dish. Its pain points are what the screens below are built on.</p>
+
+          <ul class="ed-stats">
+            <li class="ed-stat"><p class="ed-stat__value" data-count>4</p><p class="ed-stat__label">personas</p><p class="ed-stat__note">from the user research</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>3</p><p class="ed-stat__label">competitors compared</p><p class="ed-stat__note">Mealime, Tasty and Kitchen Stories</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>7</p><p class="ed-stat__label">journey stages</p><p class="ed-stat__note">from the first launch to rating the dish</p></li>
+          </ul>
+
+          <!-- Research tables, one per tab. To add one: a button in the
+               list and a panel after the others, ids matched by
+               aria-controls / aria-labelledby, the panel [hidden]. -->
+          <div class="ed-tabs ed-media">
+            <div class="ed-tabs__list" role="tablist" aria-label="Research">
+              <button class="ed-tab" type="button" role="tab" id="tab-personas" aria-controls="panel-personas" aria-selected="true">User personas</button>
+              <button class="ed-tab" type="button" role="tab" id="tab-jtbd" aria-controls="panel-jtbd" aria-selected="false" tabindex="-1">Jobs to be done</button>
+              <button class="ed-tab" type="button" role="tab" id="tab-competitors" aria-controls="panel-competitors" aria-selected="false" tabindex="-1">Competitive analysis</button>
+              <button class="ed-tab" type="button" role="tab" id="tab-cjm" aria-controls="panel-cjm" aria-selected="false" tabindex="-1">Customer journey map</button>
+            </div>
+
+            <div class="ed-tabs__panel" role="tabpanel" id="panel-personas" aria-labelledby="tab-personas">
+              <div class="ed-personas">
+                <article class="ed-persona">
+                  <img class="ed-persona__photo" src="assets/case-dishcover/avatar-olga.webp" alt="" width="116" height="116" loading="lazy" decoding="async">
+                  <h3 class="ed-persona__name">Olga, 22</h3>
+                  <p class="ed-persona__role">Student · Solvency: low</p>
+                  <dl class="ed-persona__body">
+                    <div><dt class="ed-eyebrow">Motivation</dt><dd>Cook quick, tasty, and budget-friendly meals to save time and money.</dd></div>
+                    <div><dt class="ed-eyebrow">Expectations</dt><dd>Simple recipes with minimal ingredients, filters for price and cooking time.</dd></div>
+                  </dl>
+                </article>
+                <article class="ed-persona">
+                  <img class="ed-persona__photo" src="assets/case-dishcover/avatar-sophie.webp" alt="" width="116" height="116" loading="lazy" decoding="async">
+                  <h3 class="ed-persona__name">Sophie, 32</h3>
+                  <p class="ed-persona__role">Young parent · Solvency: medium</p>
+                  <dl class="ed-persona__body">
+                    <div><dt class="ed-eyebrow">Motivation</dt><dd>Prepare healthy meals for the whole family, considering the kids' preferences and needs.</dd></div>
+                    <div><dt class="ed-eyebrow">Expectations</dt><dd>Family- and kid-friendly recipes, meal planning options, time-saving solutions.</dd></div>
+                  </dl>
+                </article>
+                <article class="ed-persona">
+                  <img class="ed-persona__photo" src="assets/case-dishcover/avatar-alex.webp" alt="" width="116" height="116" loading="lazy" decoding="async">
+                  <h3 class="ed-persona__name">Alex, 38</h3>
+                  <p class="ed-persona__role">Freelancer · Solvency: high</p>
+                  <dl class="ed-persona__body">
+                    <div><dt class="ed-eyebrow">Motivation</dt><dd>Cook quick, healthy meals to stay energized throughout the day.</dd></div>
+                    <div><dt class="ed-eyebrow">Expectations</dt><dd>Fast and nutritious recipes, calorie tracking integration, healthy eating tips.</dd></div>
+                  </dl>
+                </article>
+                <article class="ed-persona">
+                  <img class="ed-persona__photo" src="assets/case-dishcover/avatar-chloe.webp" alt="" width="116" height="116" loading="lazy" decoding="async">
+                  <h3 class="ed-persona__name">Chloe, 44</h3>
+                  <p class="ed-persona__role">Food blogger · Solvency: high</p>
+                  <dl class="ed-persona__body">
+                    <div><dt class="ed-eyebrow">Motivation</dt><dd>Find inspiration for new dishes, share recipes with followers.</dd></div>
+                    <div><dt class="ed-eyebrow">Expectations</dt><dd>Unique recipes with beautiful presentation, ability to upload own recipes, social media integration, vivid images and detailed instructions.</dd></div>
+                  </dl>
+                </article>
+              </div>
+            </div>
+
+            <div class="ed-tabs__panel" role="tabpanel" id="panel-jtbd" aria-labelledby="tab-jtbd" hidden>
+              <div class="cjm cjm--rows" tabindex="0" role="region" aria-label="Jobs to be done">
+                <table>
+                  <colgroup><col style="width:28%"><col></colgroup>
+                  <tbody>
+                    <tr>
+                <th scope="row">Project</th>
+                <td>A cooking service</td>
+              </tr>
+                    <tr>
+                <th scope="row">Problem the app solves</th>
+                <td>Hunger</td>
+              </tr>
+                    <tr>
+                <th scope="row">When the app is needed</th>
+                <td><ul><li>The user is tired of the usual dishes and wants to cook something unusual</li><li>The user finds a few ingredients left in the fridge (say, eggs, tomatoes and cheese) and doesn’t know what to make with them</li><li>Guests are coming over tonight and a tasty dinner has to be cooked</li><li>A young family plans the week’s meals to spend less and use groceries wisely</li></ul></td>
+              </tr>
+                    <tr>
+                <th scope="row">Direct competitors</th>
+                <td>Tasty, Kitchen Stories: Easy Recipes</td>
+              </tr>
+                    <tr>
+                <th scope="row">Indirect competitors</th>
+                <td><ul><li>Cooking TV shows</li><li>YouTube</li><li>Relatives</li></ul></td>
+              </tr>
+                    <tr>
+                <th scope="row">Substitutes</th>
+                <td>Food delivery apps</td>
+              </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="ed-tabs__panel" role="tabpanel" id="panel-competitors" aria-labelledby="tab-competitors" hidden>
+              <div class="cjm cjm--compare" tabindex="0" role="region" aria-label="Competitive analysis, scrolls sideways">
+                <table>
+                  <caption class="visually-hidden">What a user can do in each section of Dishcover and three competing cooking apps; a dash means the app has no such section</caption>
+                  <colgroup><col style="width:16%"><col><col><col><col></colgroup>
+                  <thead>
+                    <tr>
+                      <th scope="col"><span class="visually-hidden">Section</span></th>
+                      <th scope="col" class="cjm__ours">Dishcover</th>
+                      <th scope="col">Mealime</th>
+                      <th scope="col">Tasty</th>
+                      <th scope="col">Kitchen Stories</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Onboarding</th>
+                      <td><ul><li>Read about the app</li><li>Swipe through the slides</li><li>Skip the intro</li></ul></td>
+                      <td><ul><li>Read about the app</li><li>Swipe through the slides</li><li>Skip the intro</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>Read about the app</li><li>Swipe through the slides</li><li>Skip the intro</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Sign up / Log in</th>
+                      <td><ul><li>Sign up with a phone number or email</li><li>Log in with Google, Facebook or Apple</li><li>Recover the password</li><li>Log in</li></ul></td>
+                      <td><ul><li>Sign up with a phone number or email</li><li>Recover the password</li><li>Log in</li></ul></td>
+                      <td><ul><li>Sign up with a phone number or email</li><li>Recover the password</li><li>Log in</li></ul></td>
+                      <td><ul><li>Sign up with a phone number or email</li><li>Recover the password</li><li>Log in</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Personalization</th>
+                      <td><ul><li>Skip personalization</li><li>Choose a diet</li><li>Mark allergens</li><li>Mark disliked ingredients</li></ul></td>
+                      <td><ul><li>Choose a diet</li><li>Mark allergens</li><li>Mark disliked ingredients</li><li>Set how many people they usually cook for</li><li>Set a reminder</li></ul></td>
+                      <td><ul><li>Skip personalization</li><li>Choose a diet</li><li>Mark allergens</li><li>Mark disliked ingredients</li></ul></td>
+                      <td><ul><li>Skip personalization</li><li>Choose a diet</li><li>Choose a favorite cuisine</li><li>Mark disliked ingredients</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Subscription</th>
+                      <td><ul><li>Choose a monthly or yearly plan</li><li>Subscribe</li><li>Continue without a subscription</li><li>Read about the subscription’s benefits</li></ul></td>
+                      <td><ul><li>Subscribe</li><li>Continue without a subscription</li><li>Read about the subscription’s benefits</li><li>Restore a subscription</li></ul></td>
+                      <td><ul><li>Choose a monthly or yearly plan</li><li>Subscribe</li><li>Continue without a subscription</li><li>Read about the subscription’s benefits</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Payment</th>
+                      <td><ul><li>Choose a payment method (Apple Pay, Google Pay)</li><li>Enter a promo code</li></ul></td>
+                      <td><ul><li>Choose a payment method (Apple Pay, Google Pay)</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Home</th>
+                      <td><ul><li>See favorite recipes</li><li>See the recipes they created</li><li>Open the calendar</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Create a recipe</li><li>See cards of the chefs they follow</li><li>See their preferences</li><li>Change their preferences</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Recipe catalog</th>
+                      <td><ul><li>Pick a suggested recipe</li><li>Search recipes by name</li><li>Create a recipe</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Choose a category</li><li>Choose a chef</li><li>Read a recipe’s summary</li><li>Filter recipes</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>Pick a suggested recipe</li><li>Search recipes by name</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Choose a category</li><li>Add a recipe to favorites</li><li>See the list of recipes</li><li>Search recipes by ingredients</li></ul></td>
+                      <td><ul><li>Pick a suggested recipe</li><li>Search recipes by name</li><li>Like a recipe</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Choose a category</li><li>Choose a chef</li><li>Read a recipe’s summary</li><li>Filter recipes</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Recipe page</th>
+                      <td><ul><li>Read about the dish</li><li>Play the video</li><li>Add to favorites</li><li>Like</li><li>Go to the cooking steps</li><li>Open the chef’s profile</li><li>Add to the calendar</li><li>Read reviews</li><li>Leave a review</li></ul></td>
+                      <td><ul><li>Read about the dish</li><li>Add to favorites</li><li>Like</li><li>Add to the meal plan</li><li>See the cooking steps</li><li>Choose the number of servings</li></ul></td>
+                      <td><ul><li>Read about the dish</li><li>Play the video</li><li>Add to favorites</li><li>Choose the number of servings</li><li>Go to the cooking steps</li><li>Share the recipe</li><li>Mark the dish as cooked</li><li>Read reviews</li><li>Leave a review</li></ul></td>
+                      <td><ul><li>Read about the dish</li><li>Play the video</li><li>Add to favorites</li><li>Choose the number of servings</li><li>Go to the cooking steps</li><li>Share the recipe</li><li>Read reviews</li><li>Leave a review</li><li>See more suggested recipes</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Cooking steps</th>
+                      <td><ul><li>Read the step</li><li>Watch the video</li><li>Go to the next step</li><li>Go back to the previous step</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>Read the step</li><li>Go to the next step</li><li>Go back to the previous step</li></ul></td>
+                      <td><ul><li>Read the step</li><li>Go to the next step</li><li>Go back to the previous step</li><li>Save the recipe</li><li>Rate the recipe</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Chef page</th>
+                      <td><ul><li>See all of the chef’s dishes</li><li>Follow or unfollow the chef</li><li>Read about the chef</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Own recipes</th>
+                      <td><ul><li>Add the details</li><li>Add photos and video</li><li>Add the cooking steps</li><li>Add the ingredients</li><li>Publish</li><li>Save a draft</li></ul></td>
+                      <td><ul><li>Import from a website by URL</li><li>Create a recipe</li><li>Add photos and video</li><li>Add the cooking steps</li><li>Add the ingredients</li><li>Add the recipe</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Favorites</th>
+                      <td><ul><li>See favorite dishes</li><li>See favorite authors</li><li>Remove from favorites</li><li>Add a group</li></ul></td>
+                      <td><ul><li>See favorite recipes</li><li>Open a recipe’s page</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>See favorite dishes</li><li>Remove from favorites</li><li>Add a group</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Meal planner</th>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>Search recipes by name</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Pick suggested recipes</li><li>Create a meal plan</li></ul></td>
+                      <td><ul><li>Search recipes by name</li><li>Browse recipe collections (popular, easy, quick and more)</li><li>Pick suggested recipes</li><li>Create a meal plan</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Calendar</th>
+                      <td><ul><li>Choose a day</li><li>Add dishes to a day</li><li>Remove dishes</li><li>Go to the next or previous day</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Shopping list</th>
+                      <td><ul><li>See the shopping list</li><li>Add an item</li><li>Mark an item as bought</li><li>Go to an online store</li><li>Share</li><li>Print</li></ul></td>
+                      <td><ul><li>See the shopping list</li><li>Add an item</li><li>Mark an item as bought</li><li>Go to an online store</li><li>Share</li><li>Print</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>See the shopping list</li><li>Add an item</li><li>Mark an item as bought</li><li>Go to an online store</li><li>Share</li><li>Print</li></ul></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Community</th>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                      <td><ul><li>Read other users’ notes</li><li>Like</li><li>Comment</li></ul></td>
+                      <td><span class="cjm__none" aria-label="Not in this app">—</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Profile</th>
+                      <td><ul><li>Add, remove or change the avatar</li><li>Change the email or phone number</li><li>Change personal details</li><li>Change the password</li><li>Subscription settings</li><li>Support</li><li>Log out</li><li>Delete the account</li></ul></td>
+                      <td><ul><li>Add, remove or change the avatar</li><li>Change the email or phone number</li><li>Change personal details</li><li>Change the password</li><li>Subscription settings</li><li>Support</li><li>Switch accounts</li><li>Go to their recipes</li><li>Go to their preferences</li><li>See chefs</li></ul></td>
+                      <td><ul><li>Add, remove or change the avatar</li><li>Change the email or phone number</li><li>Change personal details</li><li>Change the password</li><li>Subscription settings</li><li>Support</li><li>Switch accounts</li><li>See saved recipes</li><li>See their community activity</li></ul></td>
+                      <td><ul><li>Add, remove or change the avatar</li><li>Change the email or phone number</li><li>Change personal details</li><li>Change the password</li><li>Subscription settings</li><li>Support</li><li>Log out</li><li>Delete the account</li></ul></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="ed-tabs__panel" role="tabpanel" id="panel-cjm" aria-labelledby="tab-cjm" hidden>
+              <div class="cjm" tabindex="0" role="region" aria-label="Customer journey map, scrolls sideways">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col"><span class="visually-hidden">Stage</span></th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">🧭</span>Onboarding</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">🔐</span>Registration</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">⚙️</span>Personali&shy;zation</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">🍽️</span>Choosing a recipe</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">👀</span>Previewing</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">🍳</span>Cooking</th>
+                  <th scope="col"><span class="cjm__emoji" aria-hidden="true">🌟</span>Rating the dish</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">User actions</th>
+                  <td><ul><li>Learn about the app</li></ul></td>
+                  <td><ul><li>Sign up as quickly as possible</li></ul></td>
+                  <td><ul><li>Dietary preferences</li><li>Ingredients to avoid or allergic to</li></ul></td>
+                  <td><ul><li>Pick a dish</li></ul></td>
+                  <td><ul><li>Watch a short video preview</li><li>Check ingredients</li><li>Read step-by-step instructions</li></ul></td>
+                  <td><ul><li>Start cooking with guidance</li></ul></td>
+                  <td><ul><li>Rate the dish</li><li>Follow the creator</li><li>Share recipe</li></ul></td>
+                </tr>
+                <tr>
+                  <th scope="row">User questions</th>
+                  <td><ul><li>How does this work?</li></ul></td>
+                  <td><ul><li>What do I need to do?</li><li>How secure is this?</li><li>Why do I need to register?</li></ul></td>
+                  <td><ul><li>Why do I need this?</li></ul></td>
+                  <td><ul><li>What do I want to cook?</li><li>Will I be able to prepare it?</li><li>What ingredients do I need?</li><li>How much time will it take?</li></ul></td>
+                  <td><ul><li>Can I make this?</li><li>What are the exact ingredients?</li><li>What are the proportions?</li></ul></td>
+                  <td><ul><li>What's included in the dish?</li><li>How much salt for 4 people?</li><li>How do I go back?</li></ul></td>
+                  <td><ul><li>Why should I bother?</li><li>What's in it for me?</li></ul></td>
+                </tr>
+                <tr class="cjm__pain">
+                  <th scope="row">Pain points</th>
+                  <td><ul><li>Why is this taking so long?</li></ul></td>
+                  <td><ul><li>I don't have time or energy to register now</li></ul></td>
+                  <td><ul><li>When can I finally start choosing recipes?</li></ul></td>
+                  <td><ul><li>Hard to tell if it suits me</li></ul></td>
+                  <td><ul><li>Video isn't clear</li><li>Too much info at once</li></ul></td>
+                  <td><ul><li>No visuals during the process</li><li>Can't figure out how to go back a step</li></ul></td>
+                  <td><ul><li>Don't want to do extra steps</li></ul></td>
+                </tr>
+                <tr>
+                  <th scope="row">Positive moments</th>
+                  <td><ul><li>"Nice! I can plan meals for the whole week."</li></ul></td>
+                  <td><ul><li>Registration was quick and easy</li></ul></td>
+                  <td><ul><li>"Cool, I can mark my favorite ingredients!"</li></ul></td>
+                  <td><ul><li>"I found something simple and fun I wouldn't have thought of!"</li></ul></td>
+                  <td><ul><li>"Just one preview and I knew I wanted to cook it!"</li></ul></td>
+                  <td><ul><li>Clear step-by-step process</li><li>Easy to adjust portions</li></ul></td>
+                  <td><ul><li>It was easy and fun, and the dish turned out great!</li></ul></td>
+                </tr>
+                <tr class="cjm__ideas">
+                  <th scope="row">Ideas &amp; solutions</th>
+                  <td><ul><li>Allow users to skip onboarding</li><li>Keep it under 3 screens with a strong value proposition</li><li>Show a progress bar so users know how much is left</li></ul></td>
+                  <td><ul><li>Keep it super simple</li><li>Allow social logins (Apple, Google, etc.)</li><li>Show progress bar</li><li>Allow users to skip and register later</li></ul></td>
+                  <td><ul><li>Add a progress bar</li><li>Let users skip or finish later</li></ul></td>
+                  <td><ul><li>Show short description and rating</li><li>Add filters for simplicity, time, and ingredients</li></ul></td>
+                  <td><ul><li>Make previews clear and concise</li><li>Break down steps into digestible parts</li></ul></td>
+                  <td><ul><li>Choose number of servings to adjust quantities</li><li>Include photos or short videos for each step</li><li>Add progress bar with the ability to jump between steps</li></ul></td>
+                  <td><ul><li>Give points or rewards</li><li>Let users skip this step</li><li>Prompt review next time the app opens</li></ul></td>
+                </tr>
+              </tbody>
+            </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4. User flow ═════════════════════════════════════════ -->
+    <section class="ed-sec" id="flow">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">User flow</h2>
+          <p class="ed-text">Designed for simplicity, Dishcover guides users through an intuitive journey — from onboarding and exploring recipes to <strong>following step-by-step instructions and cooking with confidence</strong>.</p>
+
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 980" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/user-flow.webp" alt="User flow: Start, Onboarding, Sign up or sign in and Personalization lead to five tabs. Search opens results; Home opens the recipe page, Cooking and the chef page; Favorites opens cookbooks and favourite chefs; Profile opens profile edit, settings, help and personalization; and Subscription." width="1920" height="980" loading="lazy" decoding="async">
+            </div>
+          </figure>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <h3 class="ed-h3">Wireframes</h3>
+              <p class="ed-text"><strong>100+ wireframes</strong> were created during the design process, from the allergy picker and the paywall to the step-by-step cooking screens.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1080" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/wireframes.webp" alt="A wall of grey wireframes: allergies, paywall, recipe steps, profile, phone sign-in, home, filters and search" width="1920" height="1080" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5. Screens ═══════════════════════════════════════════ -->
+    <section class="ed-sec" id="screens">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Screens</h2>
+          <p class="ed-text">Every flow from the map, designed in <strong>light and dark mode</strong> from one set of components.</p>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 01</p>
+              <h3 class="ed-h3">First Launch</h3>
+              <p class="ed-text">Users can <strong>skip any step</strong> during the first-time experience — no pressure, just flexibility. Login is quick and simple: <strong>no passwords</strong>, just a phone number and a one-time code. A short personalization step lets users choose their diet, highlight allergens and mark ingredients they'd like to avoid, making every recipe feel just right.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1655" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/first-launch.webp" alt="First launch in light mode: splash, intro, phone sign-in with a one-time code, diet style, allergies, disliked ingredients and the 'You're all set' screen" width="1920" height="1655" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          <figure class="case__embed ed-media">
+            <iframe src="https://player.vimeo.com/video/1077524231?background=1&amp;autopause=0" title="Dishcover — first launch flow" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 02</p>
+              <h3 class="ed-h3">Main Screen</h3>
+              <p class="ed-text">The home screen brings everything together — <strong>personalized recipe suggestions</strong>, easy access to filters, and a seamless way to jump back into cooking. The carousel opens with a subscription banner, followed by dishes tailored to the user. To keep things fresh, <strong>a photo shows several recipes at once</strong>: tap a dish in the picture to open it, or see every recipe in the photo as a list.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1415" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/main-screen.webp" alt="Home screen: greeting, Dishcover Plus banner, categories, recipe carousel, best chefs and a drinks photo with tappable hotspots" width="1920" height="1415" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          <figure class="case__embed ed-media">
+            <iframe src="https://player.vimeo.com/video/1077531632?background=1&amp;autopause=0" title="Dishcover — main page walkthrough" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 03</p>
+              <h3 class="ed-h3">Recipe Page</h3>
+              <p class="ed-text">Everything you need to cook — in one place: step-by-step instructions, ingredients and tips. <strong>Cooking Mode</strong> is a hands-free, step-by-step experience that keeps you focused on the dish. If you'd rather stay out of it, the recipe page keeps <strong>a simplified list of all steps</strong> for quick reference. After cooking, a short rating helps personalize future suggestions.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1690" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/recipe.webp" alt="Recipe page with nutrition, servings, ingredients and collapsible steps; Cooking Mode step 3 of 4; the 'Bon Appetit' rating screen" width="1920" height="1690" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1075" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/dark-hero.webp" alt="The recipe page in dark mode, on a table with eggs and toast" width="1920" height="1075" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 04</p>
+              <h3 class="ed-h3">Search Page</h3>
+              <p class="ed-text">Search finds recipes by <strong>ingredients, dish names, or simply exploring ideas</strong>. For users who aren't looking for something specific, curated collections offer inspiration. To make the search more tailored, <strong>filters</strong> cover preparation time, category and dietary preferences.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1460" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/search.webp" alt="Search: cuisines and dietary collections, popular searches, results for pasta, the drinks collection and the filter sheet" width="1920" height="1460" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 920" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/photos.webp" alt="A cook dusted in flour checks his phone; a hand holds the pasta results in dark mode" width="1920" height="920" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 05</p>
+              <h3 class="ed-h3">Favorites &amp; Chef page</h3>
+              <p class="ed-text">Your go-to place for saved content: the Favorites page lets you revisit both your favorite recipes and chefs. When a user likes a recipe, they can <strong>add it to a cookbook</strong> to keep their favorites neatly organized and easy to find.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 640" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/favorites.webp" alt="Adding a recipe to a cookbook, cookbooks and favourite chefs tabs, and a chef's page" width="1920" height="640" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Screen 06</p>
+              <h3 class="ed-h3">User Profile &amp; Subscription</h3>
+              <p class="ed-text">Dishcover relies on <strong>a subscription model</strong> as its primary way to support the app and provide premium features. Dishcover Plus+ adds exclusive recipes and an ad-free experience, yearly or monthly, each with a free trial. The profile keeps the current plan next to personalization, notifications, language and display settings.</p>
+            </div>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 807" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/profile-subscription.webp" alt="Profile with the current plan and settings, the edit profile form, and the Dishcover Plus+ paywall with yearly and monthly plans" width="1920" height="807" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 6. Results ═══════════════════════════════════════════ -->
+    <section class="ed-sec" id="results">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Results</h2>
+          <ul class="ed-stats ed-stats--2">
+            <li class="ed-stat"><p class="ed-stat__value" data-count>100+</p><p class="ed-stat__label">screens</p><p class="ed-stat__note">every flow from the journey map</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>3.5</p><p class="ed-stat__label">months</p><p class="ed-stat__note">from research to the last screen</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>160+</p><p class="ed-stat__label">hours of work</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>2</p><p class="ed-stat__label">modes, light and dark</p><p class="ed-stat__note">from one component set</p></li>
+          </ul>
+
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1075" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/billboard.webp" alt="A Dishcover billboard on a glass building: 'Cooking at home? Easy as eggs'" width="1920" height="1075" loading="lazy" decoding="async">
+            </div>
+          </figure>
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 1290" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-dishcover/overview.webp" alt="Every screen of the app laid out by flow, light mode on the left and dark mode on the right" width="1920" height="1290" loading="lazy" decoding="async">
+            </div>
+          </figure>
+
+          <p class="ed-text ed-closing">Thanks for reading to the end. The original case, with the films in full, lives on <a href="https://www.behance.net/gallery/224067175/Mobile-App-Design-UXUI-Case-Study-for-a-Cooking-App" target="_blank" rel="noopener">Behance</a>.</p>
+          <ul class="ed-stats ed-stats--mini">
+            <li class="ed-stat"><p class="ed-stat__value" data-count>50K+</p><p class="ed-stat__label">views on Behance</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>2.3K</p><p class="ed-stat__label">appreciations on Behance</p></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ══ Other works — the home page's work rows, all but this case ══ -->
+  <section class="section section--works" id="works">
+    <div class="shell">
+      <h2 class="eyebrow col-right">[ Other works ]</h2>
+    </div>
+
+    <ol class="works">
+      <li class="work work--bondata">
+        <a class="work__row" href="bondata-editorial.html">
+          <span class="work__index">01</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Bondata</p>
+                <h3 class="work__name">Redesigning an HR analytics app to boost manager engagement</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Web app</li>
+                <li>Redesign</li>
+                <li>HR analytics</li>
+              </ul>
+            </div>
+            <p class="work__note">An employee-engagement analytics platform for HR leads and managers</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-bondata/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--evoke">
+        <a class="work__row" href="evoke.html">
+          <span class="work__index">02</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Evoke</p>
+                <h3 class="work__name">Rebuilding an AI companion to earn trust and keep people coming back</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li>
+                <li>Mental health</li>
+              </ul>
+            </div>
+            <p class="work__note">Art direction for an AI companion that must not behave like one</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-evoke/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--yourvet">
+        <div class="work__row work__row--off" aria-disabled="true">
+          <span class="work__index">04</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Your Vet</p>
+                <h3 class="work__name">Designing a vet marketplace to book a trusted vet in a few clicks</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Web platform</li>
+                <li>Marketplace</li>
+              </ul>
+            </div>
+            <p class="work__status"><span class="work__status-dot" aria-hidden="true"></span>In progress</p>
+          </div>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+<footer class="site-footer" id="contact">
+  <div class="site-footer__inner">
+    <a class="site-footer__top" href="#top">Back to top<svg viewBox="0 0 11 12" fill="none" aria-hidden="true" focusable="false"><path d="M5.5 11.5V0.5M5.5 0.5L1 5M5.5 0.5L10 5" stroke="currentColor" stroke-width="1" /></svg></a>
+    <div class="site-footer__mark" aria-hidden="true">
+      <div class="ascii-bg" id="footer-field" hidden></div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
+
+      <div class="site-footer__col site-footer__col--reach">
+        <p><a href="mailto:wladyslaw.design@gmail.com">wladyslaw.design@gmail.com</a></p>
+        <p><a href="tel:+48577538552">+48 577 538 552</a></p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--social" aria-label="Elsewhere">
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+        <a href="#">Dribble</a>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--cv">
+        <a href="#" download>Download CV</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Same gate as the home page: the footer mark is the GPU field, and
+     without WebGL2 the band simply stays empty. */
+  (function () {
+    var root = document.documentElement, ok = false;
+    try {
+      if (location.protocol !== 'file:') {
+        var gl = document.createElement('canvas').getContext('webgl2');
+        ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
+        var lose = gl && gl.getExtension('WEBGL_lose_context');
+        if (lose) lose.loseContext();
+      }
+    } catch (e) {}
+    root.dataset.field = ok ? 'gl' : 'cpu';
+  })();
+</script>
+<script src="vendor/gsap.min.js"></script>
+<script src="js/case.js"></script>
+<script src="js/case-editorial.js"></script>
+<script type="module" src="js/field-flow.js"></script>
+<script type="module" src="js/field-gl.js"></script>
+</body>
+</html>

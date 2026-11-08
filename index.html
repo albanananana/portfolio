@@ -15,22 +15,33 @@
     href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <!-- Loader gate. The loader is only drawn when this runs, so without
-     JS (or with reduced motion) the page simply shows. If js/loader.js
-     has not taken over within 6 s — a failed download — this timer lifts it. -->
+     JS (or with reduced motion) the page simply shows. It plays on the
+     first page of a visit and on a reload — not when the home page is
+     reached again from a case. If js/loader.js has not taken over
+     within 6 s — a failed download — this timer lifts it. -->
   <script>
     (function () {
       var root = document.documentElement;
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var reload = nav ? nav.type === 'reload' : performance.navigation && performance.navigation.type === 1;
+      try {
+        if (sessionStorage.getItem('loader-seen') && !reload) return;
+        sessionStorage.setItem('loader-seen', '1');
+      } catch (e) {}
       root.classList.add('is-loading', 'is-locked');
       window.__loaderSafety = setTimeout(function () {
         root.classList.remove('is-loading', 'is-locked');
       }, 6000);
+      var pre = document.createElement('link');
+      pre.rel = 'preload'; pre.as = 'image'; pre.href = 'assets/loader/img2.webp';
+      pre.setAttribute('fetchpriority', 'high');
+      document.head.appendChild(pre);
     })();
   </script>
-  <link rel="preload" as="image" href="assets/loader/img2.webp" fetchpriority="high">
 </head>
 
-<body>
+<body id="top">
 
   <!-- ══ Loader ══════════════════════════════════════════════════
      Figma "Portfolio" › Loader (node 269:936). The logo split in two —
@@ -127,169 +138,170 @@
     <!-- ══ 01 · Intro ══════════════════════════════════════════ -->
     <section class="section section--intro" id="intro" data-nav="intro" data-bg="#F5F3EE" data-fg="#D42823">
 
-      <!-- The character field, pinned to the hero: it fills this section
-         and scrolls away with it. Press H for the tuning panel. -->
-      <div class="ascii-bg" id="ascii-bg" aria-hidden="true" hidden>
-        <pre class="ascii-bg__layer" id="ascii-base"></pre>
-        <pre class="ascii-bg__layer" id="ascii-accent"></pre>
+      <!-- The Wlad.A wordmark as a character field, in the band between the
+         bar and the intro copy (Figma "Desktop - 18", node 422:20041). The
+         field reads this band's box; press H for the tuning panel. -->
+      <div class="intro__mark" aria-hidden="true">
+        <div class="ascii-bg" id="ascii-bg" hidden>
+          <pre class="ascii-bg__layer" id="ascii-base"></pre>
+          <pre class="ascii-bg__layer" id="ascii-accent"></pre>
+        </div>
       </div>
 
       <div class="shell intro">
+        <figure class="intro__aside">
+          <span class="intro__frame"><img class="intro__photo" src="assets/portrait-hero.webp"
+              alt="Wlad Albakhtsin with his cat on his shoulder" width="414" height="518" fetchpriority="high"></span>
+          <figcaption class="intro__caption">(I'm on the left)</figcaption>
+        </figure>
+
         <div class="intro__text">
-          <h1>I'm Wlad, an AI-native UX/UI designer working across web and mobile apps, websites and design systems.
-          </h1>
-          <p>Digital products, end to end — from structure and user flows to a working prototype in code.</p>
+          <h1><span class="intro__line"><span>I'm Wlad,</span></span> <span class="intro__line"><span>UX/UI &amp; Product designer</span></span></h1>
+          <div class="intro__facts">
+            <p class="intro__focus">Design complex interfaces for SaaS,<br> E-comm, Healthcare, HR Tech fields.</p>
+            <ul class="intro__skills">
+              <li>UX / UI design</li>
+              <li>Product Design</li>
+              <li>Design Systems</li>
+              <li>Prototypes</li>
+              <li>Research</li>
+            </ul>
+            <p class="intro__place">Warsaw, PL<br><span id="local-time">16:20 (CEST)</span></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ══ 02 · Portfolio ══════════════════════════════════════ -->
+    <!-- ══ 02 · Portfolio ══════════════════════════════════════
+       Figma "Desktop - 18" › Works (node 422:20049). The rows run edge to
+       edge; inside each, the name column lines up with the right-hand
+       column of every other band. -->
     <section class="section section--works" id="portfolio" data-nav="Portfolio" data-bg="#F5F3EE" data-fg="#D42823">
       <div class="shell">
-        <h2 class="eyebrow">[ Selected works ]</h2>
+        <h2 class="eyebrow col-right">[ Selected works ]</h2>
+      </div>
 
-        <ol class="works">
-          <li class="work">
-            <a class="work__row" href="bondata.html">
-              <div class="work__left">
-                <div class="work__meta">
-                  <h3 class="work__name">Bondata</h3>
-                  <p class="work__note">Filters, navigation and cards rebuilt in a live HR analytics product</p>
+      <ol class="works">
+        <li class="work work--bondata">
+          <a class="work__row" href="bondata-editorial.html">
+            <span class="work__index">01</span>
+            <div class="work__body">
+              <div class="work__head">
+                <div class="work__title">
+                  <p class="work__project">Bondata</p>
+                  <h3 class="work__name">Redesigning an HR analytics app to boost manager engagement</h3>
                 </div>
                 <ul class="work__tags">
                   <li>Web app</li>
+                  <li>Redesign</li>
                   <li>HR analytics</li>
-                  <li>Design system</li>
                 </ul>
-                <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11"
-                      fill="none" focusable="false">
-                      <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
-                    </svg></span> )</p>
               </div>
-              <div class="work__media" aria-hidden="true">
-                <span class="work__shot"><img src="assets/work-bondata/shot.webp" alt="" width="248" height="218"
-                    loading="lazy" decoding="async"></span>
-                <span class="work__thumb"><img src="assets/work-bondata/thumb-1.webp" alt="" width="106" height="79"
-                    loading="lazy" decoding="async"></span>
-                <span class="work__thumb"><img src="assets/work-bondata/thumb-2.webp" alt="" width="106" height="79"
-                    loading="lazy" decoding="async"></span>
-                <span class="work__thumb"><img src="assets/work-bondata/thumb-3.webp" alt="" width="106" height="79"
-                    loading="lazy" decoding="async"></span>
-              </div>
-            </a>
-          </li>
-
-          <li class="work">
-            <a class="work__row" href="#">
-              <div class="work__left">
-                <div class="work__meta">
-                  <h3 class="work__name">Twój Weterynarz</h3>
-                  <p class="work__note">A vet booking marketplace you can use before your clinic joins it · Coming soon
-                  </p>
-                </div>
-                <ul class="work__tags">
-                  <li>Web platform</li>
-                  <li>Marketplace</li>
-                </ul>
-                <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11"
-                      fill="none" focusable="false">
-                      <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
-                    </svg></span> )</p>
-              </div>
-              <div class="work__media" aria-hidden="true">
-                <span class="work__shot"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
-              </div>
-            </a>
-          </li>
-
-          <li class="work">
-            <a class="work__row" href="#">
-              <div class="work__left">
-                <div class="work__meta">
-                  <h3 class="work__name">Dishcover</h3>
-                  <p class="work__note">A recipe app built for the 40 minutes at the stove · Coming soon</p>
-                </div>
-                <ul class="work__tags">
-                  <li>Mobile app</li>
-                  <li>Concept</li>
-                </ul>
-                <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11"
-                      fill="none" focusable="false">
-                      <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
-                    </svg></span> )</p>
-              </div>
-              <div class="work__media" aria-hidden="true">
-                <span class="work__shot"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
-              </div>
-            </a>
-          </li>
-
-          <li class="work">
-            <a class="work__row" href="#">
-              <div class="work__left">
-                <div class="work__meta">
-                  <h3 class="work__name">Evoke</h3>
-                  <p class="work__note">Art direction for an AI companion that must not behave like one · Coming soon
-                  </p>
+              <p class="work__note">An employee-engagement analytics platform for HR leads and managers</p>
+            </div>
+            <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+                aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                  <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+                </svg></span><span>)</span></p>
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-bondata/shot.webp" alt="" width="248" height="187"
+                loading="lazy" decoding="async"></span>
+          </a>
+        </li>
+        <li class="work work--evoke">
+          <a class="work__row" href="evoke.html">
+            <span class="work__index">02</span>
+            <div class="work__body">
+              <div class="work__head">
+                <div class="work__title">
+                  <p class="work__project">Evoke</p>
+                  <h3 class="work__name">Rebuilding an AI companion to earn trust and keep people coming back</h3>
                 </div>
                 <ul class="work__tags">
                   <li>Mobile app</li>
                   <li>Mental health</li>
                 </ul>
-                <p class="work__view">( view<span class="work__arrow" aria-hidden="true"><svg viewBox="0 0 12 11"
-                      fill="none" focusable="false">
-                      <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
-                    </svg></span> )</p>
               </div>
-              <div class="work__media" aria-hidden="true">
-                <span class="work__shot"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
-                <span class="work__thumb"></span>
+              <p class="work__note">Art direction for an AI companion that must not behave like one</p>
+            </div>
+            <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+                aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                  <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+                </svg></span><span>)</span></p>
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-evoke/shot.webp" alt="" width="248" height="187"
+                loading="lazy" decoding="async"></span>
+          </a>
+        </li>
+        <li class="work work--dishcover">
+          <a class="work__row" href="dishcover.html">
+            <span class="work__index">03</span>
+            <div class="work__body">
+              <div class="work__head">
+                <div class="work__title">
+                  <p class="work__project">Dishcover</p>
+                  <h3 class="work__name">Designing a recipe app to make home cooking feel less like work</h3>
+                </div>
+                <ul class="work__tags">
+                  <li>Mobile app</li>
+                  <li>In development</li>
+                </ul>
               </div>
-            </a>
-          </li>
-        </ol>
-      </div>
+              <p class="work__note">A culinary app with easy, step-by-step recipes for every taste</p>
+            </div>
+            <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+                aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                  <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+                </svg></span><span>)</span></p>
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-dishcover/shot.webp" alt="" width="248" height="187"
+                loading="lazy" decoding="async"></span>
+          </a>
+        </li>
+        <li class="work work--yourvet">
+          <div class="work__row work__row--off" aria-disabled="true">
+            <span class="work__index">04</span>
+            <div class="work__body">
+              <div class="work__head">
+                <div class="work__title">
+                  <p class="work__project">Your Vet</p>
+                  <h3 class="work__name">Designing a vet marketplace to book a trusted vet in a few clicks</h3>
+                </div>
+                <ul class="work__tags">
+                  <li>Web platform</li>
+                  <li>Marketplace</li>
+                </ul>
+              </div>
+              <p class="work__status"><span class="work__status-dot" aria-hidden="true"></span>In progress</p>
+            </div>
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" alt="" width="248" height="187"
+                loading="lazy" decoding="async"></span>
+          </div>
+        </li>
+      </ol>
     </section>
 
-    <!-- ══ 03 · About ══════════════════════════════════════════ -->
-    <section class="section section--about" id="about" data-nav="about" data-bg="#E5DFD5" data-fg="#D42823">
+    <!-- ══ 03 · About ══════════════════════════════════════════
+       Figma "Desktop - 18" › Frame 59 (node 422:20057): a graphite band,
+       the copy in the right-hand column. The photo is kept in the markup
+       but hidden, as in the file. -->
+    <section class="section section--about" id="about" data-nav="about" data-bg="#2A2A2A" data-fg="#F5F3EE">
       <div class="shell about">
         <figure class="about__aside">
-          <!-- Exported from the file as it is drawn: the two grades of the
-             photo, already cut to the four-point star, at 2x. -->
-          <img class="about__photo" src="assets/about-star.webp" alt="Wlad Albakhtsin" width="752" height="752"
+          <img class="about__photo" src="assets/portrait-about.webp" alt="Wlad Albakhtsin" width="354" height="472"
             loading="lazy">
-          <figcaption class="about__caption">(I'm on the left)</figcaption>
         </figure>
 
         <div class="about__body">
           <div class="about__head">
             <h2 class="eyebrow">[ About me ]</h2>
-            <p class="about__lead">Six years of design taught me what to build. AI changed how fast I can build it.</p>
+            <p class="about__lead">6 years of design craft, now with AI in the loop.</p>
           </div>
 
           <div class="about__cols">
             <div class="about__col">
-              <p>I studied visual communication design and got my start in branding, marketing and web design. Over the
-                past six years that has specialised into UX/UI and product design.</p>
-              <p>The work has spanned healthcare, legal services, HR, real estate, museums, green energy and e-commerce
-                — mostly fields I knew nothing about when I started. Learning a domain fast enough to design for it is
-                half the job.</p>
+              <p>I work AI-native: research, PRDs, visual exploration, mockups and prototypes all run through agents in my IDE. It hasn't changed what I decide, only how fast I get there and how much I can test before committing.</p>
+              <p>It's also why I can take an idea to a working prototype on my own, instead of stopping at a picture of one.</p>
             </div>
             <div class="about__col">
-              <p>Most of my work runs through AI agents in my IDE, mainly Claude Code and Antigravity: research, PRDs,
-                visual exploration, mockups, prototypes. I set them up with project rules and custom skills, so they
-                follow my process instead of a generic one.</p>
-              <p>The decisions stay mine. What changed is how much I can test before committing, and that I can take an
-                idea to a working prototype on my own, instead of stopping at a picture of one.</p>
+              <p>I've designed for healthcare, legal services, HR, real estate, museums, green energy and e-commerce, mostly fields I knew nothing about at first. Learning a domain fast enough to design for it is half the job.</p>
             </div>
           </div>
         </div>
@@ -311,10 +323,7 @@
                 </div>
                 <p class="role__org">Karts Design (full-time)</p>
               </div>
-              <p class="role__text">I design web and mobile products end to end — flows, wireframes, prototypes, final
-                UI — along with the websites around them and the design systems that keep everything consistent. Much of
-                it is work on products that already exist: a UX audit first, then the redesign. I pitch the work to
-                clients myself and defend the decisions behind it.</p>
+              <p class="role__text">I run UX research and design web and mobile products end to end — interviews, usability tests, flows, prototypes, final UI — along with the websites around them and the design systems that keep everything consistent. I pitch the work to clients myself and defend the decisions behind it.</p>
             </li>
 
             <li class="role">
@@ -353,15 +362,14 @@
         <div class="col-right skills">
 
           <div class="skills__group">
-            <h2 class="eyebrow">[ Fields of Practice ]</h2>
+            <h2 class="eyebrow">[ Skills ]</h2>
             <ul class="chips chips--fields">
+              <li class="chip">Product Design</li>
+              <li class="chip">UX/UI</li>
               <li class="chip">Web Design</li>
-              <li class="chip">UI/UX</li>
               <li class="chip">Design Systems</li>
               <li class="chip">Art Direction</li>
-              <li class="chip">Mobile &amp; Web Application Design</li>
               <li class="chip">UX Audits</li>
-              <li class="chip">Redesign</li>
               <li class="chip">Motion Design</li>
               <li class="chip">Project Management</li>
               <li class="chip">Brand Identity</li>
@@ -384,8 +392,6 @@
               <li class="chip">Jira</li>
               <li class="chip">Notion</li>
               <li class="chip">Obsidian</li>
-              <li class="chip">Slack</li>
-              <li class="chip">Loom</li>
               <li class="chip">FigJam</li>
               <li class="chip">Microsoft Clarity</li>
               <li class="chip">Google Analytics</li>
@@ -416,7 +422,17 @@
      data-nav so it owns tab 06 like any other band. -->
   <footer class="site-footer" id="contact" data-nav="Contact" data-bg="#121212" data-fg="#F5F3EE">
     <div class="site-footer__inner">
-      <div class="site-footer__top">
+      <a class="site-footer__top" href="#top">Back to top<svg viewBox="0 0 11 12" fill="none" aria-hidden="true" focusable="false"><path d="M5.5 11.5V0.5M5.5 0.5L1 5M5.5 0.5L10 5" stroke="currentColor" stroke-width="1" /></svg></a>
+      <!-- The logo mark as a particle glyph field, filling the band above the
+         contacts (Figma › Footer, node 319:2849; js/field-gl.js → FOOTER).
+         Without WebGL the band stays empty. -->
+      <div class="site-footer__mark" aria-hidden="true">
+        <div class="ascii-bg" id="footer-field" hidden></div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
+
         <div class="site-footer__col site-footer__col--reach">
           <p><a href="mailto:wladyslaw.design@gmail.com">wladyslaw.design@gmail.com</a></p>
           <p><a href="tel:+48577538552">+48 577 538 552</a></p>
@@ -432,15 +448,6 @@
           <a href="#" download>Download CV</a>
         </div>
       </div>
-
-      <!-- The logo mark as a particle glyph field — the hero's effect, drawn
-         large between the contacts and the copyright (js/field-gl.js →
-         FOOTER). Without WebGL the band stays empty. -->
-      <div class="site-footer__mark" aria-hidden="true">
-        <div class="ascii-bg" id="footer-field" hidden></div>
-      </div>
-
-      <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
     </div>
   </footer>
 
@@ -474,6 +481,7 @@
   <script src="js/loader.js"></script>
   <script src="js/main.js"></script>
   <script src="js/ascii.js"></script>
+  <script type="module" src="js/field-flow.js"></script>
   <script type="module" src="js/field-gl.js"></script>
 </body>
 

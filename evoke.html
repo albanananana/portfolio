@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en" class="page-case page-ed page-evoke">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evoke v2 — fixing why people quit the first version · Wlad Albakhtsin</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Evoke v2: the next iteration of a Polish AI companion for difficult emotions, built around the reasons people quit the first version, to lift 30-day retention from 3.1% to 5%. iOS and Android, in development.">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/case.css">
+<link rel="stylesheet" href="css/case-editorial.css">
+</head>
+<body id="top">
+
+<!-- Figma "Portfolio" › Case — Evoke v2 · AiiD style (node 666:13953),
+     built like bondata-editorial.html. The frame has no Prototyping band;
+     it comes from case-studies/04-evoke-oboard-format.md, which the frame
+     follows. Images are the frame's media exported at 2x. -->
+
+<a class="ed-home" href="index.html#portfolio">← Home</a>
+
+<nav class="ed-toc" aria-label="On this page">
+  <a href="#overview">Overview</a>
+  <a href="#goal">Goal</a>
+  <a href="#problem">Problem</a>
+  <a href="#research">Research</a>
+  <a href="#ideation">Ideation</a>
+  <a href="#prototyping">Prototyping</a>
+  <a href="#design">Design</a>
+  <a href="#handoff">Handoff</a>
+  <a href="#results">Results</a>
+</nav>
+
+<main class="ed">
+
+  <!-- ══ Hero ═════════════════════════════════════════════════ -->
+  <header class="ed-hero" id="overview">
+    <p class="ed-eyebrow">Case study · Evoke</p>
+    <div class="ed-hero__row">
+      <div class="ed-hero__main">
+        <h1 class="ed-hero__title">How Evoke v2 fixes the reasons people quit the first version.</h1>
+        <p class="ed-hero__lede">Evoke is a Polish AI companion for difficult emotions: conversations, short exercises and a marketplace of psychologists. It earns on subscriptions and booked sessions, and for many people it is the step before therapy. The client came to us with a live MVP; I led the next iteration, v2, now in development.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ Facts ════════════════════════════════════════════════ -->
+  <section class="ed-facts" aria-label="Project facts">
+    <dl class="ed-facts__grid">
+      <div class="ed-fact">
+        <dt>My contribution</dt>
+        <dd>Discovery and research<br>UX and information architecture<br>Usability and desirability testing<br>Art direction and design system<br>Guidelines for development</dd>
+      </div>
+      <div class="ed-fact"><dt>Industry</dt><dd>Mental health</dd></div>
+      <div class="ed-fact"><dt>Platform</dt><dd>iOS and Android</dd></div>
+      <div class="ed-fact"><dt>Timeline</dt><dd>Jan – May 2026</dd></div>
+      <div class="ed-fact"><dt>Status</dt><dd>In development</dd></div>
+    </dl>
+  </section>
+
+  <!-- ══ Cover — 1440 × 674, edge to edge, the v2 film ═════════ -->
+  <figure class="ed-cover">
+    <video class="case__video" muted loop playsinline preload="none" poster="assets/case-evoke/cover.webp" aria-label="A short film of Evoke v2 on phones">
+      <source src="assets/case-evoke/cover.mp4" type="video/mp4">
+    </video>
+  </figure>
+
+  <div class="ed-body">
+
+    <!-- ══ 1. Primary goal ══ -->
+    <section class="ed-sec" id="goal">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Goal</h2>
+          <p class="ed-text">Lift 30-day retention <strong>from 3.1% to 5% within three months of launch</strong>; the category median is 3.3%. Retention feeds both revenue streams: people subscribe and book only after weeks of use. No daily-use target on purpose: people open Evoke when something happens.</p>
+          <div class="ed-group">
+            <p class="ed-group__title">Tracked alongside it</p>
+            <ol class="ed-list">
+              <li><span>01</span><p>First messages: screens before the first message in the flows, the share who send one after launch</p></li>
+              <li><span>02</span><p>Follow-ups: opened, and returns within two days, the early read on retention</p></li>
+              <li><span>03</span><p>Upgrades: explaining the paid plan in testing, upgrades after launch</p></li>
+              <li><span>04</span><p>Bookings: reaching the booking screen from a chat in testing, bookings after launch</p></li>
+              <li><span>05</span><p>Usability: task success, SEQ and SUS on the MVP's five tasks</p></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 2. Results in testing ══ -->
+    <section class="ed-sec" aria-labelledby="results-early-title">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2" id="results-early-title">Results at a glance</h2>
+          <p class="ed-text">v2 isn't live yet: the live MVP against the v2 prototype, same five tasks, 8 participants each. Screens are counted in the flows.</p>
+          <figure class="ed-deltas">
+            <ul class="ed-deltas__list">
+              <li class="ed-delta"><p class="ed-delta__label">Screens before the first message:</p><p class="ed-delta__values"><span class="ed-delta__from">5</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="5">1</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Explained correctly what the paid plan adds:</p><p class="ed-delta__values"><span class="ed-delta__from">3 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="3">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, reaching the booking screen from a chat:</p><p class="ed-delta__values"><span class="ed-delta__from">2 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="2">6 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, finding an exercise for how you feel:</p><p class="ed-delta__values"><span class="ed-delta__from">4 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Average task ease, SEQ 1–7:</p><p class="ed-delta__values"><span class="ed-delta__from">4.1</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4.1">5.8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">SUS score:</p><p class="ed-delta__values"><span class="ed-delta__from">58</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="58">76 (+18 points)</span></p></li>
+            </ul>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3. Problem statement ══ -->
+    <section class="ed-sec" id="problem">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Problem</h2>
+          <p class="ed-text">Only <strong>3.1% of MVP users still opened Evoke 30 days after install</strong>, and both revenue streams went with them: <strong>0.8% upgraded, 0.4% booked a specialist</strong>. The MVP asked for an account <strong>before the first word</strong>, <strong>cut conversations at a message limit</strong>, <strong>graded people's emotions</strong> and hid specialists in a tab few opened.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4. Research I ran ══ -->
+    <section class="ed-sec" id="research">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Research</h2>
+          <ul class="ed-stats">
+            <li class="ed-stat"><p class="ed-stat__value" data-count>10</p><p class="ed-stat__label">in-depth interviews</p><p class="ed-stat__note">with MVP users, 4 of whom had left</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>8</p><p class="ed-stat__label">baseline test participants</p><p class="ed-stat__note">5 tasks on the MVP, and SUS</p></li>
+            <li class="ed-stat"><p class="ed-stat__value" data-count>4</p><p class="ed-stat__label">licensed psychologists</p><p class="ed-stat__note">from the marketplace, interviewed</p></li>
+          </ul>
+
+          <div class="ed-group">
+            <p class="ed-group__title">Also</p>
+            <ol class="ed-list">
+              <li><span>01</span><p>Funnel analytics of the live MVP, from install to booked session</p></li>
+              <li><span>02</span><p>Support emails and store reviews, tagged by theme</p></li>
+              <li><span>03</span><p>Nobody in acute crisis recruited; a psychologist on call in every session</p></li>
+            </ol>
+          </div>
+
+          <div class="ed-sub">
+            <h3 class="ed-h3">Key findings</h3>
+            <figure class="ed-bars">
+              <ol class="ed-list ed-findings">
+                <li style="--p:.7"><span>01</span><div class="ed-finding"><p>Interviewees who had thought about therapy but never went</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>7 of 10</span></div><p class="ed-finding__note">“I’m not sure my problem is big enough.”</p></div></li>
+                <li><span>02</span><div class="ed-finding"><p>People paid or booked only after three weeks</p><p class="ed-finding__note">The median upgrade came on day 19</p></div></li>
+                <li style="--p:.38"><span>03</span><div class="ed-finding"><p>New users who left at sign-up, before a single message</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>38%</span></div></div></li>
+                <li style="--p:.17"><span>04</span><div class="ed-finding"><p>Free conversations that hit the message limit, often mid-thought</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>17%</span></div><p class="ed-finding__note">Only 1 in 25 of those users upgraded</p></div></li>
+                <li><span>05</span><div class="ed-finding"><p>People came before an event they dreaded, almost never after it</p><p class="ed-finding__note">And scores about themselves read as a grade: “I don’t want to be rated for how I feel”</p></div></li>
+                <li style="--p:.06"><span>06</span><div class="ed-finding"><p>Users who ever opened the specialists tab</p><div class="ed-bar__track"><span class="ed-bar__fill"></span><span class="ed-bar__value" data-count>6%</span></div><p class="ed-finding__note">The riskiest moment, psychologists said: a chatbot reply to someone in crisis</p></div></li>
+              </ol>
+              <figcaption class="ed-caption">Source: MVP funnel analytics, support emails and store reviews, baseline usability test (n = 8), interviews with 10 users and 4 psychologists.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5. Ideation ══ -->
+    <section class="ed-sec" id="ideation">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Ideation</h2>
+          <ol class="ed-list">
+            <li><span>01</span><p>Design sprint with the founders and a clinical psychologist</p></li>
+            <li><span>02</span><p>Journey map from first launch to first booked session, MVP vs v2</p></li>
+            <li><span>03</span><p>Effort vs. Impact matrix for 40+ ideas</p></li>
+          </ol>
+
+          <figure class="ed-media ed-figure">
+            <div class="case__figure ed-zoom" style="--ar:1848 / 1702" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-evoke/journey.webp" alt="Effort vs. Impact matrix: 42 ideas from the design sprint sorted into quick wins, big bets, fill-ins and not now, coloured by taken into v2, later and dropped" width="1848" height="1702" loading="lazy" decoding="async">
+            </div>
+            <figcaption class="ed-caption">Effort vs. Impact matrix: 42 ideas from the design sprint. Everything that pushes daily use for its own sake was dropped.</figcaption>
+          </figure>
+
+          <div class="ed-sub">
+            <h3 class="ed-h3">Key ideas we took forward</h3>
+            <ol class="ed-list">
+              <li><span>01</span><p>Talk first, sign up later</p></li>
+              <li><span>02</span><p>Evoke follows up after an event you mentioned: "How did the interview go?"</p></li>
+              <li><span>03</span><p>Limits that never cut a conversation</p></li>
+              <li><span>04</span><p>Exercises sorted by how you feel</p></li>
+              <li><span>05</span><p>A way to a specialist from inside the chat</p></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 6. Prototyping ══ -->
+    <section class="ed-sec" id="prototyping">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Prototyping</h2>
+          <p class="ed-text">I tested the flows in Figma with <strong>8 MVP users on the baseline's five tasks</strong>, with a psychologist on call.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 7. Design process ══ -->
+    <section class="ed-sec" id="design">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Design</h2>
+          <p class="ed-text">v2 kept the MVP's core: <strong>conversation, exercises, a growing profile and specialists</strong>. I reworked the five places where the funnel lost people and moved every screen onto a new design system: <strong>one typeface, blue and pink ramps and Material UI's 8px grid</strong>. A desirability test with 30 people chose between three directions: the MVP read as <strong>"impersonal" and "sterile"</strong>, the winner as <strong>"calm" and "trustworthy"</strong>. A second designer helped under my direction.</p>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 01</p>
+              <h3 class="ed-h3">Evoke follows up on what you told it</h3>
+              <p class="ed-text">MVP scores like <strong>"Emotional expression: 80"</strong> read as a report card and gave no reason to return. v2 keeps only <strong>numbers that describe, not grade</strong>, and when you mention an interview or a talk with your boss, <strong>Evoke asks afterwards how it went</strong>. The question comes right in the notification, <strong>"How did the talk with your boss go?"</strong>, and follow-ups for any topic can be turned off in one tap.</p>
+            </div>
+            <figure class="shot__frame ed-media ed-media--fit" style="--ar:934 / 958">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-evoke/notification.webp" aria-label="A lock screen where the Evoke notification asks how the talk with your boss went; a tap opens the chat at that question">
+                <source src="assets/case-evoke/notification.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 02</p>
+              <h3 class="ed-h3">From a conversation to a specialist</h3>
+              <p class="ed-text">Most users <strong>aren't ready for a therapist's office</strong>; the chat is where they find out. When a topic keeps coming back, <strong>Evoke suggests a specialist in the chat</strong>, with prices one tap away, and <strong>the user approves the summary</strong> the psychologist sees. In a crisis the card leads with a crisis line. All four psychologists signed off on the flow.</p>
+            </div>
+            <figure class="shot__frame ed-media ed-media--fit" style="--ar:934 / 958">
+              <video class="case__video" muted loop playsinline preload="none" poster="assets/case-evoke/specialist.webp" aria-label="A chat about trouble sleeping ends with a Find a specialist button, which opens a list of psychologists and then a profile with Book a visit">
+                <source src="assets/case-evoke/specialist.mp4" type="video/mp4">
+              </video>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 03</p>
+              <h3 class="ed-h3">Activity library</h3>
+              <p class="ed-text">For evenings when people don't want to talk. Exercises are sorted <strong>by how you feel, not by technique</strong>. Photos won for one recommended exercise but <strong>turned into noise in a list of 80</strong>, so the mixed version stayed. Recommendations are signed <strong>"Rekomendacje Evoke"</strong>, so the app speaks in one voice.</p>
+            </div>
+            <figure class="ed-media">
+              <div class="shot__frame ed-zoom" style="--ar:1848 / 1523" role="button" tabindex="0" aria-label="Open the image full screen">
+                <img src="assets/case-evoke/d4.webp" alt="The activity library: an Evoke recommendation on top, recent activities below" width="1848" height="1523" loading="lazy" decoding="async">
+              </div>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 04</p>
+              <h3 class="ed-h3">Limits that never cut a conversation</h3>
+              <p class="ed-text">The MVP counted <strong>"4 of 200 messages"</strong> above the chat and cut people off mid-thought. v2 plans count <strong>conversations, and a started one can always be finished</strong>; the upgrade comes after it ends. 3 of 8 testers couldn't tell the plans apart, so <strong>the comparison now leads with what changes for you</strong>.</p>
+            </div>
+            <figure class="ed-media">
+              <div class="shot__frame ed-zoom" style="--ar:1848 / 1528" role="button" tabindex="0" aria-label="Open the image full screen">
+                <img src="assets/case-evoke/d3.webp" alt="The plan screen: Evoke Basic and Evoke Pro, with what each one includes" width="1848" height="1528" loading="lazy" decoding="async">
+              </div>
+            </figure>
+          </article>
+
+          <article class="ed-decision">
+            <div class="ed-sub">
+              <p class="ed-eyebrow">Decision 05</p>
+              <h3 class="ed-h3">Talk first, sign up later</h3>
+              <p class="ed-text">The MVP asked for a login before the first word, and <strong>38% left right there</strong>. In v2 <strong>one screen comes first</strong>: what Evoke is, that it isn't a crisis service, and consent to process what you share. Then the conversation starts, and saving it with Apple, Google or email comes after. In testing, a sign-up prompt after three messages felt like a paywall, so <strong>it moved to the end of the first conversation</strong>.</p>
+            </div>
+            <figure class="ed-media">
+              <div class="shot__frame ed-zoom" style="--ar:1848 / 1528" role="button" tabindex="0" aria-label="Open the image full screen">
+                <img src="assets/case-evoke/d1.webp" alt="The v2 chat: a conversation about procrastination, started before any account" width="1848" height="1528" loading="lazy" decoding="async">
+              </div>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 8. Handoff ══ -->
+    <section class="ed-sec" id="handoff">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Handoff</h2>
+          <p class="ed-text">Mockups, specs and a Material UI theme went to development with psychologist-reviewed scripts. <strong>v2 is being built now</strong>, and the site is collecting a waitlist.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 9. What testing has shown so far ══ -->
+    <section class="ed-sec" id="results">
+      <div class="ed-sec__row">
+        <div class="ed-sec__content">
+          <h2 class="ed-h2">Results</h2>
+          <p class="ed-text">v2 isn't live yet: the live MVP against the v2 prototype, same five tasks, 8 participants each. Screens are counted in the flows.</p>
+          <figure class="ed-deltas">
+            <ul class="ed-deltas__list">
+              <li class="ed-delta"><p class="ed-delta__label">Screens before the first message:</p><p class="ed-delta__values"><span class="ed-delta__from">5</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="5">1</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Explained correctly what the paid plan adds:</p><p class="ed-delta__values"><span class="ed-delta__from">3 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="3">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, reaching the booking screen from a chat:</p><p class="ed-delta__values"><span class="ed-delta__from">2 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="2">6 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Task success, finding an exercise for how you feel:</p><p class="ed-delta__values"><span class="ed-delta__from">4 of 8</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4">7 of 8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">Average task ease, SEQ 1–7:</p><p class="ed-delta__values"><span class="ed-delta__from">4.1</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="4.1">5.8</span></p></li>
+              <li class="ed-delta"><p class="ed-delta__label">SUS score:</p><p class="ed-delta__values"><span class="ed-delta__from">58</span><span class="ed-delta__arrow" aria-hidden="true">→</span><span class="ed-sr">to</span><span class="ed-delta__to" data-count data-from="58">76 (+18 points)</span></p></li>
+            </ul>
+          </figure>
+
+          <div class="ed-sub">
+            <h3 class="ed-h3">What we will measure at launch</h3>
+            <p class="ed-text">v2 cohorts from the first three months against MVP cohorts of the same length.</p>
+            <ol class="ed-list">
+              <li><span>01</span><p>30-day retention: 3.1% → at least 5%, the primary goal</p></li>
+              <li><span>02</span><p>First message sent: from 54%</p></li>
+              <li><span>03</span><p>Follow-ups opened and returns within two days: new, no baseline yet</p></li>
+              <li><span>04</span><p>Upgrades within 30 days: from 0.8%</p></li>
+              <li><span>05</span><p>Specialist bookings: from 0.4%</p></li>
+              <li><span>06</span><p>Conversations cut by the limit: from 17% to none</p></li>
+            </ol>
+          </div>
+
+          <figure class="ed-media">
+            <div class="shot__frame ed-zoom" style="--ar:1920 / 975" role="button" tabindex="0" aria-label="Open the image full screen">
+              <img src="assets/case-evoke/screens.webp" alt="Five v2 screens: home with the personalization level, conversation history, the Important for you feed and the emotional profile" width="1920" height="975" loading="lazy" decoding="async">
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ══ Other works — the home page's work rows, all but this case ══ -->
+  <section class="section section--works" id="works">
+    <div class="shell">
+      <h2 class="eyebrow col-right">[ Other works ]</h2>
+    </div>
+
+    <ol class="works">
+      <li class="work work--bondata">
+        <a class="work__row" href="bondata-editorial.html">
+          <span class="work__index">01</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Bondata</p>
+                <h3 class="work__name">Redesigning an HR analytics app to boost manager engagement</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Web app</li>
+                <li>Redesign</li>
+                <li>HR analytics</li>
+              </ul>
+            </div>
+            <p class="work__note">An employee-engagement analytics platform for HR leads and managers</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-bondata/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--dishcover">
+        <a class="work__row" href="dishcover.html">
+          <span class="work__index">03</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Dishcover</p>
+                <h3 class="work__name">Designing a recipe app to make home cooking feel less like work</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Mobile app</li>
+                <li>In development</li>
+              </ul>
+            </div>
+            <p class="work__note">A culinary app with easy, step-by-step recipes for every taste</p>
+          </div>
+          <p class="work__view"><span>(</span><span class="work__view-word">view</span><span class="work__arrow"
+              aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
+                <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
+              </svg></span><span>)</span></p>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-dishcover/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </a>
+      </li>
+      <li class="work work--yourvet">
+        <div class="work__row work__row--off" aria-disabled="true">
+          <span class="work__index">04</span>
+          <div class="work__body">
+            <div class="work__head">
+              <div class="work__title">
+                <p class="work__project">Your Vet</p>
+                <h3 class="work__name">Designing a vet marketplace to book a trusted vet in a few clicks</h3>
+              </div>
+              <ul class="work__tags">
+                <li>Web platform</li>
+                <li>Marketplace</li>
+              </ul>
+            </div>
+            <p class="work__status"><span class="work__status-dot" aria-hidden="true"></span>In progress</p>
+          </div>
+          <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" alt="" width="248" height="187"
+              loading="lazy" decoding="async"></span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+<footer class="site-footer" id="contact">
+  <div class="site-footer__inner">
+    <a class="site-footer__top" href="#top">Back to top<svg viewBox="0 0 11 12" fill="none" aria-hidden="true" focusable="false"><path d="M5.5 11.5V0.5M5.5 0.5L1 5M5.5 0.5L10 5" stroke="currentColor" stroke-width="1" /></svg></a>
+    <!-- The logo mark as a particle glyph field, filling the band above the
+       contacts (Figma › Footer, node 319:2849; js/field-gl.js → FOOTER).
+       Without WebGL the band stays empty. -->
+    <div class="site-footer__mark" aria-hidden="true">
+      <div class="ascii-bg" id="footer-field" hidden></div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p class="site-footer__copy">2026 © Wlad Albakhtsin</p>
+
+      <div class="site-footer__col site-footer__col--reach">
+        <p><a href="mailto:wladyslaw.design@gmail.com">wladyslaw.design@gmail.com</a></p>
+        <p><a href="tel:+48577538552">+48 577 538 552</a></p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--social" aria-label="Elsewhere">
+        <a href="#">LinkedIn</a>
+        <a href="#">Behance</a>
+        <a href="#">Dribble</a>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--cv">
+        <a href="#" download>Download CV</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Same gate as the home page: the footer mark is the GPU field, and
+     without WebGL2 the band simply stays empty. */
+  (function () {
+    var root = document.documentElement, ok = false;
+    try {
+      if (location.protocol !== 'file:') {
+        var gl = document.createElement('canvas').getContext('webgl2');
+        ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
+        var lose = gl && gl.getExtension('WEBGL_lose_context');
+        if (lose) lose.loseContext();
+      }
+    } catch (e) {}
+    root.dataset.field = ok ? 'gl' : 'cpu';
+  })();
+</script>
+<script src="vendor/gsap.min.js"></script>
+<script src="js/case.js"></script>
+<script src="js/case-editorial.js"></script>
+<script type="module" src="js/field-flow.js"></script>
+<script type="module" src="js/field-gl.js"></script>
+</body>
+</html>

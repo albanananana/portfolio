@@ -1,6 +1,7 @@
 /* ============================================================
    Wlad Albakhtsin — portfolio
-   Built against Figma "Portfolio" › Desktop - 9 (node 239:1139).
+   Built against Figma "Portfolio" › Desktop - 9 (node 239:1139);
+   the home page now follows Desktop - 18 (node 422:20032).
 
    FLUID SYSTEM
    ------------
@@ -47,15 +48,15 @@
 
 /* ── Type scale ───────────────────────────────────────────── */
 :root{
-  --fs-hero:    max(26px,   calc(40 * var(--u)));   /* intro — 40, up from the file's 32 */
+  --fs-hero:    max(32px,   calc(60 * var(--u)));   /* intro heading    */
   --fs-lead:    max(26px,   calc(40 * var(--u)));   /* About lead       */
-  --fs-contact: max(22px,   calc(32 * var(--u)));   /* email + phone    */
+  --fs-contact: max(22px,   calc(30 * var(--u)));   /* email + phone    */
   --fs-title:   max(19px,   calc(24 * var(--u)));   /* work + role name */
   --fs-chip:    max(15px,   calc(20 * var(--u)));
   --fs-body:    max(14.5px, calc(16 * var(--u)));   /* About cols       */
   --fs-meta:    max(13.5px, calc(15 * var(--u)));   /* eyebrow, org     */
   --fs-small:   max(13px,   calc(14 * var(--u)));   /* role text, view  */
-  --fs-tag:     max(11px,   calc(12 * var(--u)));   /* work tags        */
+  --fs-tag:     max(11px,   calc(12 * var(--u)));   /* work tags, caption */
 
   --fs-nav:     max(13px,   calc(15    * var(--nav-u)));
   --fs-tab:     max(13px,   calc(15    * var(--nav-u)));
@@ -83,17 +84,22 @@
 :root{
   --paper:      #F5F3EE;   /* page ground                        */
   --paper-bright:#FFFEFC;  /* kept for reference, unused         */
-  --sand:       #E5DFD5;   /* About band, work-card tags         */
-  --nav-bg:     #FFFFFF;   /* nav bar + inactive tab fill        */
+  --sand:       #E5DFD5;   /* work-card tags                     */
+  --nav-bg:     #FFFFFF;   /* nav bar, inactive tab, About band  */
   --ink:        #121212;   /* body copy, inactive tab label      */
+  --ink-soft:   #737373;   /* photo caption, "view" in the link  */
+  --ink-index:  #423B3B;   /* work row numbers                   */
   --accent:     #D42823;   /* eyebrows, active tab label         */
   --coral:      #FA4D48;   /* hairline rules                     */
   --rule:       #B8B5B2;   /* nav hairline                       */
   --media:      #E6E3E3;   /* project image placeholder          */
+  --stack-near: #F5F3F3;   /* work shot, back card (grey-100)    */
+  --stack-far:  #FCFBFB;   /* work shot, last card (grey-50)     */
   --tag-bg:     var(--sand);  /* work-card tag chip              */
   --toggle-bg:  #C8BEA6;   /* language switch track              */
   --dark:       #121212;   /* footer ground                      */
   --on-dark:    #F5F3EE;   /* footer copy                        */
+  --graphite:   #2A2A2A;   /* About band                         */
 
   --chip-fields:#DA9E2E;
   --chip-tools: #2EC0DA;
@@ -367,70 +373,116 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 .eyebrow--ink{ color:var(--ink) }
 
 /* ── 01 Intro ─────────────────────────────────────────────── */
-/* The hero fills the viewport and the nav floats over its top edge,
-   so <main> takes no top padding. The character field is absolutely
-   placed inside it, which is what pins it here. */
+/* One screen: the wordmark field fills the band between the bar and the
+   copy, and the copy sits on the hero's bottom edge — photo on the left,
+   heading and the three facts in the right-hand column. The bar floats
+   over the top, so the band starts under it. */
 .section--intro{
   position:relative;
   overflow:hidden;
   min-height:100vh;
   min-height:100svh;
-  display:flex;
+  display:flex; flex-direction:column;
+  padding:var(--nav-h) 0 var(--sp-40);
 }
-.intro{ position:relative; z-index:1; width:100% }
+/* The field's box — js/field-gl.js and js/ascii.js read it. The padding
+   is the content column, which the GPU field places the mark against. */
+.intro__mark{ position:relative; flex:1; min-height:calc(240 * var(--u)) }
+.intro__mark .ascii-bg{ padding:0 var(--gutter) }
 
-/* In the file the copy starts at y=213 of an 828 hero. Held as a
-   distance rather than a percentage so it keeps the same gap under
-   the bar whatever the viewport height is. */
-.intro__text{
-  margin-top:calc(213 * var(--u));
-  /* on the content column's left edge, in line with the logo and every
-     other left-hand element */
-  width:calc(587em / 32);           /* the file's 587px measure for 32px type, kept as a measure in ems,
-                                       so the lines break the same at 40px and on the floor */
-  font-size:var(--fs-hero); line-height:1.08; letter-spacing:-.05em;
-  color:var(--ink);
+.intro{
+  position:relative; z-index:1;
+  display:flex; justify-content:space-between; align-items:flex-start;
 }
-/* The first line is the page's h1 — the same type as the paragraph
-   under it, so the heading carries the meaning without a type change. */
+
+.intro__aside{ flex:none; display:flex; flex-direction:column; gap:var(--sp-8) }
+/* The frame clips, the photo inside it can be scaled — js/loader.js
+   opens the frame upward while the photo settles from a slight zoom. */
+.intro__frame{
+  display:block; overflow:hidden; border-radius:2px;
+  width:calc(207 * var(--u)); height:calc(259 * var(--u));
+}
+.intro__photo{ width:100%; height:100%; object-fit:cover }
+.intro__caption{
+  font-size:var(--fs-tag); font-weight:300; font-style:italic;
+  line-height:1.5; letter-spacing:-.02em;
+  color:var(--ink-soft);
+}
+
+.intro__text{ width:66.1%; color:var(--ink) }
 .intro__text h1{
-  font-size:inherit; font-weight:inherit; line-height:inherit;
-  letter-spacing:inherit; margin:0;
+  font-size:var(--fs-hero); font-weight:400;
+  line-height:1.08; letter-spacing:-.07em;
 }
-.intro__text > * + *{ margin-top:var(--sp-24) }
+/* Each line is a mask its text rises out of (js/loader.js). The padding
+   keeps the descenders inside the mask; the negative margin gives the
+   space back so the lines sit exactly as set. */
+.intro__line{ display:block; overflow:hidden; padding-bottom:.12em; margin-bottom:-.12em }
+.intro__line > span{ display:block }
+/* 663 → 708 in the file */
+.intro__facts{
+  margin-top:calc(45 * var(--u));
+  display:flex; justify-content:space-between; align-items:flex-start;
+  gap:var(--sp-24);
+  font-size:var(--fs-body); line-height:1.5; letter-spacing:-.02em;
+}
+.intro__focus{ width:calc(321em / 16) }      /* the file's 321px box for 16px type, in ems */
+.intro__skills, .intro__place{ white-space:nowrap }
 
 /* ── 02 Selected works ────────────────────────────────────── */
-.section--works{ padding:var(--sp-120) 0 }
-.works{ margin-top:var(--sp-40); border-bottom:.5px solid var(--rule) }
+/* Figma › Work row (node 422:20371). The rows run edge to edge with the
+   gutter inside them, so the hairlines and the hover ground reach both
+   window edges. Four tracks: the number; the name column, starting on
+   the right-hand column's line (x=501, 33.9% of the content width); the
+   view link; the shot, 248 × 187, on the right edge. */
+.section--works{ padding:var(--sp-120) 0 2px }
+.works{ margin-top:var(--sp-40) }
 
 .work{ border-top:.5px solid var(--rule) }
 .work__row{
-  position:relative; z-index:0;
-  display:flex; align-items:stretch;
-  padding:var(--sp-32) 0;
-  /* the strips' height, proportional like their widths so the media
-     keeps the file's aspect; the padding around it is spacing */
-  min-height:calc(218 * var(--lu) + 2 * var(--sp-32));
+  display:grid;
+  grid-template-columns:33.9% minmax(0, 1fr) auto calc(248 * var(--lu));
+  align-items:start;
+  padding:var(--sp-32) var(--gutter);
+  transition:background-color .25s ease;
+  isolation:isolate;   /* the shot's back cards sit on the row's ground */
+}
+.work__row:hover{ background:var(--nav-bg) }
+
+.work__index{
+  font-size:var(--fs-body); line-height:normal;
+  color:var(--ink-index);
 }
 
-/* 860 of left column + 960 of media = 1820 against a 1360 content
-   column. That overflow is in the file: the media strips run off
-   the right edge and are cut by the viewport. */
-.work__left{
-  flex:none; width:calc(860 * var(--lu));
-  padding-right:var(--sp-40);
-  display:flex;
+/* As tall as the shot: name and tags on top, the description on its foot. */
+.work__body{
+  align-self:stretch;
+  width:calc(420 * var(--u)); max-width:100%;   /* room for the headline on two lines */
+  display:flex; flex-direction:column; justify-content:space-between; gap:var(--sp-24);
 }
-.work__left > *{ flex:none; width:33.333% }
-
-.work__meta{ padding-right:var(--sp-32); display:flex; flex-direction:column; gap:var(--sp-8) }
+.work__head{ display:flex; flex-direction:column; gap:var(--sp-16) }
+/* The project's name as an eyebrow, and what the work achieved as the
+   headline under it. */
+.work__title{ display:flex; flex-direction:column; gap:var(--sp-8) }
+.work__project{
+  font-size:var(--fs-meta); line-height:normal;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
 .work__name{
-  font-size:var(--fs-title); font-weight:600;
-  line-height:normal; letter-spacing:-.05em;
+  font-size:var(--fs-title); font-weight:500;
+  line-height:1.15; letter-spacing:-.05em;
+  text-wrap:balance;
 }
-.work__note{ font-size:var(--fs-body); line-height:normal; letter-spacing:-.05em }
+.work__note{
+  max-width:calc(255 * var(--u));   /* the file's description box */
+  font-size:var(--fs-body); line-height:normal; letter-spacing:-.05em;
+  opacity:.6;
+}
 
-.work__tags{ display:flex; flex-wrap:wrap; align-content:flex-start; gap:var(--sp-4) }
+.work__tags{
+  display:flex; flex-wrap:wrap; align-content:flex-start; gap:var(--sp-4);
+}
 .work__tags li{
   background:var(--tag-bg); border-radius:2px;
   padding:calc(4 * var(--u)) calc(8 * var(--u));
@@ -438,106 +490,133 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   text-transform:uppercase;
 }
 
+/* "( view )" — the word in the soft ink; the arrow opens between it and
+   the closing bracket on hover. 40 to the shot. */
 .work__view{
-  text-align:center;
+  margin-right:var(--sp-40);
+  display:flex; align-items:center;
+  white-space:nowrap;
   font-size:var(--fs-small); line-height:1.2; letter-spacing:-.02em;
   text-transform:uppercase;
+  transition:transform .15s ease-out;
 }
-
-/* The media strip, per the Work row component (node 292:983). At rest
-   only the first shot is there, 248 wide and as tall as the row. Three
-   106 x 79 thumbnails sit behind it and slide in from the right on
-   hover, one after another. */
-.work__media{
-  flex:none; width:calc(960 * var(--lu));
-  display:flex; gap:calc(17 * var(--lu)); align-items:flex-start;
-}
-.work__shot{
-  flex:none; align-self:stretch;
-  width:calc(248 * var(--lu));
-  background:var(--media);
-  overflow:hidden;
-}
-.work__shot img, .work__thumb img{
-  width:100%; height:100%; display:block; object-fit:cover;
-}
-.work__thumb{
-  flex:none; overflow:hidden;
-  width:calc(106 * var(--lu)); height:calc(79 * var(--lu));
-  background:var(--media);
-  opacity:0; transform:translateX(calc(40 * var(--lu)));
-  transition:opacity .3s ease, transform .45s cubic-bezier(.22,.61,.36,1);
-}
-.work__thumb:nth-of-type(3){ transition-delay:.05s }
-.work__thumb:nth-of-type(4){ transition-delay:.1s }
-
-/* The row's own ground turns white under the pointer. The fill runs to
-   both window edges, so it is painted by a layer that reaches past the
-   gutters rather than by the row's own box. */
-.work__row::before{
-  content:""; position:absolute; z-index:-1;
-  top:0; bottom:0;
-  left:calc(var(--gutter) * -1); right:calc(var(--gutter) * -1);
-  background:var(--nav-bg);
-  opacity:0; transition:opacity .25s ease;
-}
-.work__row:hover::before{ opacity:1 }
-.work__row:hover .work__thumb{ opacity:1; transform:none }
-
-/* The link sits on the top line with the name and the tags, not in the
-   middle of the row: the column stretches, this one hugs. */
-.work__view{
-  align-self:flex-start;
-  display:flex; align-items:center; justify-content:center;
-  white-space:pre;
-}
+/* Figma › Work row, state=hover: the stack widens the media strip by
+   29 to the left, so the link steps back by the same 29. */
+.work__row:hover .work__view,
+.work__row:focus-visible .work__view{ transform:translateX(calc(-29 * var(--lu))) }
+.work__view-word{ color:var(--ink-soft); padding:0 calc(2 * var(--u)) }
+/* collapsed to nothing at rest, so the brackets sit 2 off the word on
+   both sides; on hover it opens to the arrow plus its own 2 */
 .work__arrow{
-  display:inline-flex; align-items:center; overflow:hidden;
+  display:inline-flex; align-items:center; justify-content:flex-end; overflow:hidden;
   width:0; opacity:0;
   transition:width .3s cubic-bezier(.22,.61,.36,1), opacity .25s ease;
 }
 .work__arrow svg{ width:calc(12 * var(--u)); height:auto; flex:none }
-.work__row:hover .work__arrow{ width:calc(18 * var(--u)); opacity:1 }
+.work__row:hover .work__arrow{ width:calc(14 * var(--u)); opacity:1 }
+
+.work__shot{
+  position:relative;
+  display:block; aspect-ratio:248 / 187;
+  background:var(--media);
+}
+.work__shot img{ width:100%; height:100%; display:block; object-fit:cover }
+
+/* Figma › Work row, state=hover: two smaller cards slide out from
+   behind the shot to the left, centred on it — a stack. In the
+   248 × 187 frame the near one is 229 × 173 at x −17, y 7, the far
+   one 224 × 161 at x −29, y 13. At rest both sit hidden behind the
+   shot. Smart animate, ease out, 150 ms. */
+.work__shot::before,
+.work__shot::after{
+  content:""; position:absolute; z-index:-1;
+  opacity:0;
+  transition:transform .15s ease-out, opacity .15s ease-out;
+}
+.work__shot::before{          /* far */
+  left:-11.69%; top:6.95%; width:90.32%; height:86.1%;
+  background:var(--stack-far);
+  transform:translateX(12.95%);
+}
+.work__shot::after{           /* near */
+  left:-6.85%; top:3.74%; width:92.34%; height:92.51%;
+  background:var(--stack-near);
+  transform:translateX(7.42%);
+}
+/* A case with its own colour stacks it behind the shot: the near card
+   at 70% of the colour, the far one at 40%, each mixed into the row's
+   white so they read as tints yet hide one another like solid cards.
+   A work without a colour keeps the greys. */
+.work--bondata{ --work:#72A5FF }     /* Bondata blue-400, its case page ground */
+.work--evoke{ --work:#72A5FF }       /* Evoke's case ground in the file is the same blue-400 */
+.work--dishcover{ --work:#FF8177 }   /* Dishcover red-400 */
+.work--bondata, .work--dishcover, .work--evoke{
+  --stack-near:color-mix(in srgb, var(--work) 70%, var(--nav-bg));
+  --stack-far: color-mix(in srgb, var(--work) 40%, var(--nav-bg));
+}
+/* A work not ready to open: no link and no view, faded, no hover.
+   Its shot keeps the last column the view would have pushed it to. */
+.work__row--off{ cursor:default }
+.work__row--off:hover{ background:none }
+.work__row--off .work__index, .work__row--off .work__head{ opacity:.45 }
+/* Instead of the description: what state the work is in. Full ink, so it
+   reads first on a faded row; the dot breathes slowly. */
+.work__status{
+  display:inline-flex; align-items:center; gap:calc(8 * var(--u));
+  font-size:var(--fs-small); line-height:1.2; letter-spacing:-.02em;
+  text-transform:uppercase;
+}
+.work__status-dot{
+  width:calc(7 * var(--u)); height:calc(7 * var(--u)); flex:none;
+  border-radius:50%; background:var(--coral);
+  animation:work-pulse 2.4s ease-in-out infinite;
+}
+@keyframes work-pulse{ 50%{ opacity:.35 } }
+@media (prefers-reduced-motion:reduce){ .work__status-dot{ animation:none } }
+.work__row--off .work__shot{ grid-column:4 }
+.work__row--off .work__shot::before, .work__row--off .work__shot::after{ display:none }
+.work__row:hover .work__shot::before,
+.work__row:hover .work__shot::after,
+.work__row:focus-visible .work__shot::before,
+.work__row:focus-visible .work__shot::after{ opacity:1; transform:none }
 
 /* ── 03 About ─────────────────────────────────────────────── */
+/* Figma › Frame 59 (422:20057): a graphite band, the photo hidden, the
+   eyebrow and copy in paper, the lead in red. */
 .section--about{
-  background:var(--sand);
+  background:var(--graphite); color:var(--on-dark);
   padding:var(--sp-120) 0;
 }
 .about{ display:flex; align-items:flex-start; justify-content:space-between }
+.about__aside{ display:none }
+.section--about .eyebrow{ color:var(--on-dark) }
 
 .about__aside{
   flex:none;
   position:sticky; top:calc(var(--nav-h) + var(--sp-24));
-  display:flex; flex-direction:column; align-items:center; gap:var(--sp-8);
 }
-/* The photo is the file's own export — already cut to the star, with
-   transparent corners — so it needs no mask here. 375.8 in the file. */
 .about__photo{
   display:block;
-  width:calc(375.82 * var(--u)); height:auto; aspect-ratio:1;
-}
-.about__caption{
-  font-size:var(--fs-tag); font-weight:300; font-style:italic;
-  line-height:1.5; letter-spacing:-.02em; text-align:center;
-  color:var(--ink);
+  width:calc(177 * var(--u)); height:calc(236 * var(--u));
+  object-fit:cover; border-radius:2px;
 }
 
-.about__body{ width:66.1%; display:flex; flex-direction:column; gap:var(--sp-160) }
+.about__body{ width:66.1%; margin-left:auto; display:flex; flex-direction:column; gap:var(--sp-160) }
 
 .about__head{ display:flex; flex-direction:column; gap:var(--sp-24) }
 .about__lead{
   width:calc(591em / 40);            /* the file's 591px box for 40px type, in ems */
   font-size:var(--fs-lead); font-weight:600;
   line-height:1.1; letter-spacing:-.04em;
-  color:var(--ink);
+  color:var(--accent);
 }
 
 .about__cols{
+  width:calc(787 * var(--u)); max-width:100%;   /* Frame 57: 787 wide, the second column at 465 */
   display:flex; justify-content:space-between;
-  font-size:var(--fs-body); font-weight:500;
+  font-size:var(--fs-body); font-weight:400;
   line-height:1.5; letter-spacing:-.02em;
-  color:var(--ink);
+  color:var(--on-dark);
 }
 .about__col{ width:calc(322em / 16) }       /* the file's 322px box for 16px type, in ems */
 .about__col p + p{ margin-top:var(--sp-16) }
@@ -554,14 +633,14 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 .role__head{ display:flex; flex-direction:column; gap:var(--sp-16) }
 .role__top{
   display:flex; justify-content:space-between; gap:var(--sp-24);
-  font-size:var(--fs-title); font-weight:600;
+  font-size:var(--fs-title); font-weight:500;
   line-height:1; letter-spacing:-.04em;
   white-space:nowrap;
 }
-.role__title{ font-weight:600 }
+.role__title{ font-weight:inherit }
 .role__years{ text-align:right; font-variant-numeric:tabular-nums }
 .role__org { font-size:var(--fs-meta); line-height:normal; opacity:.6 }
-.role__text{ font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em }
+.role__text{ max-width:64ch; font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em }   /* 60–70 characters a line */
 
 /* ── 05 Skills ────────────────────────────────────────────── */
 .section--skills{ padding:var(--sp-80) 0 }
@@ -582,49 +661,33 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 .chips--ai     .chip{ border-color:var(--chip-ai) }
 
 /* ── 06 Contact ───────────────────────────────────────────── */
-/* A full screen: contacts on top, the logo field filling the middle,
-   the copyright line at the foot. */
+/* A full screen (Figma › Footer, node 319:2849): the logo field fills
+   the top, the copyright and the contacts sit along the foot. Scrolled
+   to the end, the fixed bar covers the band's top, so the bar's height
+   is taken as top padding and the mark starts under it. */
 .site-footer{
   margin-top:var(--gap-section);
   background:var(--dark); color:var(--on-dark);
   min-height:100vh;
   min-height:100svh;
   display:flex;
-  /* Scrolled to the end, this band fills the viewport and the fixed bar
-     sits over its top — so the bar's height is part of the top padding,
-     not taken out of the contacts. */
-  padding:calc(var(--nav-h) + var(--sp-40)) 0 var(--sp-40);
+  padding:var(--nav-h) 0 var(--sp-40);
 }
 .site-footer__inner{
+  position:relative;
   flex:1; width:100%;
   padding:0 var(--gutter);
-  display:flex; flex-direction:column; gap:var(--sp-24);
+  display:flex; flex-direction:column;
+  gap:calc(59 * var(--u));                    /* mark foot 643 → contacts 702 */
   font-size:var(--fs-body); font-weight:600; letter-spacing:-.04em;
   line-height:1.1;
 }
-
-/* Column starts from the file: contacts at x=519.67, links at 1079.33,
-   Download CV against the right edge. */
-.site-footer__top{
-  display:grid;
-  grid-template-columns:calc(479.67 * var(--lu)) calc(559.66 * var(--lu)) 1fr auto;
-  align-items:start;
-}
-.site-footer__col--reach{
-  grid-column:2;
-  display:flex; flex-direction:column; gap:var(--sp-16);
-  font-size:var(--fs-contact); font-weight:600;
-  letter-spacing:-.04em; text-transform:uppercase;
-  white-space:nowrap;
-}
-.site-footer__col--social{ grid-column:3; display:flex; flex-direction:column; gap:var(--sp-24) }
-.site-footer__col--cv{ grid-column:4 }
 
 /* The logo field. Its box is what js/field-gl.js reads for the grid, so
    the size lives here. It runs out to the viewport edges (negative
    margin, gutter as padding) so the mark can drift and tilt past the
    content column without being cut; the script places the mark's left
-   edge on the padding, i.e. in line with the copyright below. */
+   edge on the padding and its top on the band's top. */
 .site-footer__mark{
   position:relative; flex:1;
   min-height:calc(300 * var(--u));
@@ -632,6 +695,32 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 }
 /* the padding goes on the field itself — that is the element the script reads */
 .site-footer__mark .ascii-bg{ padding:0 var(--gutter) }
+
+/* Everything on one bottom line. The contacts start on the right-hand
+   column (x=501); the links sit midway between them and Download CV,
+   which is how the file's equal gaps fall. */
+.site-footer__bottom{
+  display:grid;
+  grid-template-columns:33.9% auto 1fr auto;
+  align-items:end;
+}
+.site-footer__col--reach{
+  display:flex; flex-direction:column; gap:calc(20 * var(--u));
+  font-size:var(--fs-contact); font-weight:500;
+  letter-spacing:-.04em; text-transform:uppercase;
+  white-space:nowrap;
+}
+.site-footer__col--social{ justify-self:center; display:flex; flex-direction:column; gap:var(--sp-16) }
+/* Back to top over Download CV, stacked like the links beside them;
+   the arrow points the way it goes. */
+.site-footer__col--cv{ display:flex; flex-direction:column; align-items:flex-start; gap:var(--sp-16) }
+/* on its own, in the footer's top right corner, under the bar */
+.site-footer__top{
+  position:absolute; z-index:2; top:0; right:var(--gutter);
+  display:inline-flex; align-items:center; gap:.4em;
+}
+.site-footer__top svg{ width:.7em; height:auto; flex:none; transition:transform .25s ease }
+.site-footer__top:hover svg{ transform:translateY(-3px) }
 .site-footer a:hover{ color:var(--coral) }
 
 /* ============================================================
@@ -651,41 +740,39 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   main{ padding-top:var(--nav-h) }
 
   /* <main> is pushed down by the bar here, so take that back out
-     or the hero would run one nav-height past the fold */
+     or the hero would run one nav-height past the fold. The field is
+     off under 1024, so its band goes and the copy is centred. */
   .section--intro{
     min-height:calc(100vh - var(--nav-h));
     min-height:calc(100svh - var(--nav-h));
-    align-items:center;
+    padding:40px 0;
+    justify-content:center;
   }
-  .intro__text{ margin-top:0; margin-left:0; width:100% }
+  .intro__mark{ display:none }
+  .intro{ flex-direction:column; gap:32px }
+  .intro__frame{ width:160px; height:200px }
+  .intro__text{ width:100% }
+  .intro__facts{ margin-top:28px; flex-wrap:wrap; row-gap:20px }
+  .intro__focus{ width:100% }
 
-  /* The card stacks and the media strips become a swipeable row
-     instead of bleeding off the right edge. */
-  .work__row{ flex-direction:column; gap:20px; min-height:0; padding:24px 0 }
-  .work__left{ width:100%; padding-right:0; flex-direction:column; gap:16px }
-  .work__left > *{ width:100% }
-  .work__meta{ padding-right:0 }
-  .work__view{ text-align:left }
-  /* No hover on touch: the strip is simply a swipeable row with every
-     shot in it, the big one first. */
-  .work__media{
-    width:auto; margin:0 calc(var(--gutter) * -1); padding:0 var(--gutter);
-    overflow-x:auto; gap:8px; height:160px; align-items:stretch;
-  }
-  .work__shot{ width:240px }
-  .work__thumb{
-    width:104px; height:100%;
-    opacity:1; transform:none; transition:none;
-  }
+  /* The row stacks: number, name and tags, the description, the link,
+     then the shot at full width. */
+  .work__row{ display:flex; flex-direction:column; gap:16px; padding:24px var(--gutter) }
+  .work__body{ width:100%; gap:16px }
+  .work__note{ max-width:none }
+  .work__view{ margin-right:0 }
+  .work__row:hover .work__view, .work__row:focus-visible .work__view{ transform:none }
+  .work__shot{ width:100% }
+  .work__shot::before, .work__shot::after{ display:none }
   .work__arrow{ display:none }
 
   .section--about{ padding:56px 0 }
   .about{ flex-direction:column; gap:40px }
   .about__aside{ position:static }
-  .about__photo{ width:220px }
+  .about__photo{ width:177px; height:236px }
   .about__body{ gap:40px }
   .about__lead{ width:100% }
-  .about__cols{ flex-direction:column; gap:26px }
+  .about__cols{ width:100%; flex-direction:column; gap:26px }
   .about__col{ width:100% }
 
   .role__top{ flex-direction:column; gap:4px }
@@ -694,11 +781,12 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   .chips{ gap:6px }
   .chip{ padding:7px 13px }
 
-  .site-footer__top{ grid-template-columns:1fr; gap:32px }
-  .site-footer__col--reach, .site-footer__col--social, .site-footer__col--cv{ grid-column:1 }
+  .site-footer__inner{ justify-content:flex-end }
+  .site-footer__bottom{ grid-template-columns:1fr; gap:32px }
+  .site-footer__col--social{ justify-self:start }
   .site-footer__col--reach{ white-space:normal; overflow-wrap:anywhere }
   .site-footer__mark{ display:none }   /* the field is off under 1024, as in the hero */
-  .site-footer__copy{ margin-top:auto }
+  .site-footer__copy{ order:1 }
 }
 
 @media (prefers-reduced-motion:reduce){

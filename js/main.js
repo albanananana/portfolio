@@ -196,3 +196,36 @@
   }
   window.addEventListener('load', function () { measure(); update(); });
 })();
+
+/* ============================================================
+   Local time in the hero — "16:20 (CEST)", Warsaw's clock
+   whatever the visitor's own zone. Ticks on the minute.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var el = document.getElementById('local-time');
+  if (!el || !window.Intl) return;
+
+  var fmt;
+  try {
+    fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit',
+      hourCycle: 'h23', timeZoneName: 'short'
+    });
+  } catch (e) { return; }
+
+  function paint() {
+    var parts = {};
+    fmt.formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
+    /* en-GB names the zone CET/CEST; an engine without the short name
+       falls back to "GMT+1", which still reads correctly */
+    el.textContent = parts.hour + ':' + parts.minute + ' (' + parts.timeZoneName + ')';
+  }
+
+  function tick() {
+    paint();
+    setTimeout(tick, 60000 - (Date.now() % 60000) + 50);
+  }
+  tick();
+})();

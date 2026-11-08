@@ -9,16 +9,20 @@
      2 · close    the halves slam together over the frame and land
                   as the whole logo; the shared strokes turn red
      3 · exit     the dark ground lifts, the logo flies into the
-                  nav logo's place, the hero copy rises in
+                  nav logo's place
+     4 · hero     the heading rises out of its line masks, the photo
+                  opens, the rest of the copy follows; last, the
+                  wordmark field assembles (heroIntro below)
 
-   Markup and start states: index.html / style.css (.loader).
+   Markup and start states: index.html / style.css (.loader). Whether
+   it plays at all — first page of a visit, or a reload — is decided
+   in the <head> of index.html, before anything is drawn.
    Without GSAP, or if anything throws, the page is simply shown.
    ============================================================ */
 (function () {
   'use strict';
 
   /* ── Tuning ─────────────────────────────────────────────────── */
-  var ONCE_PER_SESSION = false;   // true: play on the first visit of a tab session only
   var T = {
     flick:  1.3,    // s — the whole run of shots, eased by FLICK_EASE
     close:  0.42,   // s — halves slam shut
@@ -42,6 +46,18 @@
 
   var navImg = document.querySelector('.nav__logo img');
 
+  /* The hero's wordmark field waits for this before it assembles. The
+     gate is raised now, before js/field-gl.js runs, and only when the
+     show is going to play — every other path opens it at once. */
+  var playing = root.classList.contains('is-loading') && !!window.gsap;
+  window.__heroGate = playing;
+  function revealField() {
+    if (window.__heroReveal) return;
+    window.__heroReveal = true;
+    window.dispatchEvent(new Event('hero:reveal'));
+  }
+  if (playing) setTimeout(revealField, 12000);   // should the timeline ever stall
+
   function finish() {
     clearTimeout(window.__loaderSafety);
     root.classList.remove('is-loading', 'is-locked');
@@ -50,18 +66,11 @@
     window.dispatchEvent(new Event('loader:done'));
   }
 
-  if (!root.classList.contains('is-loading')) { finish(); return; }   // reduced motion
+  if (!playing) { finish(); revealField(); return; }   // reduced motion, or no GSAP
   var gsap = window.gsap;
-  if (!gsap) { finish(); return; }
   /* From here this file guarantees its own ending; the 6 s CSS
      safety net in <head> would only cut a slow start short. */
   clearTimeout(window.__loaderSafety);
-  if (ONCE_PER_SESSION) {
-    try {
-      if (sessionStorage.getItem('loader-seen')) { finish(); return; }
-      sessionStorage.setItem('loader-seen', '1');
-    } catch (e) {}
-  }
 
   /* The show starts at the top of the page (unless a link sent us
      to a section). */
@@ -83,7 +92,7 @@
 
   /* The first shot is on screen from the start; the run begins once
      the rest are decoded (capped). */
-  capped.then(run).catch(finish);
+  capped.then(run).catch(function () { finish(); revealField(); });
 
   function run() {
     var tl = gsap.timeline();
@@ -124,16 +133,45 @@
     tl.addLabel('exit').call(dock, null, 'exit');
     tl.to(bg, { yPercent: -100, duration: T.exit, ease: 'expo.inOut', onUpdate: inkByEdge }, 'exit');
 
-    var copy = document.querySelectorAll('.intro__text p');
-    if (copy.length) {
-      tl.fromTo(copy,
-        { y: 48, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', stagger: 0.07, clearProps: 'transform,opacity' },
-        'exit+=' + T.exit * 0.45);
-    }
+    tl.add(heroIntro(), 'exit+=' + T.exit * 0.45);
     /* the copy keeps easing after the loader is gone — do not wait for it */
     tl.call(finish, null, 'exit+=' + T.exit);
     setTimeout(finish, (tl.duration() + 1) * 1000);   // if a frame callback ever throws
+  }
+
+  /* 4 · hero -------------------------------------------------------
+     Times are from the moment the ground is halfway up. Everything is
+     visible in the markup; the start states are set here, under the
+     loader, so nothing shows before its turn. */
+  var H = {
+    lines:  0,      // s — heading lines rise, one after the other
+    photo:  0.35,   // s — the photo frame opens
+    copy:   0.6,    // s — caption and the three facts
+    field:  0.9     // s — the wordmark starts to assemble
+  };
+  function heroIntro() {
+    var hero = gsap.timeline();
+    var lines = document.querySelectorAll('.intro__line > span');
+    var frame = document.querySelector('.intro__frame');
+    var photo = document.querySelector('.intro__photo');
+    var copy  = document.querySelectorAll('.intro__caption, .intro__focus, .intro__skills li, .intro__place');
+
+    if (lines.length) {
+      gsap.set(lines, { yPercent: 105 });
+      hero.to(lines, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.12, clearProps: 'transform' }, H.lines);
+    }
+    if (frame && photo) {
+      gsap.set(frame, { clipPath: 'inset(100% 0% 0% 0%)' });
+      gsap.set(photo, { scale: 1.18 });
+      hero.to(frame, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.05, ease: 'expo.inOut', clearProps: 'clipPath' }, H.photo)
+          .to(photo, { scale: 1, duration: 1.5, ease: 'expo.out', clearProps: 'transform' }, H.photo + 0.15);
+    }
+    if (copy.length) {
+      gsap.set(copy, { y: 24, opacity: 0 });
+      hero.to(copy, { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', stagger: 0.05, clearProps: 'transform,opacity' }, H.copy);
+    }
+    hero.call(revealField, null, H.field);
+    return hero;
   }
 
   /* The logo is light while it is over the dark ground and dark once

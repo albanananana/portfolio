@@ -40,15 +40,18 @@
 
 /* ── Hero ──────────────────────────────────────────────────────── */
 const CONFIG = {
-  svg: '../assets/Wlad.A.v2.svg',
+  svg: '../assets/Wlad.A.v3.svg',   // outlined from Figma › Desktop - 18 (node 422:20045)
   particles: 256,         // texture side → 256² = 65,536 points
 
-  /* placement */
-  anchor: 'center',       // 'center': posX from the centre · 'left': shape's left edge on the field's padding
-  scale: 78,              // % of the field's content width the shape spans
+  /* placement — Desktop - 18 has the ink at x 53 → 1017 of 1440, i.e.
+     13 into the 1360 column and 964 of it wide, centred between the bar
+     and the heading. The field is that band (.intro__mark). */
+  anchor: 'left',         // 'center': posX from the centre · 'left': shape's left edge on the field's padding
+  anchorY: 'center',      // 'center': posY from the centre · 'top': shape's top edge on the field's top
+  scale: 70.9,            // % of the field's content width the shape spans
   maxHeight: 1,           // never taller than this share of the field's height
-  posX: 9.5,              // % of width — from centre, or from the left padding when anchored left
-  posY: 26,               // % of height, from centre (down is +) — v2 is 4.68:1, foot on the bottom edge
+  posX: 0.96,             // % of width — from centre, or from the left padding when anchored left
+  posY: -0.5,             // % of height, from centre or from the top (down is +)
   depth: 0.5,             // extrusion, model units (the shape is 13.7 wide)
   frontWeight: 4,         // sampling weight of the front face vs. lit walls (0.5)
 
@@ -58,6 +61,10 @@ const CONFIG = {
   flowFrequency: 0.53,
   mouseStrength: 0.155,
   pointSize: 4,
+
+  /* entrance — the word builds from the foot up out of points below it */
+  revealDuration: 1.4,    // s, first point moving → last one home
+  revealSpread: 7,        // how far out the points start, model units (the shape is 13.7 wide)
 
   /* motion toward the pointer — artefakt */
   tiltX: 0.12,
@@ -87,16 +94,16 @@ const CONFIG = {
    · anchored left — the mark's left edge sits on the field's padding,
      in line with the copyright; the field itself runs to the viewport
      edges so drift and tilt are not cut at the gutter
-   · 934 of 1360 wide, as in the layout (68.7%), allowed nearly the
-     field's full height
+   · 1123 of 1360 wide, as in the layout (82.6%), top-anchored so the
+     mark hangs from the top of the band, as the file draws it
    · glyph size in px (≈ the hero's ~10px cell) instead of a count
    · no tilt — it stays flat to the page (tiltSpace is kept for tuning)
    · deeper extrusion — a compact mark shows its sides when it tilts */
 const FOOTER = {
   ...CONFIG,
   svg: '../assets/logo.svg',
-  anchor: 'left',
-  scale: 68.7, maxHeight: 0.94,
+  anchor: 'left', anchorY: 'top',
+  scale: 82.6, maxHeight: 1,   // 1123 of 1360, its top on the band's top
   posX: 0, posY: 0,
   depth: 1.2,
   cell: 9,
@@ -106,12 +113,18 @@ const FOOTER = {
   tiltX: 0.1, tiltY: 0.1, // a small tilt, measured inside the band
   tiltLerp: 0.18,
   ink: '#F5F3EE',
-  opacity: 0.2,           // the mark sits far back on the dark ground
+  opacity: 0.2,
+  revealSpread: 5,           // the mark sits far back on the dark ground
   grain: null             // the page grain is the hero panel's business
 };
 
 const DEV_PANEL = true;            // ← set false to ship
 const STORE_KEYS = { hero: 'field-gl-v1', footer: 'field-gl-footer-v1' };
+/* The Desktop - 18 layout moved both shapes. Placement saved in this
+   browser before it would put them back where they were, so it is
+   dropped once; the rest of a saved tune is kept. */
+const PLACEMENT = ['svg', 'anchor', 'anchorY', 'scale', 'maxHeight', 'posX', 'posY', 'revealDuration', 'revealSpread'];
+const PLACEMENT_REV = 'field-gl-layout-422b';   /* b: the entrance went upward and faster */
 const MODEL_W = 13.7;              // every shape is normalised to this width
 const LIGHT_DIR = [0.1, 1, 1];     // artefakt, per-object light
 
@@ -236,16 +249,25 @@ void main() {
   gl_FragColor = particle;
 }`;
 
+/* The entrance is drawn here, not simulated: uReveal runs 0 → 1 once and
+   each point is offset from wherever the simulation has it. Its turn
+   comes by its height in the shape (the foot first) with a little
+   noise, so the word builds upward as a ragged front; until then it
+   waits below and to one side, and on its turn it rises home and
+   fades in. */
 const POINT_VERT = /* glsl */`
 uniform vec2 uResolution;
 uniform float uSize;
+uniform float uReveal;
+uniform float uSpread;
+uniform float uModelH;
 uniform sampler2D uParticlesTexture;
 uniform sampler2D uNormalsTexture;
 uniform vec3 uLightDir;
 attribute vec2 aParticlesUv;
 attribute float aSize;
 varying float vLight;
-varying float vDelay;
+varying float vReveal;
 float hash1(vec3 p) {
   p = fract(p * 0.1031);
   p += dot(p, p.yzx + 33.33);
@@ -253,10 +275,19 @@ float hash1(vec3 p) {
 }
 void main() {
   vec4 particle = texture(uParticlesTexture, aParticlesUv);
-  vec4 modelPosition = modelMatrix * vec4(particle.xyz, 1.0);
+
+  /* stable per point: hashed from its slot, not its moving position */
+  vec3 seed = vec3(aParticlesUv * 417.0, 3.7);
+  float h1 = hash1(seed), h2 = hash1(seed.yzx + 11.0), h3 = hash1(seed.zxy + 29.0);
+  float turn = clamp(particle.y / uModelH + 0.5, 0.0, 1.0) * 0.72 + h1 * 0.28;
+  float t = smoothstep(turn, turn + 0.28, uReveal * 1.28);
+  vec3 away = normalize(vec3((h3 - 0.5) * 1.2, -0.6 - h2 * 0.6, (h1 - 0.5) * 0.8)) * uSpread * (0.4 + h2);
+  vec3 pos = particle.xyz + away * (1.0 - t) * (1.0 - t);
+  vReveal = t;
+
+  vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
   vec4 viewPosition = viewMatrix * modelPosition;
   gl_Position = projectionMatrix * viewPosition;
-  vDelay = hash1(modelPosition.xyz);
 
   /* grow in over the first 10% of a life, fade over the last 30% */
   float size = min(smoothstep(0.0, 0.1, particle.a), 1.0 - smoothstep(0.7, 1.0, particle.a));
@@ -267,13 +298,12 @@ void main() {
 }`;
 
 const POINT_FRAG = /* glsl */`
-uniform float uVisibility;
 varying float vLight;
-varying float vDelay;
+varying float vReveal;
 void main() {
   float d = length(gl_PointCoord - 0.5);
   float alpha = 1.0 - smoothstep(0.4, 0.5, d);
-  alpha *= smoothstep(0.0, 1.0, (uVisibility - vDelay) / 0.15);   /* staggered intro */
+  alpha *= vReveal;                                                 /* entrance */
   alpha *= vLight;
   if (alpha < 0.01) discard;
   gl_FragColor = vec4(vec3(1.0), alpha);
@@ -422,7 +452,7 @@ async function createField(stage, cfg, { primary = false } = {}) {
       uResolution: { value: new T.Vector2() }, uSize: { value: cfg.pointSize },
       uParticlesTexture: { value: null }, uNormalsTexture: { value: normalTex },
       uLightDir: { value: new T.Vector3(...LIGHT_DIR).normalize() },
-      uVisibility: { value: reduced ? 1.15 : 0 }
+      uReveal: { value: reduced ? 1 : 0 }, uSpread: { value: cfg.revealSpread }, uModelH: { value: modelH }
     }
   });
   const points = new T.Points(pointsGeo, pointsMat);
@@ -507,7 +537,10 @@ async function createField(stage, cfg, { primary = false } = {}) {
        and perspective enlarges the shape — by ~5% in the hero and ~13% for
        the deeper footer mark, which also pulled its left edge off the
        column. */
-    group.position.set(x, -H * cfg.posY / 100, -(cfg.depth / 2) * s * 2);
+    const y = cfg.anchorY === 'top'
+      ? H / 2 - (s * modelH) / 2 - H * cfg.posY / 100
+      : -H * cfg.posY / 100;
+    group.position.set(x, y, -(cfg.depth / 2) * s * 2);
   }
 
   /* ── pointer ──────────────────────────────────────────────────── */
@@ -539,8 +572,13 @@ async function createField(stage, cfg, { primary = false } = {}) {
     last = now;
     elapsed += dt;
 
-    const vis = pointsMat.uniforms.uVisibility;
-    if (vis.value < 1.15) vis.value = Math.min(1.15, vis.value + dt / 1.6);
+    /* The hero waits for js/loader.js to finish the copy (hero:reveal);
+       the footer assembles the first time it is scrolled into view —
+       this only runs while the field is on screen. */
+    const rev = pointsMat.uniforms.uReveal;
+    if (rev.value < 1 && (!primary || !window.__heroGate || window.__heroReveal)) {
+      rev.value = Math.min(1, rev.value + dt / cfg.revealDuration);
+    }
 
     su.uTime.value = elapsed;
     su.uDeltaTime.value = reduced ? 0 : dt;
@@ -612,6 +650,8 @@ async function createField(stage, cfg, { primary = false } = {}) {
       su.uFlowFieldFrequency.value = cfg.flowFrequency;
       su.uMouseStrength.value = cfg.mouseStrength;
       pointsMat.uniforms.uSize.value = cfg.pointSize;
+      pointsMat.uniforms.uSpread.value = cfg.revealSpread;
+      if (key === 'revealDuration' || key === 'revealSpread') pointsMat.uniforms.uReveal.value = 0;
       asciiMat.uniforms.uAsciiContrast.value = cfg.contrast;
       asciiMat.uniforms.uAsciiBrightness.value = cfg.brightness;
       asciiMat.uniforms.uOpacity.value = cfg.opacity;
@@ -658,8 +698,11 @@ body.fp-open #fp{display:block}
 #fp .r{display:flex;align-items:center;gap:8px;margin-bottom:7px}
 #fp label{flex:0 0 92px;opacity:.7}
 #fp input[type=range]{flex:1;min-width:0;accent-color:#FA4D48}
+#fp input[type=checkbox]{accent-color:#FA4D48;margin:0}
 #fp input[type=text],#fp input[type=color],#fp select{flex:1;min-width:0;font:inherit;padding:3px 5px;border:1px solid #B8B5B2;border-radius:3px;background:#fff}
-#fp .v{flex:0 0 40px;text-align:right;font-variant-numeric:tabular-nums;opacity:.75}
+#fp .v{flex:0 0 64px;width:64px;min-width:0;text-align:right;font:inherit;font-variant-numeric:tabular-nums;padding:2px 4px;border:1px solid #E5DFD5;border-radius:3px;background:#fff;color:inherit}
+#fp .v:focus{outline:none;border-color:#FA4D48}
+#fp .v::-webkit-inner-spin-button{opacity:.4}
 #fp .b{display:flex;gap:6px;margin-top:10px}
 #fp .b button{flex:1;font:inherit;padding:6px;border:1px solid #B8B5B2;border-radius:3px;background:#fff;cursor:pointer}
 #fp .b button.p{background:#121212;color:#F5F3EE;border-color:#121212}
@@ -681,19 +724,23 @@ body.fp-open #fp{display:block}
   });
 }
 
-function renderPanel() {
-  if (!panelEl || !panelFields.length) return;
-  panelCurrent = Math.min(panelCurrent, panelFields.length - 1);
-  const { id, label, name, field, cfg, defaults, key } = panelFields[panelCurrent];
-
+/* The rows of a field-gl tab. Another module can bring its own
+   (entry.groups), in the same shape: [legend, rows], each row a range
+   ({k, text, min, max, step}) or {k, text, type: 'color' | 'text' |
+   'check' | 'select', options: [[value, label]]}. */
+function defaultGroups(cfg) {
   const R = (k, text, min, max, step) => ({ k, text, min, max, step });
-  const groups = [
+  const S = (k, text, options) => ({ k, text, type: 'select', options });
+  return [
     ['Placement', [
+      S('anchor', 'anchor', [['center', 'centre'], ['left', 'left edge']]),
       R('scale', 'scale %', 10, 140, 0.5), R('maxHeight', 'max height', 0.2, 1, 0.01),
       R('posX', cfg.anchor === 'left' ? 'offset x % (edge)' : 'offset x %', -50, 50, 0.5),
       R('posY', 'offset y %', -50, 50, 0.5)]],
     ['Flow · artefakt', [R('flowInfluence', 'influence', 0, 1, 0.01), R('flowStrength', 'strength', 0, 4, 0.01), R('flowFrequency', 'frequency', 0.05, 2, 0.01)]],
-    ['Cursor · artefakt', [R('mouseStrength', 'repel', 0, 0.5, 0.005), R('tiltX', 'tilt x', 0, 1, 0.01), R('tiltY', 'tilt y', 0, 1, 0.01), R('tiltLerp', 'follow', 0.01, 0.5, 0.01)]],
+    ['Entrance · replays on change', [R('revealDuration', 'duration s', 0.4, 6, 0.1), R('revealSpread', 'spread', 0, 20, 0.5)]],
+    ['Cursor · artefakt', [S('tiltSpace', 'tilt from', [['window', 'window'], ['field', 'field centre']]),
+      R('mouseStrength', 'repel', 0, 0.5, 0.005), R('tiltX', 'tilt x', 0, 1, 0.01), R('tiltY', 'tilt y', 0, 1, 0.01), R('tiltLerp', 'follow', 0.01, 0.5, 0.01)]],
     ['ASCII · artefakt', [
       R('cell', 'cell px (0 = cols)', 0, 30, 0.5), R('columns', 'columns', 40, 300, 1),
       R('renderScale', 'buffer scale', 0.1, 1, 0.05), R('pointSize', 'point size', 0.5, 12, 0.1),
@@ -701,27 +748,46 @@ function renderPanel() {
     ['Ink', [R('opacity', 'opacity', 0.05, 1, 0.01)]
       .concat(cfg.grain != null ? [R('grain', 'page grain', 0, 0.3, 0.005)] : [])
       .concat([R('minWidth', 'min width', 0, 1600, 16)])],
-    ['Shape · after reload', [R('depth', 'depth', 0.05, 3, 0.05), R('frontWeight', 'front weight', 0.5, 20, 0.5)]]
+    ['Shape · after reload', [R('depth', 'depth', 0.05, 3, 0.05), R('frontWeight', 'front weight', 0.5, 20, 0.5)]],
+    ['Glyphs', [{ k: 'charset', text: 'charset', type: 'text' }, { k: 'ink', text: 'ink', type: 'color' }]]
   ];
-  const row = (r) => `<div class="r"><label for="fp-${r.k}">${r.text}</label><input type="range" id="fp-${r.k}" min="${r.min}" max="${r.max}" step="${r.step}" value="${cfg[r.k]}"><span class="v" id="fpv-${r.k}">${cfg[r.k]}</span></div>`;
+}
+
+function renderPanel() {
+  if (!panelEl || !panelFields.length) return;
+  panelCurrent = Math.min(panelCurrent, panelFields.length - 1);
+  const entry = panelFields[panelCurrent];
+  const { label, name, field, cfg, defaults, key } = entry;
+  const groups = entry.regroup ? entry.regroup() : entry.groups || defaultGroups(cfg);
+  const relabel = entry.relabel || (entry.groups ? [] : ['anchor']);   /* the offset label changes meaning */
+
   const esc = (v) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  const row = (r) => {
+    const id = `fp-${r.k}`, lab = `<label for="${id}">${r.text}</label>`;
+    if (r.type === 'color') return `<div class="r">${lab}<input type="color" id="${id}" value="${esc(cfg[r.k])}"></div>`;
+    if (r.type === 'text') return `<div class="r">${lab}<input type="text" id="${id}" value="${esc(cfg[r.k])}"></div>`;
+    if (r.type === 'check') return `<div class="r">${lab}<input type="checkbox" id="${id}"${cfg[r.k] ? ' checked' : ''}></div>`;
+    if (r.type === 'select') return `<div class="r">${lab}<select id="${id}">${r.options.map(([v, t]) => `<option value="${esc(v)}"${String(cfg[r.k]) === String(v) ? ' selected' : ''}>${t}</option>`).join('')}</select></div>`;
+    return `<div class="r">${lab}<input type="range" id="${id}" min="${r.min}" max="${r.max}" step="${r.step}" value="${cfg[r.k]}"><input type="number" class="v" id="fpv-${r.k}" step="any" value="${cfg[r.k]}" aria-label="${r.text}"></div>`;
+  };
 
   panelEl.innerHTML =
-    `<h2>Glyph fields · GPU</h2><p class="h">H — close · values persist in this browser</p>` +
+    `<h2>${entry.title || 'Glyph fields · GPU'}</h2><p class="h">H — close · values persist in this browser</p>` +
     (panelFields.length > 1
       ? `<div class="fp-tabs">${panelFields.map((f, i) => `<button type="button" data-i="${i}" class="${i === panelCurrent ? 'on' : ''}">${f.label}</button>`).join('')}</div>`
       : '') +
-    groups.map(([g, rows]) => `<fieldset><legend>${g}</legend>` +
-      (g === 'Placement' ? `<div class="r"><label for="fp-anchor">anchor</label><select id="fp-anchor"><option value="center"${cfg.anchor !== 'left' ? ' selected' : ''}>centre</option><option value="left"${cfg.anchor === 'left' ? ' selected' : ''}>left edge</option></select></div>` : '') +
-      (g === 'Cursor · artefakt' ? `<div class="r"><label for="fp-tiltSpace">tilt from</label><select id="fp-tiltSpace"><option value="window"${cfg.tiltSpace === 'window' ? ' selected' : ''}>window</option><option value="field"${cfg.tiltSpace !== 'window' ? ' selected' : ''}>field centre</option></select></div>` : '') +
-      rows.map(row).join('') + '</fieldset>').join('') +
-    `<fieldset><legend>Glyphs</legend>
-      <div class="r"><label for="fp-charset">charset</label><input type="text" id="fp-charset" value="${esc(cfg.charset)}"></div>
-      <div class="r"><label for="fp-ink">ink</label><input type="color" id="fp-ink" value="${esc(cfg.ink)}"></div></fieldset>
-    <div class="b"><button type="button" id="fp-reset">Reset ${label}</button><button type="button" id="fp-copy" class="p">Copy ${name}</button></div>
+    groups.map(([g, rows]) => `<fieldset><legend>${g}</legend>` + rows.map(row).join('') + '</fieldset>').join('') +
+    (entry.buttons ? `<div class="b">${entry.buttons.map((b, i) => `<button type="button" data-b="${i}">${b.label}</button>`).join('')}</div>` : '') +
+    `<div class="b"><button type="button" id="fp-reset">Reset ${label}</button><button type="button" id="fp-copy" class="p">Copy ${name}</button></div>
     <div class="s" id="fp-stats"></div>`;
 
-  const save = () => { try { localStorage.setItem(key, JSON.stringify(cfg)); } catch (e) {} };
+  /* only what differs from the file, so a later change of a default
+     still reaches a browser that has a tune saved */
+  const save = () => {
+    const diff = {};
+    Object.keys(cfg).forEach((k) => { if (cfg[k] !== defaults[k]) diff[k] = cfg[k]; });
+    try { localStorage.setItem(key, JSON.stringify(diff)); } catch (e) {}
+  };
   const stats = () => { const n = panelEl.querySelector('#fp-stats'); if (n) n.textContent = field.stats(); };
   stats();
 
@@ -731,17 +797,37 @@ function renderPanel() {
     if (f.scrollTo) f.scrollTo.scrollIntoView({ behavior: 'smooth', block: f.id === 'hero' ? 'start' : 'end' });
     renderPanel();
   }));
+  panelEl.querySelectorAll('[data-b]').forEach((b) => b.addEventListener('click', () => entry.buttons[+b.dataset.b].run()));
   groups.forEach(([, rows]) => rows.forEach((r) => {
     const input = panelEl.querySelector('#fp-' + r.k);
-    input.addEventListener('input', () => {
-      cfg[r.k] = parseFloat(input.value);
-      panelEl.querySelector('#fpv-' + r.k).textContent = cfg[r.k];
-      field.apply(r.k); save(); stats();
+    const ev = r.type === 'check' || r.type === 'select' ? 'change' : 'input';
+    const num = panelEl.querySelector('#fpv-' + r.k);
+    const commit = (value) => {
+      cfg[r.k] = value;
+      field.apply(r.k); save();
+      setTimeout(stats, 200);   /* a rebuild lands a moment later */
+      if (relabel.includes(r.k)) renderPanel();
+    };
+    input.addEventListener(ev, () => {
+      if (r.type === 'check') return commit(input.checked);
+      if (r.type) return commit(input.value);
+      const v = parseFloat(input.value);
+      if (num) num.value = v;
+      commit(v);
     });
-  }));
-  ['charset', 'ink', 'anchor', 'tiltSpace'].forEach((k) => panelEl.querySelector('#fp-' + k).addEventListener('input', (e) => {
-    cfg[k] = e.target.value; field.apply(k); save();
-    if (k === 'anchor') renderPanel();   /* the offset label changes meaning */
+    /* Typed values: applied as you type when they parse, and may go
+       past the slider's range (the slider just pins at its end).
+       Enter or leaving the box tidies the field to the value used. */
+    if (num) {
+      num.addEventListener('input', () => {
+        const v = parseFloat(num.value);
+        if (!Number.isFinite(v)) return;
+        input.value = v;
+        commit(v);
+      });
+      num.addEventListener('change', () => { num.value = cfg[r.k]; });
+      num.addEventListener('keydown', (e) => { if (e.key === 'Enter') num.blur(); });
+    }
   }));
   panelEl.querySelector('#fp-reset').addEventListener('click', () => {
     try { localStorage.removeItem(key); } catch (e) {}
@@ -754,11 +840,25 @@ function renderPanel() {
   });
 }
 
+/* Other modules (js/field-flow.js) add their tab through this. */
+if (DEV_PANEL) {
+  window.__fieldPanel = registerPanelField;
+  (window.__fieldPanelQueue || []).splice(0).forEach(registerPanelField);
+}
+
 /* ── Go ──────────────────────────────────────────────────────── */
 function savedConfig(defaults, key) {
   const cfg = { ...defaults };
   if (DEV_PANEL) {
-    try { Object.assign(cfg, JSON.parse(localStorage.getItem(key) || '{}')); } catch (e) {}
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      if (localStorage.getItem(PLACEMENT_REV + ':' + key) !== '1') {
+        PLACEMENT.forEach((k) => delete saved[k]);
+        localStorage.setItem(key, JSON.stringify(saved));
+        localStorage.setItem(PLACEMENT_REV + ':' + key, '1');
+      }
+      Object.assign(cfg, saved);
+    } catch (e) {}
   }
   return cfg;
 }
@@ -768,6 +868,9 @@ function startHero() {
      done so the 6 s watchdog in the page head stops waiting, and let
      startFooter() run — this is not a GPU failure, there is just no hero. */
   if (!heroStage) { window.__fieldDone = true; return; }
+  /* This copy draws the hero with js/field-flow.js; it claims the
+     stage before this runs and reports in itself. */
+  if (window.__flowHero) return;
   const cfg = savedConfig(CONFIG, STORE_KEYS.hero);
   createField(heroStage, cfg, { primary: true }).then((field) => {
     if (!field) return;   /* the watchdog got there first */
@@ -779,6 +882,8 @@ function startHero() {
 
 function startFooter() {
   if (!footerStage) return;
+  /* This copy draws the footer mark with js/field-flow.js too. */
+  if (window.__flowFooter) return;
   const cfg = savedConfig(FOOTER, STORE_KEYS.footer);
   createField(footerStage, cfg).then((field) => {
     if (field && DEV_PANEL) registerPanelField({ id: 'footer', label: 'Footer', name: 'FOOTER', field, cfg, defaults: FOOTER, key: STORE_KEYS.footer, scrollTo: footerStage.closest('footer') });
