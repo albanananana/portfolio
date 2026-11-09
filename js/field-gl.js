@@ -893,10 +893,11 @@ function startFooter() {
 
 if (html.dataset.field !== 'gl') {
   /* index.html already decided on the CPU field; the footer stays plain */
-} else if (innerWidth < CONFIG.minWidth) {
+} else if (innerWidth < CONFIG.minWidth && !window.__flowHero) {
   /* Narrow screen: draw nothing and do not download three.js at all. The
      CPU field is off at this width too. If the window is widened past the
-     threshold later, start then. */
+     threshold later, start then. (When js/field-flow.js has the hero it
+     runs at every width and reports in itself, so this stays out of it.) */
   window.__fieldDone = true;
   const late = () => {
     if (innerWidth < CONFIG.minWidth) return;

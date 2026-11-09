@@ -191,6 +191,25 @@ const FOOTER_SMALL = {
 };
 const footerDefaults = () => (innerWidth < FOOTER.minWidth ? { ...FOOTER, ...FOOTER_SMALL } : FOOTER);
 
+/* ── Hero on phones and tablets — the same small mark, centred in a band
+   at the bottom of the hero, behind the photo (style.css › .intro__mark).
+   The entrance sphere and the swirl shrink with it so they stay in the band. */
+const HERO_SMALL = {
+  anchorX: 'center',
+  anchorY: 'center',
+  scale: 80,
+  maxHeight: 1,
+  posX: 0,
+  posY: 0,
+  designWidth: 280,
+  minPerContour: 300,
+  sphere: 0.9,
+  swirl: 80,
+  flyCount: 60,
+  minWidth: 0
+};
+const heroDefaults = () => (innerWidth < FOOTER.minWidth ? { ...CONFIG, ...HERO_SMALL } : CONFIG);
+
 const DEV_PANEL = false;           // ← true brings back the tuning panel (H)
 const STORE_KEYS = { hero: 'field-flow-v1', footer: 'field-flow-footer-v1' };
 /* values that change the particles themselves — the panel rebuilds */
@@ -955,7 +974,7 @@ function register(field, id, stage) {
 }
 
 function startHero() {
-  start(heroStage, savedConfig(CONFIG, STORE_KEYS.hero), { primary: true })
+  start(heroStage, savedConfig(heroDefaults(), STORE_KEYS.hero), { primary: true })
     .then((field) => { if (field) register(field, 'hero', heroStage); })
     .catch((e) => fallback(e && e.message ? e.message : e));
 }
@@ -966,21 +985,7 @@ function startFooter() {
     .catch((e) => console.warn('[flow] footer field not started:', e && e.message ? e.message : e));
 }
 
-/* The footer runs at every width (FOOTER_SMALL under 1024). The hero band
-   is hidden under 1024, so there the hero waits until the window is widened. */
-const HERO_MIN = Math.min(CONFIG.minWidth, FOOTER.minWidth);
+/* Both fields run at every width; under 1024 they take HERO_SMALL and
+   FOOTER_SMALL. */
 if (window.__flowFooter) startFooter();
-if (window.__flowHero) {
-  if (innerWidth < HERO_MIN) {
-    window.__fieldDone = true;
-    const late = () => {
-      if (innerWidth < HERO_MIN) return;
-      removeEventListener('resize', late);
-      window.__fieldDone = false;
-      startHero();
-    };
-    addEventListener('resize', late);
-  } else {
-    startHero();
-  }
-}
+if (window.__flowHero) startHero();
