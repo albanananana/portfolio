@@ -303,6 +303,7 @@ body.fill-solid .tab__label--fill{ transition:clip-path .3s ease, color .35s eas
 
 /* PL · switch · EN — visual only for now */
 .lang{ display:flex; align-items:center; gap:calc(4 * var(--nav-u)) }
+.lang[hidden]{ display:none }
 .lang__opt{ text-transform:uppercase; opacity:.4 }
 .lang__opt.is-on{ opacity:1 }
 .lang__switch{
