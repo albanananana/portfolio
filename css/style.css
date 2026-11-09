@@ -743,18 +743,17 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   main{ padding-top:var(--nav-h) }
 
   /* <main> is pushed down by the bar here, so take that back out
-     or the hero would run one nav-height past the fold. The copy is
-     centred; the field's band leaves the flow (below). */
+     or the hero would run one nav-height past the fold. The field is
+     off under 1024, so its band goes; the copy and the photo spread
+     over the whole height, the copy up top and the photo at the foot. */
   .section--intro{
     min-height:calc(100vh - var(--nav-h));
     min-height:calc(100svh - var(--nav-h));
     padding:40px 0;
     justify-content:center;
   }
-  /* The mark, small, low in the hero and behind the photo (HERO_SMALL
-     in js/field-flow.js); the copy sits over it. */
-  .intro__mark{ position:absolute; left:0; right:0; bottom:0; height:300px; min-height:0 }
-  .intro{ flex-direction:column; gap:32px }
+  .intro__mark{ display:none }
+  .intro{ flex:1; flex-direction:column; gap:32px }
   .intro__aside{ order:1 }             /* the copy first, the photo under it */
   .intro__frame{ width:160px; height:200px }
   .intro__text{ width:100% }
