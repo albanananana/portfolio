@@ -147,7 +147,7 @@
     lines:  0,      // s — heading lines rise, one after the other
     photo:  0.35,   // s — the photo frame opens
     copy:   0.6,    // s — caption and the three facts
-    field:  0.9     // s — the wordmark starts to assemble
+    field:  0.3     // s — the wordmark starts to assemble
   };
   function heroIntro() {
     var hero = gsap.timeline();

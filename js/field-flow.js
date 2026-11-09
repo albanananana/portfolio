@@ -96,8 +96,8 @@ const CONFIG = {
 
   /* entrance */
   sphere: 3,            // sphere radius, × the shape's height
-  fadeIn: 3,            // s for the sphere to fade in
-  hold: 3,              // s from the start of the fade until it starts to form
+  fadeIn: 0.8,          // s for the sphere to fade in
+  hold: 1,              // s from the start of the fade until it starts to form
   springK: 31,          // the forming spring — about 2 s to land
   springD: 17.2,        // ζ ≈ 1.5: overdamped, settles without overshoot
   swirl: 250,           // px — the mid-morph turbulence
@@ -902,11 +902,11 @@ function panelGroups(cfg) {
   ];
 }
 
-/* The entrance got faster (rev b). A tune saved before kept the old
+/* The entrance got faster (rev b, then rev c). A tune saved before kept the old
    timing — the panel used to save every value, not only the changed
    ones — so those keys are dropped from it once. */
 const ENTRANCE = ['fadeIn', 'hold', 'springK', 'springD'];
-const ENTRANCE_REV = 'field-flow-entrance-b';
+const ENTRANCE_REV = 'field-flow-entrance-c';
 
 function savedConfig(defaults, key) {
   const cfg = { ...defaults };
