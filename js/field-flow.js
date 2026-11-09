@@ -176,7 +176,22 @@ const FOOTER = {
   minWidth: 1024
 };
 
-const DEV_PANEL = true;            // ← set false to ship
+/* ── Footer on phones and tablets — under FOOTER.minWidth the band is the
+   empty space between Back to top and the contacts. The mark is smaller
+   and centred in it. designWidth is about the mark's width on a phone, so
+   the particles keep their desktop spacing on screen instead of a small
+   mark carrying ten times as many. */
+const FOOTER_SMALL = {
+  anchorY: 'center',
+  scale: 80,
+  designWidth: 280,
+  minPerContour: 300,
+  flyCount: 40,
+  minWidth: 0
+};
+const footerDefaults = () => (innerWidth < FOOTER.minWidth ? { ...FOOTER, ...FOOTER_SMALL } : FOOTER);
+
+const DEV_PANEL = false;           // ← true brings back the tuning panel (H)
 const STORE_KEYS = { hero: 'field-flow-v1', footer: 'field-flow-footer-v1' };
 /* values that change the particles themselves — the panel rebuilds */
 const REBUILD = ['density', 'maxParticles', 'minPerContour', 'scatter', 'fill', 'hatch', 'fillScatter', 'fillInset', 'slant', 'maxRate'];
@@ -946,29 +961,26 @@ function startHero() {
 }
 
 function startFooter() {
-  start(footerStage, savedConfig(FOOTER, STORE_KEYS.footer))
+  start(footerStage, savedConfig(footerDefaults(), STORE_KEYS.footer))
     .then((field) => { if (field) register(field, 'footer', footerStage); })
     .catch((e) => console.warn('[flow] footer field not started:', e && e.message ? e.message : e));
 }
 
-function go() {
-  if (window.__flowHero) startHero();
-  if (window.__flowFooter) startFooter();
-}
-
-const MIN_WIDTH = Math.min(CONFIG.minWidth, FOOTER.minWidth);
-if (window.__flowHero || window.__flowFooter) {
-  if (innerWidth < MIN_WIDTH) {
-    /* narrow: nothing is drawn (both bands are hidden), start if widened */
-    if (window.__flowHero) window.__fieldDone = true;
+/* The footer runs at every width (FOOTER_SMALL under 1024). The hero band
+   is hidden under 1024, so there the hero waits until the window is widened. */
+const HERO_MIN = Math.min(CONFIG.minWidth, FOOTER.minWidth);
+if (window.__flowFooter) startFooter();
+if (window.__flowHero) {
+  if (innerWidth < HERO_MIN) {
+    window.__fieldDone = true;
     const late = () => {
-      if (innerWidth < MIN_WIDTH) return;
+      if (innerWidth < HERO_MIN) return;
       removeEventListener('resize', late);
-      if (window.__flowHero) window.__fieldDone = false;
-      go();
+      window.__fieldDone = false;
+      startHero();
     };
     addEventListener('resize', late);
   } else {
-    go();
+    startHero();
   }
 }

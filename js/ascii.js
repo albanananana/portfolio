@@ -46,7 +46,7 @@
     minWidth:  448          // below this the field is not drawn at all
   };
 
-  var DEV_PANEL = true;     // ← set false to ship
+  var DEV_PANEL = false;    // ← true brings back the tuning panel (H)
   var STORE_KEY = 'ascii-bg-config-v4';
   var LEGACY_KEY = 'ascii-bg-config-v3';   /* placement is dropped when it is carried over */
 

@@ -118,7 +118,7 @@ const FOOTER = {
   grain: null             // the page grain is the hero panel's business
 };
 
-const DEV_PANEL = true;            // ← set false to ship
+const DEV_PANEL = false;           // ← true brings back the tuning panel (H)
 const STORE_KEYS = { hero: 'field-gl-v1', footer: 'field-gl-footer-v1' };
 /* The Desktop - 18 layout moved both shapes. Placement saved in this
    browser before it would put them back where they were, so it is

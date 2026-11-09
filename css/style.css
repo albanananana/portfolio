@@ -332,12 +332,14 @@ body.fill-solid .tab__label--fill{ transition:clip-path .3s ease, color .35s eas
 body.menu-open .burger span:nth-child(1){ transform:translateY(4.5px) rotate(45deg) }
 body.menu-open .burger span:nth-child(2){ transform:translateY(-4.5px) rotate(-45deg) }
 
+/* Always on the paper ground: in the section colour it went dark over
+   About and the footer, and the links (ink) disappeared into it. */
 .menu{
   position:fixed; inset:var(--nav-h) 0 0; z-index:90;
-  background:var(--section-bg);
+  background:var(--paper);
   padding:28px var(--gutter) var(--gutter);
   display:flex; flex-direction:column;
-  transition:background .35s ease, opacity .22s ease, visibility .22s;
+  transition:opacity .22s ease, visibility .22s;
   visibility:hidden; opacity:0;
 }
 body.menu-open{ overflow:hidden }
@@ -349,7 +351,7 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   letter-spacing:-.02em; text-transform:lowercase;
 }
 .menu a b{ font-weight:400; font-size:12px; opacity:.5; font-variant-numeric:tabular-nums }
-.menu a.is-active{ color:var(--section-fg) }
+.menu a.is-active{ color:var(--accent) }
 .menu a.is-active b{ opacity:1 }
 
 /* ============================================================
@@ -751,6 +753,7 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   }
   .intro__mark{ display:none }
   .intro{ flex-direction:column; gap:32px }
+  .intro__aside{ order:1 }             /* the copy first, the photo under it */
   .intro__frame{ width:160px; height:200px }
   .intro__text{ width:100% }
   .intro__facts{ margin-top:28px; flex-wrap:wrap; row-gap:20px }
@@ -785,8 +788,11 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
   .site-footer__inner{ justify-content:flex-end }
   .site-footer__bottom{ grid-template-columns:1fr; gap:32px }
   .site-footer__col--social{ justify-self:start }
-  .site-footer__col--reach{ white-space:normal; overflow-wrap:anywhere }
-  .site-footer__mark{ display:none }   /* the field is off under 1024, as in the hero */
+  /* one line for the address: sized to fit a phone instead of breaking it */
+  .site-footer__col--reach{ font-size:min(var(--fs-contact), 4.9vw) }
+  /* The mark, smaller (FOOTER_SMALL in js/field-flow.js), in the space
+     between Back to top and the contacts. */
+  .site-footer__mark{ min-height:180px }
   .site-footer__copy{ order:1 }
 }
 
