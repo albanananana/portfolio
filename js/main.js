@@ -148,11 +148,37 @@
     });
   }
 
+  /* ── Hide on scroll (under 1024) ──────────────────────────────
+     Scrolling down slides the bar up out of view, any scroll up
+     brings it back. It always shows near the top, while the menu is
+     open, and on desktop, where the tabs are the navigation. Small
+     moves are ignored so a resting finger does not make it flicker,
+     and so is the rubber-band past either end on iOS. */
+  var small = window.matchMedia('(max-width:1023px)');
+  var lastY = window.scrollY, barHidden = false;
+  function hideBar(h) {
+    if (h === barHidden) return;
+    barHidden = h;
+    body.classList.toggle('nav-hidden', h);
+  }
+  function headroom() {
+    var y = window.scrollY;
+    var max = root.scrollHeight - window.innerHeight;
+    if (!small.matches || body.classList.contains('menu-open') || y <= navHeight()) {
+      hideBar(false); lastY = y; return;
+    }
+    if (y > max) return;
+    if (Math.abs(y - lastY) < 8) return;
+    hideBar(y > lastY);
+    lastY = y;
+  }
+  if (navEl) navEl.addEventListener('focusin', function () { hideBar(false); });
+
   var queued = false;
   function onScroll() {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(function () { queued = false; update(); });
+    requestAnimationFrame(function () { queued = false; update(); headroom(); });
   }
 
   /* ── Mobile menu ───────────────────────────────────────────── */
@@ -178,7 +204,7 @@
 
   /* ── Go ────────────────────────────────────────────────────── */
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', function () { measure(); update(); });
+  window.addEventListener('resize', function () { measure(); update(); headroom(); });
 
   measure();
   update();

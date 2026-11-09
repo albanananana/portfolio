@@ -738,6 +738,10 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 @media (max-width:1023px){
   .tabs, .nav__right{ display:none }
   .burger{ display:block }
+  /* js/main.js › headroom: the bar slides away on the way down and
+     comes back on the way up */
+  .nav{ transition:transform .3s cubic-bezier(.2, .7, .2, 1) }
+  body.nav-hidden .nav{ transform:translateY(-100%) }
   .col-right, .about__body{ width:100%; margin-left:0 }
 
   main{ padding-top:var(--nav-h) }
