@@ -124,7 +124,7 @@ Antigravity, Claude Code, Krea, Magnific, Midjourney
 
 ## 06 · Contact (footer)
 
-wladyslaw.design@gmail.com
+hello@wlad.design
 
 +48 577 538 552
 

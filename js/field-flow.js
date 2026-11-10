@@ -96,10 +96,10 @@ const CONFIG = {
 
   /* entrance */
   sphere: 3,            // sphere radius, × the shape's height
-  fadeIn: 0.8,          // s for the sphere to fade in
-  hold: 1,              // s from the start of the fade until it starts to form
-  springK: 31,          // the forming spring — about 2 s to land
-  springD: 17.2,        // ζ ≈ 1.5: overdamped, settles without overshoot
+  fadeIn: 0.4,          // s for the sphere to fade in
+  hold: 0.5,            // s from the start of the fade until it starts to form
+  springK: 124,         // the forming spring — about 0.8 s to 95 %
+  springD: 34.4,        // ζ ≈ 1.5: overdamped, settles without overshoot
   swirl: 250,           // px — the mid-morph turbulence
 
   /* cursor */
