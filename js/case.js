@@ -20,7 +20,10 @@
    on a touch screen a tap shows it for a few seconds.
    A pause by the reader sticks — scrolling back does not restart
    that video until they press play. Under reduced motion nothing
-   starts on its own. */
+   starts on its own.
+
+   data-start="1" on a video skips its opening second: it starts
+   there, loops back there, and the scrub line stops there. */
 (function () {
   'use strict';
 
@@ -54,6 +57,7 @@
     var seek = bar.querySelector('.vctl__seek');
     var time = bar.querySelector('.vctl__time');
     var scrubbing = false, resume = false, raf = 0;
+    var start = parseFloat(v.getAttribute('data-start')) || 0;
 
     v.userPaused = still;
 
@@ -122,7 +126,7 @@
     seek.addEventListener('input', function () {
       var d = v.duration;
       if (!d) { v.preload = 'auto'; return; }
-      v.currentTime = seek.value / 1000 * d;
+      v.currentTime = Math.max(start, seek.value / 1000 * d);
       paint();
     });
     function release() {
@@ -139,6 +143,15 @@
       v.addEventListener(e, state);
     });
     v.addEventListener('seeked', paint);
+    if (start) {
+      /* the first load, and every loop, which seeks back to 0 */
+      v.addEventListener('loadedmetadata', function () {
+        if (v.currentTime < start) v.currentTime = start;
+      });
+      v.addEventListener('seeking', function () {
+        if (v.currentTime < start - 0.05) v.currentTime = start;
+      });
+    }
     state();
   }
 
