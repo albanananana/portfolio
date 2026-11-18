@@ -1,8 +1,9 @@
 # Portfolio site
 
 Static site — plain HTML, CSS and JS. No build step. Two vendored dependencies:
-a tree-shaken three.js build for the hero field, loaded lazily on wide screens,
-and GSAP for the loader and the editorial case's figures.
+GSAP for the loader and the editorial case's figures, and a tree-shaken three.js
+build that only the previous hero field (`js/field-gl.js`) uses — the pages no
+longer load it; it comes in with the tuning panel.
 Built against the Figma file **Portfolio › Desktop - 9** (`node-id=239-1139`).
 
 ```
@@ -18,16 +19,17 @@ site/
 ├── js/main.js          tab building, scroll spy, per-section colour, burger
 ├── js/case.js          case page: burger + which contents link is current
 ├── js/case-editorial.js   editorial case: home and contents, image zoom, research tabs, GSAP reveal of figures and charts (bars fill, numbers count up)
-├── js/field-flow.js    particle flow fields — hero + footer logo mark (WebGL2, after colin.cv)
-├── js/field-gl.js      the tuning panel (H); its ASCII fields stand down when field-flow runs
-├── js/ascii.js         the hero field, CPU version (fallback)
+├── js/field-flow.js    particle flow fields — hero + footer logo mark (WebGL2 on a GPU, one still CPU frame without one; after colin.cv)
+├── js/field-gl.js      the tuning panel (H) — not loaded by the pages; field-flow.js imports it when DEV_PANEL is on
+├── js/ascii.js         the hero field, CPU version — no longer loaded by the pages (lab/ascii.html still uses it)
 ├── vendor/
 │   ├── gsap.min.js     GSAP 3.15.0
 │   ├── three-field.js  three.js r186, only the classes field-gl.js uses
 │   └── three-LICENSE.txt
 └── assets/
     ├── logo.svg
-    ├── loader/         the project shots the loader flicks through
+    ├── loader/         the project shots the loader flicks through (750 wide, plus -400 for 1x screens via srcset)
+    ├── work-*/shot*    the work-row shots: 992 wide, plus -496 and -720 (srcset)
     ├── case-bondata/   the case's before/after screenshots (WebP, 2x)
     ├── case-dishcover/ screens cut from the Behance boards (WebP, 1920 wide) and the persona photos
     ├── work-dishcover/ the Dishcover row shot, from the Behance cover
@@ -249,7 +251,13 @@ Percentage padding would resolve against *width*, which is the wrong axis.
 
 ### Flow fields — `js/field-flow.js` (default)
 
-The hero and the footer draw the logo mark as particles running along its outlines and through hatch strokes inside it. Press H for the panel (Hero and Footer tabs); defaults are `CONFIG` and `FOOTER` at the top of the file. `js/field-flow.js` loads before `js/field-gl.js` and claims both bands, so the ASCII fields below no longer start; `js/field-gl.js` only provides the panel. If WebGL2 is missing, `js/ascii.js` still takes the hero. The previous, ASCII version of the whole site is kept in `../site-backup-ascii/`.
+The hero and the footer draw the logo mark as particles running along its outlines and through hatch strokes inside it. Defaults are `CONFIG` and `FOOTER` at the top of the file. The previous, ASCII version of the whole site is kept in `../site-backup-ascii/`.
+
+**Two modes.** An inline script above the page's scripts sets `data-field` on `<html>` (the same check on the home page and the case pages). `gl`: a WebGL2 context that `failIfMajorPerformanceCaveat` lets through and whose renderer is not a software one (SwiftShader, llvmpipe, Microsoft Basic Render…) — the fields animate. `still`: anything else — no GPU, a blocklisted driver, a VM, headless Chrome (PageSpeed), or no WebGL2 at all. There each field is drawn once, already formed, by `startStill()`: the points are rasterised on the CPU into a 2D canvas the way the shaders draw them at rest, and no WebGL context is made. Animated in software, the field kept the main thread busy every frame — PageSpeed's desktop run reported 33 s of main-thread work and 5 s of TBT; in a local headless run with SwiftShader the change took TBT from ~730 ms to 0.
+
+**Loading.** The hero is built at load (it has to be ready when the loader hands over); under 1024 it is not built at all. The footer is built only once the page is within a screen of it. A start yields to the browser between its heavy steps (each outline, the fill mask, the shaders, the particles), and each outline is measured with `getPointAtLength` at 256 points and interpolated to 1024 — that call alone used to be a ~550 ms task on a throttled phone. If the SVG or the GPU field fails, the band stays empty; `js/ascii.js` is no longer a fallback.
+
+**Panel.** Press H with `DEV_PANEL = true` in both `js/field-flow.js` and `js/field-gl.js`: field-flow.js then imports field-gl.js, which provides the panel (Hero and Footer tabs). Set both back to `false` to ship.
 
 ### GPU ASCII version — `js/field-gl.js` (previous default)
 
@@ -282,7 +290,9 @@ Three deliberate departures from artefakt, all for a light page:
   which falls between texels and averages four; sampling the centre reads the
   cell's own brightness.
 
-**Loading.** `index.html` picks the field before any script runs:
+**Loading** (as it was while this field was the default; the pages now
+choose between `gl` and `still`, see Flow fields above). `index.html` picked the
+field before any script ran:
 WebGL2 + `EXT_color_buffer_float` + an http(s) page → `data-field="gl"`,
 otherwise `cpu`. three.js is imported dynamically, and not at all under
 `minWidth` (1024). If the GPU field fails, or has not reported in 6 s, it fires
@@ -345,7 +355,7 @@ left of the column.
 No CPU fallback for the footer, and hidden under 1024px: without WebGL the band
 is empty.
 
-### CPU version — `js/ascii.js` (fallback)
+### CPU version — `js/ascii.js` (former fallback, no longer loaded by the pages)
 
 `js/ascii.js` paints a character grid in the hero. It is `position:absolute`
 inside the hero section, so it scrolls away with it — it does **not** follow

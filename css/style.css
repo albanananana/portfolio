@@ -87,7 +87,7 @@
   --sand:       #E5DFD5;   /* work-card tags                     */
   --nav-bg:     #FFFFFF;   /* nav bar, inactive tab, About band  */
   --ink:        #121212;   /* body copy, inactive tab label      */
-  --ink-soft:   #737373;   /* photo caption, "view" in the link  */
+  --ink-soft:   #6B6B6B;   /* photo caption, "view" in the link; 4.8:1 on paper (#737373 was 4.3, under AA's 4.5) */
   --ink-index:  #423B3B;   /* work row numbers                   */
   --accent:     #D42823;   /* eyebrows, active tab label         */
   --coral:      #FA4D48;   /* hairline rules                     */

@@ -704,25 +704,27 @@
 </footer>
 
 <script>
-  /* Same gate as the home page: the footer mark is the GPU field, and
-     without WebGL2 the band simply stays empty. */
+  /* Same gate as the home page (see the note there): the footer mark
+     animates on a GPU (gl) and is drawn once on the CPU otherwise (still). */
   (function () {
-    var root = document.documentElement, ok = false;
+    var mode = 'still';
     try {
-      if (location.protocol !== 'file:') {
-        var gl = document.createElement('canvas').getContext('webgl2');
-        ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
-        var lose = gl && gl.getExtension('WEBGL_lose_context');
+      var gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+      if (gl) {
+        var name = String(gl.getParameter(gl.RENDERER)), info;
+        if (/^webkit webgl$/i.test(name) && (info = gl.getExtension('WEBGL_debug_renderer_info')))
+          name = String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL));
+        if (!/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name)) mode = 'gl';
+        var lose = gl.getExtension('WEBGL_lose_context');
         if (lose) lose.loseContext();
       }
     } catch (e) {}
-    root.dataset.field = ok ? 'gl' : 'cpu';
+    document.documentElement.dataset.field = mode;
   })();
 </script>
 <script src="vendor/gsap.min.js"></script>
 <script src="js/case.js"></script>
 <script src="js/case-editorial.js"></script>
 <script type="module" src="js/field-flow.js"></script>
-<script type="module" src="js/field-gl.js"></script>
 </body>
 </html>

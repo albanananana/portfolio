@@ -36,6 +36,8 @@
       }, 6000);
       var pre = document.createElement('link');
       pre.rel = 'preload'; pre.as = 'image'; pre.href = 'assets/loader/img2.webp';
+      pre.setAttribute('imagesrcset', 'assets/loader/img2-400.webp 400w, assets/loader/img2.webp 750w');
+      pre.setAttribute('imagesizes', '21.5vw');
       pre.setAttribute('fetchpriority', 'high');
       document.head.appendChild(pre);
     })();
@@ -54,13 +56,13 @@
     <div class="loader__stage">
       <div class="loader__frame">
         <div class="loader__reveal">
-          <img src="assets/loader/img2.webp" alt="" decoding="async" fetchpriority="high">
-          <img src="assets/loader/img3.webp" alt="" decoding="async">
-          <img src="assets/loader/img5.webp" alt="" decoding="async">
-          <img src="assets/loader/img6.webp" alt="" decoding="async">
-          <img src="assets/loader/img10.webp" alt="" decoding="async">
-          <img src="assets/loader/img11.webp" alt="" decoding="async">
-          <img src="assets/loader/img1.webp" alt="" decoding="async">
+          <img src="assets/loader/img2.webp" srcset="assets/loader/img2-400.webp 400w, assets/loader/img2.webp 750w" sizes="21.5vw" alt="" decoding="async" fetchpriority="high">
+          <img src="assets/loader/img3.webp" srcset="assets/loader/img3-400.webp 400w, assets/loader/img3.webp 750w" sizes="21.5vw" alt="" decoding="async">
+          <img src="assets/loader/img5.webp" srcset="assets/loader/img5-400.webp 400w, assets/loader/img5.webp 750w" sizes="21.5vw" alt="" decoding="async">
+          <img src="assets/loader/img6.webp" srcset="assets/loader/img6-400.webp 400w, assets/loader/img6.webp 750w" sizes="21.5vw" alt="" decoding="async">
+          <img src="assets/loader/img10.webp" srcset="assets/loader/img10-400.webp 400w, assets/loader/img10.webp 750w" sizes="21.5vw" alt="" decoding="async">
+          <img src="assets/loader/img11.webp" srcset="assets/loader/img11-400.webp 400w, assets/loader/img11.webp 750w" sizes="21.5vw" alt="" decoding="async">
+          <img src="assets/loader/img1.webp" srcset="assets/loader/img1-400.webp 400w, assets/loader/img1.webp 750w" sizes="21.5vw" alt="" decoding="async">
         </div>
       </div>
       <div class="loader__half loader__half--w">
@@ -205,7 +207,7 @@
                 aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
                   <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
                 </svg></span><span>)</span></p>
-            <span class="work__shot" aria-hidden="true"><img src="assets/work-bondata/shot.webp" alt="" width="248" height="187"
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-bondata/shot.webp" srcset="assets/work-bondata/shot-496.webp 496w, assets/work-bondata/shot-720.webp 720w, assets/work-bondata/shot.webp 992w" sizes="(min-width: 1024px) calc(18.24vw - 12px), calc(100vw - 40px)" alt="" width="248" height="187"
                 loading="lazy" decoding="async"></span>
           </a>
         </li>
@@ -229,7 +231,7 @@
                 aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
                   <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
                 </svg></span><span>)</span></p>
-            <span class="work__shot" aria-hidden="true"><img src="assets/work-evoke/shot.webp" alt="" width="248" height="187"
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-evoke/shot.webp" srcset="assets/work-evoke/shot-496.webp 496w, assets/work-evoke/shot-720.webp 720w, assets/work-evoke/shot.webp 992w" sizes="(min-width: 1024px) calc(18.24vw - 12px), calc(100vw - 40px)" alt="" width="248" height="187"
                 loading="lazy" decoding="async"></span>
           </a>
         </li>
@@ -253,7 +255,7 @@
                 aria-hidden="true"><svg viewBox="0 0 12 11" fill="none" focusable="false">
                   <path d="M0.5 5.5H11.5M11.5 5.5L7 1M11.5 5.5L7 10" stroke="currentColor" stroke-width="1" />
                 </svg></span><span>)</span></p>
-            <span class="work__shot" aria-hidden="true"><img src="assets/work-dishcover/shot.webp" alt="" width="248" height="187"
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-dishcover/shot.webp" srcset="assets/work-dishcover/shot-496.webp 496w, assets/work-dishcover/shot-720.webp 720w, assets/work-dishcover/shot.webp 992w" sizes="(min-width: 1024px) calc(18.24vw - 12px), calc(100vw - 40px)" alt="" width="248" height="187"
                 loading="lazy" decoding="async"></span>
           </a>
         </li>
@@ -273,7 +275,7 @@
               </div>
               <p class="work__status"><span class="work__status-dot" aria-hidden="true"></span>In progress</p>
             </div>
-            <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" alt="" width="248" height="187"
+            <span class="work__shot" aria-hidden="true"><img src="assets/work-yourvet/shot.webp" srcset="assets/work-yourvet/shot-496.webp 496w, assets/work-yourvet/shot-720.webp 720w, assets/work-yourvet/shot.webp 992w" sizes="(min-width: 1024px) calc(18.24vw - 12px), calc(100vw - 40px)" alt="" width="248" height="187"
                 loading="lazy" decoding="async"></span>
           </div>
         </li>
@@ -457,37 +459,35 @@
   </footer>
 
   <script>
-    /* Which hero field runs is decided here, before either script loads.
-       The GPU one (js/field-gl.js, three.js) needs WebGL2 with float
-       render targets and an http(s) page — module scripts do not load
-       from file://. Otherwise js/ascii.js, the CPU one, runs as before.
-       If the GPU field has not reported in within 6 s (slow or failed
-       download), the CPU field is started instead. */
+    /* How the particle fields (js/field-flow.js) are drawn, decided
+       before it loads — data-field on <html>:
+         gl     WebGL2 on a GPU: the fields animate.
+         still  anything else — WebGL drawn in software (no GPU, a
+                blocklisted driver, a VM, headless Chrome) or no WebGL2:
+                each field is drawn once, formed, on the CPU. Animated in
+                software, every frame would be CPU work on the main thread.
+       failIfMajorPerformanceCaveat refuses a software context; the
+       renderer's name catches a browser that hands one out anyway. */
     (function () {
-      var root = document.documentElement, ok = false;
+      var mode = 'still';
       try {
-        if (location.protocol !== 'file:') {
-          var gl = document.createElement('canvas').getContext('webgl2');
-          ok = !!(gl && gl.getExtension('EXT_color_buffer_float'));
-          var lose = gl && gl.getExtension('WEBGL_lose_context');
+        var gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+        if (gl) {
+          var name = String(gl.getParameter(gl.RENDERER)), info;
+          if (/^webkit webgl$/i.test(name) && (info = gl.getExtension('WEBGL_debug_renderer_info')))
+            name = String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL));
+          if (!/swiftshader|llvmpipe|softpipe|software|basic render/i.test(name)) mode = 'gl';
+          var lose = gl.getExtension('WEBGL_lose_context');
           if (lose) lose.loseContext();
         }
       } catch (e) { }
-      root.dataset.field = ok ? 'gl' : 'cpu';
-      if (ok) setTimeout(function () {
-        if (window.__fieldDone) return;
-        window.__fieldDone = true;
-        root.dataset.field = 'cpu';
-        window.dispatchEvent(new Event('field:fallback'));
-      }, 6000);
+      document.documentElement.dataset.field = mode;
     })();
   </script>
   <script src="vendor/gsap.min.js"></script>
   <script src="js/loader.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/ascii.js"></script>
   <script type="module" src="js/field-flow.js"></script>
-  <script type="module" src="js/field-gl.js"></script>
 </body>
 
 </html>

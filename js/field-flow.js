@@ -27,7 +27,9 @@
         the word and spring into the outlines, with a swirl that
         peaks halfway (4·m·(1−m)) and is gone when they land. It
         waits for js/loader.js (hero:reveal) like the old field; the
-        footer forms the first time it is scrolled into view.
+        footer is built when the page nears it and forms the first
+        time it is scrolled into view. Drawn in software, a field
+        skips all this: one formed frame, no motion (MODE below).
 
      3. CURSOR — points within a radius of the pointer get a kick
         away from it, each tilted a little at random, and spring back
@@ -41,15 +43,18 @@
    Placement is the old fields' (js/field-gl.js › CONFIG / FOOTER),
    so both shapes sit exactly where they did. Distances are in px of
    the Figma frame (designWidth is the shape's width there), so the
-   same numbers mean the same thing for both shapes. If WebGL2 or
-   the SVG fails, the CPU field (js/ascii.js) takes the hero as
-   before; the footer band stays empty, as it always did.
+   same numbers mean the same thing for both shapes. Without a GPU
+   the field is drawn once, still (startStill). If the SVG or the
+   GPU field fails, the band stays empty. The CPU field (js/ascii.js)
+   is no longer a fallback: it was the heaviest way to draw the
+   mark, on exactly the machines least able to afford it.
 
    TUNING: press H. The panel is js/field-gl.js's, with a Hero and a
    Footer tab for these fields; values persist in this browser,
    "Copy CONFIG" / "Copy FOOTER" gives the object to paste below.
-   Shape values rebuild the particles on the spot. Set DEV_PANEL to
-   false to ship.
+   Shape values rebuild the particles on the spot. The pages do not
+   load js/field-gl.js: DEV_PANEL true here imports it (set its own
+   DEV_PANEL too). Set both back to false to ship.
    ============================================================ */
 
 /* ── Hero ──────────────────────────────────────────────────────── */
@@ -203,20 +208,36 @@ const footerStage = document.getElementById('footer-field');
 const NS = 'http://www.w3.org/2000/svg';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Claim both bands before js/field-gl.js looks (modules run in order). */
-if (html.dataset.field === 'gl') {
-  if (heroStage) window.__flowHero = true;
-  if (footerStage) window.__flowFooter = true;
-}
+/* The page decides the mode before this file runs (data-field on <html>,
+   set by the inline script above the page's scripts):
+     gl     WebGL2 on a GPU: the fields animate.
+     still  no GPU for it — WebGL drawn in software (no GPU, a
+            blocklisted driver, a VM, headless Chrome) or no WebGL2 at
+            all: each field is drawn once, formed, on the CPU into a 2D
+            canvas (startStill). Animated, every frame would be CPU work
+            on the page's main thread.
+   Reduced motion on a GPU draws one formed WebGL frame and stops. */
+const MODE = html.dataset.field;
+const soft = MODE !== 'gl';
+const still = reduced || soft;
 
+/* Claim both bands (js/field-gl.js, when the panel brings it in, leaves
+   claimed ones alone). */
+if (heroStage) window.__flowHero = true;
+if (footerStage) window.__flowFooter = true;
+
+/* A field that cannot start leaves its band empty: the band stays
+   hidden until start() shows it. */
 function fallback(reason) {
   console.warn('[flow] not used:', reason);
   window.__flowHero = false;
-  if (window.__fieldDone) return;
-  window.__fieldDone = true;
-  html.dataset.field = 'cpu';
-  window.dispatchEvent(new Event('field:fallback'));
 }
+
+/* Hands the main thread back between the heavy steps of a start, so the
+   steps run as separate short tasks instead of one long one. */
+const breathe = () => (globalThis.scheduler && scheduler.yield
+  ? scheduler.yield()
+  : new Promise((r) => setTimeout(r, 0)));
 
 /* ── Shaders ─────────────────────────────────────────────────── */
 const VERT = `#version 300 es
@@ -387,15 +408,28 @@ async function sampleShape(svgText) {
 
   const contours = [];
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  /* getPointAtLength costs about 10 µs a call, and 1024 calls per
+     contour made this the longest step of a start (≈550 ms on a phone
+     for the footer). So each contour is measured at MEASURED points and
+     the TEX_W points between them are interpolated: a chord of 1/256 of
+     an outline stays within half a px of the curve even at the hero's
+     size, under the 2.5 px dots. */
+  const MEASURED = 256;
+  const at = new Float32Array((MEASURED + 1) * 2);
   const sample = (el) => {
     const raw = el.getTotalLength();
     const m = el.getCTM();
     const len = raw * Math.sqrt(Math.abs(m.a * m.d - m.b * m.c));
     if (!(len > 0.05)) return;
+    for (let i = 0; i <= MEASURED; i++) {
+      const q = el.getPointAtLength(i / MEASURED * raw);
+      at[i * 2] = m.a * q.x + m.c * q.y + m.e; at[i * 2 + 1] = m.b * q.x + m.d * q.y + m.f;
+    }
     const pts = new Float32Array(TEX_W * 2);
     for (let j = 0; j < TEX_W; j++) {
-      const q = el.getPointAtLength(j / TEX_W * raw);
-      const x = m.a * q.x + m.c * q.y + m.e, y = m.b * q.x + m.d * q.y + m.f;
+      const f = j / TEX_W * MEASURED, i = Math.floor(f), t = f - i;
+      const x = at[i * 2] + (at[i * 2 + 2] - at[i * 2]) * t;
+      const y = at[i * 2 + 1] + (at[i * 2 + 3] - at[i * 2 + 1]) * t;
       pts[j * 2] = x; pts[j * 2 + 1] = y;
       if (x < minX) minX = x; if (x > maxX) maxX = x;
       if (y < minY) minY = y; if (y > maxY) maxY = y;
@@ -403,24 +437,26 @@ async function sampleShape(svgText) {
     contours.push({ pts, len, fill: false });
   };
   try {
-    g.querySelectorAll('path, rect, circle, ellipse, polygon, polyline').forEach((el) => {
-      if (el.closest('defs, clipPath, mask')) return;
+    for (const el of g.querySelectorAll('path, rect, circle, ellipse, polygon, polyline')) {
+      if (el.closest('defs, clipPath, mask')) continue;
       const d = el.tagName === 'path' ? el.getAttribute('d') || '' : null;
-      if (d === null || /m/.test(d.slice(1))) { sample(el); return; }
-      d.split(/(?=M)/).map((x) => x.trim()).filter(Boolean).forEach((sub) => {
+      if (d === null || /m/.test(d.slice(1))) { sample(el); await breathe(); continue; }
+      for (const sub of d.split(/(?=M)/).map((x) => x.trim()).filter(Boolean)) {
         const part = document.createElementNS(NS, 'path');
         part.setAttribute('d', sub);
         if (el.hasAttribute('transform')) part.setAttribute('transform', el.getAttribute('transform'));
         el.parentNode.insertBefore(part, el);
         sample(part);
         part.remove();
-      });
-    });
+        await breathe();
+      }
+    }
   } finally {
     host.remove();
   }
   if (!contours.length) throw new Error('no shapes in the SVG');
   const box = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  await breathe();
 
   /* the fill, as alpha, about 2000 px across */
   const res = 2000 / Math.max(vb.w, vb.h), pad = 0.02 * Math.max(vb.w, vb.h);
@@ -481,16 +517,226 @@ function hatchRows(mask, box, cfg, unit) {
   return rows;
 }
 
+/* The particles: the outlines and hatch strokes as rows (each TEX_W
+   points along its line), and per point its row, phase, speed, scatter
+   off the line, random seeds and place on the entrance sphere. Shared
+   by the GPU field and the still one. */
+function particles(contours, mask, box, cfg, unit, maxRows, withTex = true) {
+  const rows = contours.slice();
+  if (cfg.fill) rows.push(...hatchRows(mask, box, cfg, unit));
+  if (rows.length > maxRows) rows.length = maxRows;
+  const R = rows.length;
+
+  /* outlines and strokes → texture (RGBA32F: x, y, –, –) */
+  let tex = null;
+  if (withTex) {
+    tex = new Float32Array(TEX_W * R * 4);
+    rows.forEach((r, ri) => {
+      for (let j = 0; j < TEX_W; j++) {
+        const o = (ri * TEX_W + j) * 4;
+        tex[o] = r.pts[j * 2]; tex[o + 1] = r.pts[j * 2 + 1]; tex[o + 3] = 1;
+      }
+    });
+  }
+
+  /* Same density on every line; an outline never gets fewer than
+     minPerContour, so the counters and the full stop stay solid. */
+  const total = rows.reduce((s, r) => s + r.len, 0);
+  const density = Math.min(cfg.density / unit, cfg.maxParticles / total);
+  const alloc = rows.map((r) => Math.max(r.fill ? 1 : Math.round(cfg.minPerContour), Math.round(r.len * density)));
+  const N = alloc.reduce((s, a) => s + a, 0);
+  const maxLen = Math.max(...contours.map((r) => r.len));
+  const bakedSpeed = cfg.flowSpeed || 1;
+  const speedU = bakedSpeed * unit, stub = 40 * unit;
+  const base = speedU / maxLen;
+
+  const aRow = new Float32Array(N), aPhase = new Float32Array(N), aSpeed = new Float32Array(N);
+  const aFill = new Float32Array(N);
+  const aScatter = new Float32Array(N * 2), aRnd = new Float32Array(N * 3);
+  const aSphere = new Float32Array(N * 3);
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  let w = 0;
+  rows.forEach((r, ri) => {
+    /* hatch strokes run at the outline speed; a stub at a letter's
+       edge is treated as 40 long so it does not flicker */
+    const speed = r.fill ? speedU / Math.max(r.len, stub) : base * Math.min(maxLen / r.len, cfg.maxRate);
+    for (let k = 0; k < alloc[ri]; k++, w++) {
+      aRow[w] = ri; aPhase[w] = Math.random(); aSpeed[w] = speed; aFill[w] = r.fill ? 1 : 0;
+    }
+  });
+  for (let i = 0; i < N; i++) {
+    const rx = (Math.random() - 0.5) * 0.4, ry = (Math.random() - 0.5) * 0.4, rz = (Math.random() - 0.5) * 0.3;
+    aRnd[i * 3] = rx; aRnd[i * 3 + 1] = ry; aRnd[i * 3 + 2] = rz;
+    const band = (aFill[i] ? cfg.fillScatter : cfg.scatter) * unit;
+    const ang = rx * 15.708, rad = Math.sqrt(Math.abs(ry) * 5) * band;   // colin: uniform over a disc
+    aScatter[i * 2] = Math.cos(ang) * rad; aScatter[i * 2 + 1] = Math.sin(ang) * rad;
+    /* Fibonacci sphere, in a shuffled order so the sphere does not
+       map contours onto bands of latitude */
+    const k = (i * 7919) % N;
+    const y = 1 - (k / Math.max(N - 1, 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = golden * k;
+    aSphere[i * 3] = Math.cos(th) * rr; aSphere[i * 3 + 1] = y; aSphere[i * 3 + 2] = Math.sin(th) * rr;
+  }
+  return { rows, tex, N, aRow, aPhase, aSpeed, aFill, aScatter, aRnd, aSphere, bakedSpeed };
+}
+
+/* Where the shape sits: the band's box, how far the canvas reaches past
+   it, and the map from SVG units to canvas px (X; the vertex shader's
+   uM and uT). */
+function placement(stage, cfg, box) {
+  const SW = stage.clientWidth, SH = stage.clientHeight;
+  if (!SW || !SH) return null;
+  /* Bleed: the canvas reaches this far past the band on every side,
+     so a shape scaled past the band is not cut at its edges (the
+     hero section still clips at its own box). */
+  const bl = Math.max(0, cfg.bleed || 0);
+  const cs = getComputedStyle(stage);
+  const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+  const inner = SW - padL - padR;
+  const s = Math.min((cfg.scale / 100) * inner / box.w, (SH * cfg.maxHeight) / box.h);
+  /* the shape's centre, in band px, then moved onto the canvas */
+  const cx = (cfg.anchorX === 'center'
+    ? SW / 2 + inner * cfg.posX / 100
+    : padL + inner * cfg.posX / 100 + box.w * s / 2) + bl;
+  const cy = (cfg.anchorY === 'top'
+    ? (box.h * s) / 2 + SH * cfg.posY / 100
+    : SH / 2 + SH * cfg.posY / 100) + bl;
+  /* scale and turn about the shape's centre */
+  const r = (cfg.rotate || 0) * Math.PI / 180, co = Math.cos(r), si = Math.sin(r);
+  const bx = box.x + box.w / 2, by = box.y + box.h / 2;
+  const X = { a: s * co, b: -s * si, c: s * si, d: s * co, tx: 0, ty: 0 };
+  X.tx = cx - X.a * bx - X.b * by;
+  X.ty = cy - X.c * bx - X.d * by;
+  return { bl, W: SW + bl * 2, H: SH + bl * 2, X, sphere: { x: cx, y: cy, r: box.h * s * cfg.sphere } };
+}
+
+/* The canvas over the band and its bleed, at the screen's pixel ratio
+   (capped at 2). Returns that ratio. */
+function sizeCanvas(canvas, stage, p) {
+  Object.assign(canvas.style, p.bl
+    ? { left: -p.bl + 'px', top: -p.bl + 'px', width: p.W + 'px', height: p.H + 'px' }
+    : { left: '', top: '', width: '', height: '' });
+  stage.style.overflow = p.bl ? 'visible' : '';
+  stage.style.contain = p.bl ? 'none' : '';
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  canvas.width = Math.round(p.W * dpr); canvas.height = Math.round(p.H * dpr);
+  return dpr;
+}
+
+/* Put the canvas in the band and show it (for the hero, in place of the
+   CPU field's <pre>s). `fade`: a field drawn once has no entrance of its
+   own, so while the loader plays it waits under it, transparent, and
+   fades in when the loader hands over. */
+function takeOver(stage, canvas, primary, fade) {
+  stage.querySelectorAll('.ascii-bg__layer').forEach((el) => el.remove());
+  stage.appendChild(canvas);
+  stage.hidden = false;
+  stage.style.opacity = '';
+  if (fade) {
+    stage.style.opacity = '0';
+    addEventListener('hero:reveal', () => {
+      stage.style.transition = 'opacity .9s ease';
+      stage.style.opacity = '';
+    }, { once: true });
+  }
+  if (primary) {
+    window.__fieldDone = true;
+    html.dataset.hero = 'flow';
+  }
+}
+
+/* ── The still field ─────────────────────────────────────────────
+   MODE 'still': the formed field drawn once, on the CPU, into a 2D
+   canvas — no WebGL context at all. Drawn in software, even a single
+   WebGL frame meant compiling the shaders and pushing every point
+   through the software rasteriser, a long task of its own. This draws
+   what the shaders draw at rest (uMorph 1, uFlow 0, no cursor): each
+   point a disc of pointSize device px at its place on its line, its
+   colour premultiplied and laid over with ONE, ONE_MINUS_SRC_ALPHA in
+   8 bits, as the GPU's framebuffer does. Redrawn when the band
+   resizes. */
+function startStill(stage, cfg, canvas, shape, unit, primary) {
+  const ctx = canvas.getContext('2d');
+  let P = particles(shape.contours, shape.mask, shape.box, cfg, unit, Infinity, false);
+
+  function draw() {
+    const wide = innerWidth >= cfg.minWidth;
+    canvas.style.display = wide ? 'block' : 'none';
+    const p = wide && placement(stage, cfg, shape.box);
+    if (!p) return;
+    sizeCanvas(canvas, stage, p);
+    const w = canvas.width, h = canvas.height, sx = w / p.W, sy = h / p.H, X = p.X;
+    const buf = new Uint8ClampedArray(w * h * 4);
+    const look = [
+      { rgb: hexToVec(cfg.ink).map((c) => c * 255), alpha: cfg.alpha, size: cfg.pointSize },
+      { rgb: hexToVec(cfg.fillInk).map((c) => c * 255), alpha: cfg.fillAlpha, size: cfg.fillPointSize }
+    ];
+    const e0 = 0.5 - 0.5 * cfg.softness - 0.001;
+    const { rows, N, aRow, aPhase, aFill, aScatter } = P;
+    for (let i = 0; i < N; i++) {
+      const L = look[aFill[i] ? 1 : 0];
+      const pts = rows[aRow[i]].pts, j = (aPhase[i] * TEX_W) | 0;
+      const qx = pts[j * 2] + aScatter[i * 2], qy = pts[j * 2 + 1] + aScatter[i * 2 + 1];
+      const cx = (X.a * qx + X.b * qy + X.tx) * sx, cy = (X.c * qx + X.d * qy + X.ty) * sy;
+      const s = L.size, half = s / 2;
+      const x0 = Math.max(0, Math.floor(cx - half)), x1 = Math.min(w - 1, Math.ceil(cx + half));
+      const y0 = Math.max(0, Math.floor(cy - half)), y1 = Math.min(h - 1, Math.ceil(cy + half));
+      for (let py = y0; py <= y1; py++) {
+        for (let px = x0; px <= x1; px++) {
+          /* gl_PointCoord's distance from the point's centre, as the fragment shader reads it */
+          const dx = px + 0.5 - cx, dy = py + 0.5 - cy, d = Math.sqrt(dx * dx + dy * dy) / s;
+          if (d > 0.5) continue;
+          const t = Math.min(1, Math.max(0, (d - e0) / (0.5 - e0)));
+          const a = L.alpha * (1 - t * t * (3 - 2 * t));
+          if (a <= 0) continue;
+          const o = (py * w + px) * 4, inv = 1 - a;
+          buf[o] = L.rgb[0] * a + buf[o] * inv;
+          buf[o + 1] = L.rgb[1] * a + buf[o + 1] * inv;
+          buf[o + 2] = L.rgb[2] * a + buf[o + 2] * inv;
+          buf[o + 3] = a * 255 + buf[o + 3] * inv;
+        }
+      }
+    }
+    /* ImageData is straight alpha; the buffer is premultiplied */
+    for (let o = 0; o < buf.length; o += 4) {
+      const A = buf[o + 3];
+      if (A && A < 255) {
+        const k = 255 / A;
+        buf[o] *= k; buf[o + 1] *= k; buf[o + 2] *= k;
+      }
+    }
+    ctx.putImageData(new ImageData(buf, w, h), 0, 0);
+  }
+
+  takeOver(stage, canvas, primary, primary && window.__heroGate && !window.__heroReveal);
+  /* the observer's first call, right after the band is shown, is the first draw */
+  let queued = 0;
+  new ResizeObserver(() => {
+    if (queued) return;
+    queued = requestAnimationFrame(() => { queued = 0; draw(); });
+  }).observe(stage);
+
+  return {
+    cfg,
+    apply(key) {
+      if (REBUILD.includes(key)) P = particles(shape.contours, shape.mask, shape.box, cfg, unit, Infinity, false);
+      draw();
+    },
+    replay() {},
+    stats: () => `${P.N.toLocaleString()} particles · still · ${canvas.width}×${canvas.height}`
+  };
+}
+
 /* ── The field ───────────────────────────────────────────────── */
 async function start(stage, cfg, { primary = false } = {}) {
   const svgText = await (await fetch(new URL(cfg.svg, import.meta.url))).text();
   const { contours, box, mask } = await sampleShape(svgText);
-  if (primary && window.__fieldDone) return null;   // the 6 s watchdog started the CPU field
+  await breathe();
   /* SVG units per Figma px: every distance in cfg is in Figma px */
   const unit = box.w / cfg.designWidth;
 
   const canvas = document.createElement('canvas');
   canvas.className = 'ascii-bg__gl';
+  if (soft) return startStill(stage, cfg, canvas, { contours, box, mask }, unit, primary);
   const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
   if (!gl) throw new Error('no WebGL2');
   const maxRows = gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -519,59 +765,11 @@ async function start(stage, cfg, { primary = false } = {}) {
   let disp, vx, vy, mCos, mSin, mMag, near, bakedSpeed = cfg.flowSpeed;
 
   function build() {
-    rows = contours.slice();
-    if (cfg.fill) rows.push(...hatchRows(mask, box, cfg, unit));
-    if (rows.length > maxRows) rows.length = maxRows;
-    const R = rows.length;
-
-    /* outlines and strokes → texture (RGBA32F: x, y, –, –) */
-    tex = new Float32Array(TEX_W * R * 4);
-    rows.forEach((r, ri) => {
-      for (let j = 0; j < TEX_W; j++) {
-        const o = (ri * TEX_W + j) * 4;
-        tex[o] = r.pts[j * 2]; tex[o + 1] = r.pts[j * 2 + 1]; tex[o + 3] = 1;
-      }
-    });
+    let aFill, aSphere;
+    ({ rows, tex, N, aRow, aPhase, aSpeed, aFill, aScatter, aRnd, aSphere, bakedSpeed } =
+      particles(contours, mask, box, cfg, unit, maxRows));
     gl.bindTexture(gl.TEXTURE_2D, pathTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, TEX_W, R, 0, gl.RGBA, gl.FLOAT, tex);
-
-    /* Same density on every line; an outline never gets fewer than
-       minPerContour, so the counters and the full stop stay solid. */
-    const total = rows.reduce((s, r) => s + r.len, 0);
-    const density = Math.min(cfg.density / unit, cfg.maxParticles / total);
-    const alloc = rows.map((r) => Math.max(r.fill ? 1 : Math.round(cfg.minPerContour), Math.round(r.len * density)));
-    N = alloc.reduce((s, a) => s + a, 0);
-    const maxLen = Math.max(...contours.map((r) => r.len));
-    bakedSpeed = cfg.flowSpeed || 1;
-    const speedU = bakedSpeed * unit, stub = 40 * unit;
-    const base = speedU / maxLen;
-
-    aRow = new Float32Array(N); aPhase = new Float32Array(N); aSpeed = new Float32Array(N);
-    const aFill = new Float32Array(N);
-    aScatter = new Float32Array(N * 2); aRnd = new Float32Array(N * 3);
-    const aSphere = new Float32Array(N * 3);
-    const golden = Math.PI * (3 - Math.sqrt(5));
-    let w = 0;
-    rows.forEach((r, ri) => {
-      /* hatch strokes run at the outline speed; a stub at a letter's
-         edge is treated as 40 long so it does not flicker */
-      const speed = r.fill ? speedU / Math.max(r.len, stub) : base * Math.min(maxLen / r.len, cfg.maxRate);
-      for (let k = 0; k < alloc[ri]; k++, w++) {
-        aRow[w] = ri; aPhase[w] = Math.random(); aSpeed[w] = speed; aFill[w] = r.fill ? 1 : 0;
-      }
-    });
-    for (let i = 0; i < N; i++) {
-      const rx = (Math.random() - 0.5) * 0.4, ry = (Math.random() - 0.5) * 0.4, rz = (Math.random() - 0.5) * 0.3;
-      aRnd[i * 3] = rx; aRnd[i * 3 + 1] = ry; aRnd[i * 3 + 2] = rz;
-      const band = (aFill[i] ? cfg.fillScatter : cfg.scatter) * unit;
-      const ang = rx * 15.708, rad = Math.sqrt(Math.abs(ry) * 5) * band;   // colin: uniform over a disc
-      aScatter[i * 2] = Math.cos(ang) * rad; aScatter[i * 2 + 1] = Math.sin(ang) * rad;
-      /* Fibonacci sphere, in a shuffled order so the sphere does not
-         map contours onto bands of latitude */
-      const k = (i * 7919) % N;
-      const y = 1 - (k / Math.max(N - 1, 1)) * 2, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = golden * k;
-      aSphere[i * 3] = Math.cos(th) * rr; aSphere[i * 3 + 1] = y; aSphere[i * 3 + 2] = Math.sin(th) * rr;
-    }
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, TEX_W, rows.length, 0, gl.RGBA, gl.FLOAT, tex);
     disp = new Float32Array(N * 2);
     fill(gl, B.row, aRow); fill(gl, B.phase, aPhase); fill(gl, B.speed, aSpeed); fill(gl, B.fill, aFill);
     fill(gl, B.scatter, aScatter); fill(gl, B.rnd, aRnd); fill(gl, B.sphere, aSphere);
@@ -617,6 +815,7 @@ async function start(stage, cfg, { primary = false } = {}) {
   }
 
   let active = false;
+  await breathe();   // the shaders above compiled in this task; the particles get their own
   build();
   buildFly();
 
@@ -628,39 +827,11 @@ async function start(stage, cfg, { primary = false } = {}) {
   let W = 0, H = 0, dpr = 1;
   const X = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }, sphere = { x: 0, y: 0, r: 1 };
   function resize() {
-    const SW = stage.clientWidth, SH = stage.clientHeight;
-    if (!SW || !SH) return;
-    /* Bleed: the canvas reaches this far past the band on every side,
-       so a shape scaled past the band is not cut at its edges (the
-       hero section still clips at its own box). */
-    const bl = Math.max(0, cfg.bleed || 0);
-    W = SW + bl * 2; H = SH + bl * 2;
-    Object.assign(canvas.style, bl
-      ? { left: -bl + 'px', top: -bl + 'px', width: W + 'px', height: H + 'px' }
-      : { left: '', top: '', width: '', height: '' });
-    stage.style.overflow = bl ? 'visible' : '';
-    stage.style.contain = bl ? 'none' : '';
-    dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-
-    const cs = getComputedStyle(stage);
-    const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
-    const inner = SW - padL - padR;
-    const s = Math.min((cfg.scale / 100) * inner / box.w, (SH * cfg.maxHeight) / box.h);
-    /* the shape's centre, in band px, then moved onto the canvas */
-    const cx = (cfg.anchorX === 'center'
-      ? SW / 2 + inner * cfg.posX / 100
-      : padL + inner * cfg.posX / 100 + box.w * s / 2) + bl;
-    const cy = (cfg.anchorY === 'top'
-      ? (box.h * s) / 2 + SH * cfg.posY / 100
-      : SH / 2 + SH * cfg.posY / 100) + bl;
-    /* scale and turn about the shape's centre */
-    const r = (cfg.rotate || 0) * Math.PI / 180, co = Math.cos(r), si = Math.sin(r);
-    const bx = box.x + box.w / 2, by = box.y + box.h / 2;
-    X.a = s * co; X.b = -s * si; X.c = s * si; X.d = s * co;
-    X.tx = cx - X.a * bx - X.b * by;
-    X.ty = cy - X.c * bx - X.d * by;
-    sphere.x = cx; sphere.y = cy; sphere.r = box.h * s * cfg.sphere;
+    const p = placement(stage, cfg, box);
+    if (!p) return;
+    W = p.W; H = p.H;
+    dpr = sizeCanvas(canvas, stage, p);
+    Object.assign(X, p.X); Object.assign(sphere, p.sphere);
   }
 
   /* ── pointer ────────────────────────────────────────────────── */
@@ -680,9 +851,9 @@ async function start(stage, cfg, { primary = false } = {}) {
   /* the hero waits for the loader; the footer only ever runs on screen,
      so it forms the first time it is scrolled into view */
   const gated = () => primary && window.__heroGate && !window.__heroReveal;
-  let shown = reduced ? 1 : 0;           // fades the sphere in
-  let morph = reduced ? 1 : 0, mv = 0;   // spring 0 → 1
-  let sinceShown = reduced ? 1e3 : 0;
+  let shown = still ? 1 : 0;           // fades the sphere in
+  let morph = still ? 1 : 0, mv = 0;   // spring 0 → 1
+  let sinceShown = still ? 1e3 : 0;
   let flow = 0, slow = 0, clock = 0, lastSpawn = 0;
 
   function spawn() {
@@ -710,7 +881,7 @@ async function start(stage, cfg, { primary = false } = {}) {
     last = now;
     clock += dt;
 
-    if (!reduced && !gated()) {
+    if (!still && !gated()) {
       shown = cfg.fadeIn > 0 ? Math.min(1, shown + dt / cfg.fadeIn) : 1;
       sinceShown += dt;
       if (sinceShown > cfg.hold && morph < 1) {
@@ -720,13 +891,13 @@ async function start(stage, cfg, { primary = false } = {}) {
       }
     }
     /* the speeds are baked at build time; the panel's speed scales the clock */
-    if (!reduced) { flow += dt * cfg.flowSpeed / bakedSpeed; slow += dt * 0.24; }
+    if (!still) { flow += dt * cfg.flowSpeed / bakedSpeed; slow += dt * 0.24; }
 
     /* cursor springs, on the CPU, only while something can move */
     const mouseOn = mx > -1e3 && morph > 0.9 && cfg.mousePush > 0;
     if (mouseOn || active) {
       const R2 = cfg.mouseRadius * cfg.mouseRadius;
-      let still = true;
+      let settled = true;
       for (let i = 0; i < N; i++) {
         let dx = disp[i * 2], dy = disp[i * 2 + 1];
         if (mouseOn) {
@@ -750,15 +921,15 @@ async function start(stage, cfg, { primary = false } = {}) {
         if (Math.abs(dx) < 0.01 && Math.abs(vx[i]) < 0.01) { dx = 0; vx[i] = 0; }
         if (Math.abs(dy) < 0.01 && Math.abs(vy[i]) < 0.01) { dy = 0; vy[i] = 0; }
         disp[i * 2] = dx; disp[i * 2 + 1] = dy;
-        if (dx || dy || vx[i] || vy[i]) still = false;
+        if (dx || dy || vx[i] || vy[i]) settled = false;
       }
-      active = !still;
+      active = !settled;
       gl.bindBuffer(gl.ARRAY_BUFFER, B.disp);
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, disp);
     }
 
     /* strays */
-    if (!reduced && morph > 0.85 && cfg.flyEvery > 0 && (clock - lastSpawn) * 1000 >= cfg.flyEvery) { lastSpawn = clock; spawn(); }
+    if (!still && morph > 0.85 && cfg.flyEvery > 0 && (clock - lastSpawn) * 1000 >= cfg.flyEvery) { lastSpawn = clock; spawn(); }
     for (let i = 0; i < F; i++) {
       const age = clock - fly.t0[i];
       if (age <= 0 || age >= cfg.flyLife) { fly.a[i] = 0; continue; }
@@ -830,7 +1001,7 @@ async function start(stage, cfg, { primary = false } = {}) {
   let running = false, onScreen = true, wide = innerWidth >= cfg.minWidth, raf = 0;
   const loop = (t) => { if (!running) return; raf = requestAnimationFrame(loop); frame(t); };
   function sync() {
-    const should = wide && onScreen && !document.hidden && !reduced;
+    const should = wide && onScreen && !document.hidden && !still;
     if (should && !running) { running = true; last = 0; raf = requestAnimationFrame(loop); }
     if (!should && running) { running = false; cancelAnimationFrame(raf); }
     canvas.style.display = wide ? 'block' : 'none';
@@ -841,19 +1012,11 @@ async function start(stage, cfg, { primary = false } = {}) {
   new ResizeObserver(() => {
     wide = innerWidth >= cfg.minWidth;
     resize(); sync();
-    if (reduced && wide) frame(performance.now());
+    if (still && wide) frame(performance.now());
   }).observe(stage);
 
   /* take over the stage (for the hero, from the CPU field's <pre>s) */
-  stage.querySelectorAll('.ascii-bg__layer').forEach((el) => el.remove());
-  stage.appendChild(canvas);
-  stage.hidden = false;
-  stage.style.opacity = '';
-  if (primary) {
-    window.__fieldDone = true;
-    html.dataset.field = 'gl';
-    html.dataset.hero = 'flow';
-  }
+  takeOver(stage, canvas, primary, still && gated());
   resize();
   frame(performance.now());
   sync();
@@ -868,11 +1031,11 @@ async function start(stage, cfg, { primary = false } = {}) {
       if (key === 'flyCount') buildFly();
       if (REBUILD.includes(key)) {
         clearTimeout(rebuildT);
-        rebuildT = setTimeout(() => { build(); if (reduced) frame(performance.now()); }, 120);
+        rebuildT = setTimeout(() => { build(); if (still) frame(performance.now()); }, 120);
       }
       wide = innerWidth >= cfg.minWidth;
       resize(); sync();
-      if (reduced) frame(performance.now());
+      if (still) frame(performance.now());
     },
     replay() {
       shown = 0; morph = 0; mv = 0; sinceShown = 0;
@@ -960,10 +1123,19 @@ function startHero() {
     .catch((e) => fallback(e && e.message ? e.message : e));
 }
 
+/* The footer is a screen or more below the fold, so its field is built
+   once the page is within a screen of it, not at load. The footer itself
+   is watched: the stage is display:none until start() shows it. */
 function startFooter() {
-  start(footerStage, savedConfig(footerDefaults(), STORE_KEYS.footer))
+  const go = () => start(footerStage, savedConfig(footerDefaults(), STORE_KEYS.footer))
     .then((field) => { if (field) register(field, 'footer', footerStage); })
     .catch((e) => console.warn('[flow] footer field not started:', e && e.message ? e.message : e));
+  const near = new IntersectionObserver((es) => {
+    if (!es.some((e) => e.isIntersecting)) return;
+    near.disconnect();
+    go();
+  }, { rootMargin: '0px 0px 100% 0px' });
+  near.observe(footerStage.closest('footer') || footerStage.parentElement);
 }
 
 /* The footer runs at every width (FOOTER_SMALL under 1024). The hero band
@@ -984,3 +1156,7 @@ if (window.__flowHero) {
     startHero();
   }
 }
+
+/* The tuning panel lives in js/field-gl.js, which the pages no longer
+   load; it comes in only while the panel is switched on. */
+if (DEV_PANEL) import('./field-gl.js');
