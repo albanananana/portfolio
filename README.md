@@ -39,11 +39,13 @@ site/
 
 ## Running it
 
-Open `index.html` directly, or serve it (needed once anything is fetched):
+Serve the folder with clean URLs: the pages link to each other without `.html` (`bondata`, `evoke`, `dishcover`, `./#portfolio`), as Vercel serves them (`cleanUrls` in `vercel.json`).
 
 ```sh
-cd site && python3 -m http.server 8000    # → http://localhost:8000
+cd site && npx serve .                     # → http://localhost:3000, /evoke serves evoke.html
 ```
+
+`python3 -m http.server` still works for the home page, but its links to the cases 404, since it does not map `/evoke` to `evoke.html`.
 
 ## Deploying
 
