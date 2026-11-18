@@ -1,5 +1,5 @@
 /* ============================================================
-   Case page, editorial (bondata-editorial.html)
+   Case page, editorial (bondata.html)
 
    On top of js/case.js, which runs the videos:
 

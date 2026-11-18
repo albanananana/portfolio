@@ -8,7 +8,7 @@ Built against the Figma file **Portfolio › Desktop - 9** (`node-id=239-1139`).
 ```
 site/
 ├── index.html          markup + copy
-├── bondata-editorial.html  case page — Bondata in the editorial layout (Figma › Case — Bondata · AiiD style, 586:25457); the earlier bondata.html is in ../_backups/2026-10-28
+├── bondata.html        case page — Bondata in the editorial layout (Figma › Case — Bondata · AiiD style, 586:25457); an older version of the page is in ../_backups/2026-10-28
 ├── dishcover.html      case page — Dishcover in the editorial layout (Figma › Case — Dishcover · AiiD style, 615:13746); the old page is in ../_backups/2026-10-28
 ├── css/style.css       tokens, layout, the folder-tab nav
 ├── css/case.css        case-page layout: contents rail, decisions, shots
