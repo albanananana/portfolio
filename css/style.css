@@ -720,11 +720,63 @@ body.menu-open .menu{ visibility:visible; opacity:1 }
 /* on its own, in the footer's top right corner, under the bar */
 .site-footer__top{
   position:absolute; z-index:2; top:0; right:var(--gutter);
+  padding-top:40px;
   display:inline-flex; align-items:center; gap:.4em;
 }
 .site-footer__top svg{ width:.7em; height:auto; flex:none; transition:transform .25s ease }
 .site-footer__top:hover svg{ transform:translateY(-3px) }
-.site-footer a:hover{ color:var(--coral) }
+/* The copyright, and under it the privacy notice and the cookie
+   banner (js/analytics.js) as plain small links in one line. */
+.site-footer__copy{ display:flex; flex-direction:column; gap:var(--sp-8) }
+.site-footer__legal{ font-size:var(--fs-small); font-weight:400; letter-spacing:-.02em }
+.site-footer__legal a,
+.site-footer__legal button{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.2em }
+.site-footer button{ letter-spacing:inherit; text-align:left }
+.site-footer a:hover,
+.site-footer button:hover{ color:var(--coral) }
+
+/* ── Cookie banner ────────────────────────────────────────── */
+/* Drawn by js/analytics.js on a first visit and on "Cookie settings".
+   A card in the bottom-right corner, not a wall: the page stays usable
+   around it. Over the nav, under the home-page loader. Accept is the
+   primary button, Decline the tertiary one: underlined text in full
+   ink, so saying no is still plain to see. */
+.consent{
+  position:fixed; z-index:200;
+  right:var(--gutter); bottom:var(--gutter);
+  width:min(400px, calc(100vw - 2 * var(--gutter)));
+  padding:20px;
+  display:flex; flex-direction:column; gap:16px;
+  background:var(--nav-bg); color:var(--ink);
+  border:1px solid var(--rule); border-radius:2px;
+  font-size:var(--fs-small); line-height:1.5; letter-spacing:-.02em;
+  opacity:0; transform:translateY(8px);
+  transition:opacity .3s ease, transform .3s cubic-bezier(.22,.61,.36,1);
+}
+.consent.is-in{ opacity:1; transform:none }
+.consent[hidden]{ display:none }
+.consent__copy{ display:flex; flex-direction:column; gap:4px }
+.consent__title{ font-size:var(--fs-body); font-weight:500; line-height:1.3 }
+.consent__text{ color:var(--ink-soft) }
+.consent__text a,
+.consent__btn--tertiary{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.2em }
+.consent__text a:hover{ color:var(--accent) }
+.consent__actions{ display:flex; justify-content:flex-end; align-items:center; gap:8px }
+.consent__btn{
+  height:40px; padding:0 20px; border-radius:2px;
+  line-height:1; letter-spacing:inherit;
+  transition:background-color .2s ease, color .2s ease;
+}
+.consent__btn--tertiary{ padding:0 12px; color:var(--ink) }
+.consent__btn--tertiary:hover{ color:var(--accent) }
+.consent__btn--primary{ background:var(--ink); color:var(--on-dark) }
+.consent__btn--primary:hover{ background:var(--accent) }
+@media (max-width:600px){
+  .consent{ left:16px; right:16px; bottom:16px; width:auto }
+}
+@media (prefers-reduced-motion:reduce){
+  .consent{ transition:none; transform:none }
+}
 
 /* ============================================================
    RESPONSIVE

@@ -1,0 +1,26 @@
+/* ============================================================
+   Privacy — the notice behind the cookie banner (privacy.html)
+
+   Loaded after css/style.css, css/case.css and css/case-editorial.css:
+   the page is built from the case pages' hero and bands, on the paper
+   ground instead of a case colour. Only what those files lack is here.
+   ============================================================ */
+
+.page-privacy{ --ed-ground: var(--paper) }
+
+.page-privacy .ed-text a,
+.page-privacy .ed-list a{
+  text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.2em;
+}
+.page-privacy .ed-text a:hover,
+.page-privacy .ed-list a:hover{ color:var(--accent) }
+.page-privacy .ed-list strong{ font-weight:600 }
+
+/* The secondary button of the cookie banner, a size up for the page. */
+.pv-btn{
+  height:48px; padding:0 24px;
+  border:1px solid var(--ink); border-radius:2px;
+  font-size:var(--fs-big); line-height:1; letter-spacing:-.02em;
+  transition:background-color .2s ease;
+}
+.pv-btn:hover{ background:var(--ink); color:var(--on-dark) }
