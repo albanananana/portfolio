@@ -92,7 +92,7 @@ The decisions stay mine. What changed is how much I can test before committing, 
 ### Eyebrow
 [ Career ]
 
-### UXUI/Product Designer · 2025 – Now
+### UXUI/Product Designer · 2024 – Now
 Karts Design (full-time)
 
 I design web and mobile products end to end — flows, wireframes, prototypes, final UI — along with the websites around them and the design systems that keep everything consistent. Much of it is work on products that already exist: a UX audit first, then the redesign. I pitch the work to clients myself and defend the decisions behind it.
